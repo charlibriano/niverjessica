@@ -121,7 +121,6 @@
   .diskrow{ display:flex; align-items:center; gap:12px }
   .cd{
     width:66px; height:66px; border-radius:50%;
-    /* setores para dar noção forte de rotação */
     background:
       radial-gradient(circle at 50% 50%, #111 0 8px, transparent 8px),
       conic-gradient(#e5e7eb 0 10%, #cbd5e1 10% 20%, #9ca3af 20% 30%, #cbd5e1 30% 40%,
@@ -129,21 +128,15 @@
     box-shadow:inset 0 0 10px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
     position:relative; overflow:hidden;
   }
-  .cd::before{ /* rótulo central */
-    content:""; position:absolute; left:50%; top:50%; width:26px; height:26px;
+  .cd::before{ content:""; position:absolute; left:50%; top:50%; width:26px; height:26px;
     transform:translate(-50%,-50%); border-radius:50%;
-    background:radial-gradient(circle at 60% 40%, #22c55e, #16a34a 60%);
-    box-shadow:inset 0 0 4px rgba(0,0,0,.35);
-  }
-  .cd::after{ /* marcador para evidenciar movimento */
-    content:""; position:absolute; left:50%; top:7px; width:4px; height:10px;
-    transform:translateX(-50%); border-radius:2px; background:#e11d48;
-  }
-  .spin{ animation:spin 3.5s linear infinite } /* giro mais rápido */
+    background:radial-gradient(circle at 60% 40%, #22c55e, #16a34a 60%); box-shadow:inset 0 0 4px rgba(0,0,0,.35);}
+  .cd::after{ content:""; position:absolute; left:50%; top:7px; width:4px; height:10px; transform:translateX(-50%); border-radius:2px; background:#e11d48; }
+  .spin{ animation:spin 3.5s linear infinite }
   @keyframes spin{ to{ transform:rotate(360deg) } }
 
   .title{ font-weight:800; font-size:1rem }
-  .viz{ width:100%; height:44px; border-radius:10px; background:rgba(255,255,255,.05) }
+  .viz{ width:100%; height:60px; border-radius:10px; background:rgba(255,255,255,.05) } /* maior para destacar */
   .controls{ display:flex; align-items:center; gap:10px }
   .play{
     appearance:none; border:none; cursor:pointer; border-radius:11px; padding:10px 14px;
@@ -174,7 +167,6 @@
   .lightbox.show{ display:flex }
   .lightbox .close{ position:fixed; top:20px; right:24px; background:#fff; border:none; border-radius:999px; padding:10px 14px; font-weight:800; cursor:pointer }
 
-  /* responsividade */
   @media (max-width:520px){
     .controls{ gap:8px }
     .time{ min-width:70px; font-size:.82rem }
@@ -184,7 +176,6 @@
 </style>
 </head>
 <body>
-  <!-- Fallback -->
   <button id="fallback" class="fallback-open" aria-controls="carta">Abrir carta</button>
 
   <div class="wrap">
@@ -222,18 +213,18 @@
           <button id="restart" class="mini" type="button">↺ Rever do início</button>
         </div>
 
-        <!-- Texto com efeito máquina (aniversário + 14 anos amando mais) -->
-        <p class="tline" data-typer="Hoje é o seu dia! Desde o primeiro olhar eu me apaixonei por você — e, nestes 14 anos ao seu lado, esse amor só cresce a cada dia."></p>
-        <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, que iluminou nossa casa com sorrisos. Já são 3 aninhos de bênçãos e descobertas com você."></p>
-        <p class="tline" data-typer="Juntos conquistamos tanto: construímos nossa casa, nossos sonhos e um caminho de carinho, fé e parceria."></p>
-        <p class="tline" data-typer="Feliz aniversário, meu amor. Que o Senhor te cubra de saúde e alegria. Eu te amo — ontem, hoje e sempre."></p>
+        <!-- Texto com efeito máquina (polido, mantendo sua voz) -->
+        <p class="tline" data-typer="Hoje é o seu aniversário, mas o presente somos nós. Desde o primeiro dia em que te vi, eu me apaixonei por você."></p>
+        <p class="tline" data-typer="Quero que saiba: eu estarei sempre ao seu lado. Estamos há 16 anos juntos, 14 anos de casados, e depois de 10 anos Deus nos presenteou com a Alê (Alexandra), que traz alegrias e nos ensina a sermos melhores a cada dia."></p>
+        <p class="tline" data-typer="Que este dia seja tão especial quanto você é em nossas vidas. Obrigado por ser essa mulher maravilhosa, por todo carinho e pelas suas orações."></p>
+        <p class="tline" data-typer="Que o Senhor ouça cada uma delas — você é 'amiga de Deus' — e que todos os seus sonhos, projetos e desejos se realizem."></p>
+        <p class="tline" data-typer="Te amo todos os dias!"></p>
 
         <div class="meta" id="meta">
           <span class="pill">Para: <strong>Jéssica</strong></span>
           <span class="pill">De: <strong>Felipe Palhares</strong></span>
         </div>
 
-        <!-- Assinatura -->
         <div class="signature" id="signature" style="display:none">
           <svg class="sig" viewBox="0 0 380 60" width="100%" height="50" aria-hidden="true">
             <path d="M10 35 C40 10, 70 10, 100 35 S160 60, 190 35 240 10, 280 35 330 60, 370 35" />
@@ -324,17 +315,15 @@
         hero   = $('#zoom');
 
   // tempo aproximado do refrão (edite se quiser)
-  const CHORUS_TIME = 60; // segundos
+  const CHORUS_TIME = 60; // s
   const CHORUS_LEN  = 14;
 
   audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmt(audio.duration); });
   audio.addEventListener('timeupdate', ()=>{
     cur.textContent = fmt(audio.currentTime);
     fill.style.width = ((audio.currentTime/(audio.duration||1))*100) + "%";
-
     const t = audio.currentTime;
-    const on = t >= CHORUS_TIME && t <= CHORUS_TIME + CHORUS_LEN;
-    hero.classList.toggle('glow', on);
+    hero.classList.toggle('glow', t >= CHORUS_TIME && t <= CHORUS_TIME + CHORUS_LEN);
   });
   btn.addEventListener('click', async ()=>{
     try{
@@ -358,41 +347,79 @@
 
   function fmt(secs){ if(!isFinite(secs)) return "0:00"; const m=Math.floor(secs/60), s=Math.floor(secs%60); return m+":"+(s<10?"0":"")+s; }
 
-  /* equalizador colorido */
+  /* equalizador NOVO — 32 barras, log, contraste, picos */
   const vizCanvas = $('#viz'); const ctx = vizCanvas.getContext('2d', { alpha:true });
-  let audioCtx, analyser, dataArray;
+  let audioCtx, analyser, dataArray, peaks=[], smoothed=[];
+  const BARS = 32;
+
   function ensureAudioGraph(){
     if(audioCtx) return;
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
     const src = audioCtx.createMediaElementSource(audio);
-    analyser = audioCtx.createAnalyser(); analyser.fftSize = 64;
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;                // mais detalhes
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -10;
+    analyser.smoothingTimeConstant = 0.65; // suaviza sem “achatar”
     dataArray = new Uint8Array(analyser.frequencyBinCount);
+    peaks = Array(BARS).fill(0);
+    smoothed = Array(BARS).fill(0);
     src.connect(analyser); analyser.connect(audioCtx.destination);
   }
   btn.addEventListener('click', ensureAudioGraph, {once:true});
   abrir.addEventListener('click', ensureAudioGraph, {once:true});
   fallback.addEventListener('click', ensureAudioGraph, {once:true});
 
+  // mapeia barra (0..BARS-1) para índice de frequência logarítmico
+  function binFor(i){
+    const frac = i/(BARS-1);
+    const exp = Math.pow(frac, 1.8); // dá mais resolução nos graves
+    return Math.min(dataArray.length-1, Math.floor(exp * (dataArray.length-1)));
+  }
+
   function drawViz(){
     requestAnimationFrame(drawViz);
     if(!analyser) return;
     analyser.getByteFrequencyData(dataArray);
-    const w = vizCanvas.width = vizCanvas.clientWidth, h = vizCanvas.clientHeight;
-    const bars = 26, step = Math.floor(dataArray.length / bars), bw = w / bars;
+    const w = vizCanvas.width = vizCanvas.clientWidth, h = vizCanvas.height = vizCanvas.clientHeight;
+    const bw = w / BARS - 2; // espaçamento
     ctx.clearRect(0,0,w,h);
-    for(let i=0;i<bars;i++){
-      const v = dataArray[i*step]/255, bh=(h-6)*v, x=i*bw, y=h-bh-3, r=4, hue = 130 + i*(220/bars);
-      ctx.fillStyle = `hsla(${hue}, 80%, ${40+v*35}%, ${0.7*(0.3+v)})`;
+
+    for(let i=0;i<BARS;i++){
+      const idx = binFor(i);
+      const v = dataArray[idx] / 255;             // 0..1
+      const vBoost = Math.pow(v, 1.2);            // contraste (sem achatar)
+      const bh = Math.max(2, (h-8) * vBoost);     // altura
+      smoothed[i] = smoothed[i]*0.6 + bh*0.4;     // easing leve
+      peaks[i] = Math.max(peaks[i]*0.98, smoothed[i]); // pico cai devagar
+
+      const x = i*(bw+2), y = h - smoothed[i] - 4, r = 4;
+      const hue = 130 + i*(220/BARS);
+
+      // barra
+      ctx.fillStyle = `hsla(${hue}, 85%, ${40+v*35}%, ${0.85})`;
       ctx.beginPath();
-      ctx.moveTo(x+r, y); ctx.lineTo(x+bw-r, y); ctx.quadraticCurveTo(x+bw, y, x+bw, y+r);
-      ctx.lineTo(x+bw, y+bh-r); ctx.quadraticCurveTo(x+bw, y+bh, x+bw-r, y+bh);
-      ctx.lineTo(x+r, y+bh); ctx.quadraticCurveTo(x, y+bh, x, y+bh-r);
-      ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath(); ctx.fill();
+      ctx.moveTo(x+r, y);
+      ctx.lineTo(x+bw-r, y);
+      ctx.quadraticCurveTo(x+bw, y, x+bw, y+r);
+      ctx.lineTo(x+bw, y+smoothed[i]-r);
+      ctx.quadraticCurveTo(x+bw, y+smoothed[i], x+bw-r, y+smoothed[i]);
+      ctx.lineTo(x+r, y+smoothed[i]);
+      ctx.quadraticCurveTo(x, y+smoothed[i], x, y+smoothed[i]-r);
+      ctx.lineTo(x, y+r);
+      ctx.quadraticCurveTo(x, y, x+r, y);
+      ctx.closePath();
+      ctx.fill();
+
+      // cap de pico
+      const capY = h - peaks[i] - 6;
+      ctx.fillStyle = `hsla(${hue}, 95%, 90%, .9)`;
+      ctx.fillRect(x, capY, bw, 3);
     }
   }
   drawViz();
 
-  /* corações + brilhinhos contínuos */
+  /* efeitos contínuos (corações + brilhos) */
   function heartBurst(qty=10){
     for(let i=0;i<qty;i++){
       const h=document.createElement('div');
@@ -416,7 +443,7 @@
   setInterval(()=>heartBurst(3), 2500);
   setInterval(()=>sparklesBurst(3), 2000);
 
-  /* fogos ao final */
+  /* fogos/confete e abrir carta */
   function fireworks(){
     const colors=['#34d399','#22c55e','#86efac','#a7f3d0','#6ee7b7','#f9a8d4','#93c5fd'];
     for(let i=0;i<5;i++){
@@ -435,8 +462,6 @@
       }
     }
   }
-
-  /* confete ao abrir */
   function confettiOnce(){
     const colors=['🎉','✨','💚','💗','💙','💛','🧡'];
     for(let i=0;i<28;i++){
@@ -449,8 +474,6 @@
       document.body.appendChild(c); setTimeout(()=>{c.remove();style.remove();},950);
     }
   }
-
-  /* abrir carta */
   function abrirCarta(){
     flap.style.transform='rotateX(155deg)';
     setTimeout(()=>{
