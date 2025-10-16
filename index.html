@@ -16,26 +16,29 @@
   body{
     margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--text);
-    background:radial-gradient(1400px 900px at -20% -10%, #20172a 0, transparent 60%),
-               radial-gradient(1200px 700px at 120% 0%, #112230 0, transparent 55%),
-               var(--bg);
-    min-height:100svh;display:flex;align-items:center;justify-content:center;padding:14px;
+    background:
+      radial-gradient(1400px 900px at -20% -10%, #20172a 0, transparent 60%),
+      radial-gradient(1200px 700px at 120% 0%, #112230 0, transparent 55%),
+      var(--bg);
+    min-height:100svh;display:flex;align-items:center;justify-content:center;padding:12px;
     overflow-x:hidden;
     background-attachment: fixed;
     --glowX:50%; --glowY:40%; --glowC:rgba(34,197,94,.18);
   }
+  /* luz suave reativa no fundo */
   body::after{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
-    background:radial-gradient(500px 320px at var(--glowX) var(--glowY), var(--glowC), transparent 70%);
-    filter:blur(28px);
+    background: radial-gradient(500px 320px at var(--glowX) var(--glowY), var(--glowC), transparent 70%);
+    filter: blur(28px);
   }
-  .wrap{width:min(var(--wrap),100%); animation:fadeUp .7s ease-out both}
+  .wrap{width:min(var(--wrap),100%); animation:fadeUp .6s ease-out both}
   @keyframes fadeUp{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
 
+  /* CAPA */
   .capa{
     position:relative;background:linear-gradient(180deg,#63e2a8,#22c55e);
     border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
-    padding:20px;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;
+    padding:18px;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;
   }
   .flap{
     position:absolute;left:0;right:0;top:0;height:50%;
@@ -47,38 +50,45 @@
   .selo{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
     background:#e7ffe7;color:#096d36;border-radius:999px;padding:8px 14px;font-weight:800;letter-spacing:.04em;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 
-  .cta-heart{
-    width:130px;height:118px;background:transparent;border:none;cursor:pointer;padding:0;
-    display:block;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));
-    animation:pulse 1.8s ease-in-out infinite;
-  }
+  /* Botão coração */
+  .cta-heart{width:130px;height:118px;background:transparent;border:none;cursor:pointer;padding:0;
+    display:block;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));animation:pulse 1.8s ease-in-out infinite}
   .cta-heart svg{width:100%;height:100%;display:block}
-  .cta-heart .label{position:absolute;inset:0;display:grid;place-items:center;text-align:center;
-    color:#fff;font-weight:900;font-size:1.02rem;line-height:1.05;white-space:nowrap;pointer-events:none}
+  .cta-heart .label{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;font-weight:900;font-size:1.02rem;line-height:1.05}
   @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-  .beat{animation:beat 0.95s ease-in-out infinite !important}
+  .beat{animation:beat .95s ease-in-out infinite !important}
   @keyframes beat{0%{transform:scale(1)}20%{transform:scale(1.08)}40%{transform:scale(1)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
 
-  .fallback-open{
-    position:fixed;left:10px;bottom:10px;z-index:50;
-    background:var(--accent);color:#fff;border:none;border-radius:12px;
-    padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);
-  }
+  /* Botão fallback (fixo) */
+  .fallback-open{position:fixed;left:10px;bottom:10px;z-index:50;
+    background:var(--accent);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 
+  /* === CARTA (MOBILE-FIRST COM ALTURA FIXA) === */
   .carta{
-    display:none;grid-template-columns:1fr;gap:14px;
+    display:none;
+    /* Altura “travada” pra caber tudo sem sumir o topo */
+    height:86svh; max-height:720px;
     background:linear-gradient(180deg,rgba(34,197,94,.10),transparent 30%),var(--card);
-    border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:12px;
+    border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
+    padding:10px;
+    /* No mobile: duas linhas (carta em cima com scroll próprio; imagem + player embaixo) */
+    display:grid; grid-template-rows: 1fr auto; gap:10px;
   }
-  @media(min-width:760px){.carta{grid-template-columns:1fr 360px;padding:16px;gap:16px}}
+  /* Em telas maiores: duas colunas */
+  @media (min-width:780px){
+    .carta{ grid-template-columns: 1fr 360px; grid-template-rows: none; height:auto; }
+  }
 
+  /* Folha pautada com furos */
   .letter{
     position:relative;background:var(--paper);color:var(--ink);
-    border-radius:16px;padding:14px 16px 16px 22px;box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
+    border-radius:16px;padding:12px 14px 14px 22px;box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
     background-image:
       repeating-linear-gradient(#0000,#0000 26px,var(--line) 27px,#0000 28px),
       linear-gradient(90deg,#f7d5d5 0 16px,#0000 16px);
     background-size:auto,auto;
+    /* Faz a carta rolar só dentro dela */
+    overflow:auto; max-height:100%;
   }
   .letter::before{
     content:"";position:absolute;left:6px;top:18px;bottom:18px;width:6px;border-radius:999px;
@@ -87,22 +97,29 @@
                radial-gradient(circle at 50% 70%, #d9d9d9 0 3px,#0000 3px),
                radial-gradient(circle at 50% 100%,#d9d9d9 0 3px,#0000 3px);
   }
-  .letter h2{margin:0 0 8px;color:#0a7a3b;font-size:1.15rem}
-  .controls-line{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .letter h2{margin:0 0 6px;color:#0a7a3b;font-size:1.08rem}
+  .controls-line{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
   .mini{background:#e8f9ef;border:1px solid #c9f6df;color:#0a7a3b;font-weight:800;border-radius:10px;padding:6px 10px;cursor:pointer}
-  .tline{margin:0 0 10px;line-height:1.7;font-size:1rem;opacity:0;min-height:1.4em}
-  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:.92rem;color:#555;opacity:0}
+  .tline{margin:0 0 8px;line-height:1.7;font-size:.98rem;opacity:0;min-height:1.4em}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.9rem;color:#555;opacity:0}
   .pill{background:#e6ffe8;border:1px solid #c9f6df;border-radius:999px;padding:6px 10px}
 
-  .signature{margin-top:10px;height:50px;display:none}
-  .sig path{
-    fill:none;stroke:#0a7a3b;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
-    stroke-dasharray:700;stroke-dashoffset:700;animation:draw 3.8s ease forwards;animation-delay:.4s;
+  /* Lápis animado (aparece só enquanto escreve) */
+  .pencil{position:absolute; right:14px; bottom:10px; width:34px; height:34px; opacity:0; pointer-events:none}
+  .writing .pencil{opacity:1; animation:scribble 1.4s ease-in-out infinite}
+  @keyframes scribble{
+    0%{ transform: translate(0,0) rotate(-12deg) }
+    50%{ transform: translate(-8px,-4px) rotate(8deg) }
+    100%{ transform: translate(0,0) rotate(-12deg) }
   }
-  @keyframes draw{to{stroke-dashoffset:0}}
 
+  /* Bloco mídia (imagem + player) sempre visível no mobile */
+  .media{ display:flex; flex-direction:column; gap:8px; }
   .hero{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#111;cursor:zoom-in}
-  .hero img{width:100%;height:auto;display:block;object-fit:contain;filter:saturate(1.05)contrast(1.05)}
+  .hero img{width:100%;height:auto;display:block;object-fit:contain;filter:saturate(1.05) contrast(1.05)}
+  /* imagem reduzida no mobile pra caber com o player */
+  @media (max-width:779px){ .hero{max-height:22vh} .hero img{max-height:22vh} }
+
   .hero.glow{box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 26px rgba(255,255,255,.13)}
   .hero.glow::after{
     content:'';position:absolute;inset:-2px;padding:2px;border-radius:16px;
@@ -113,402 +130,273 @@
   }
   @keyframes ring{to{transform:rotate(360deg)}}
 
-  .player{background:var(--glass);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;margin-top:12px;backdrop-filter:blur(6px)}
+  /* PLAYER */
+  .player{background:var(--glass);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(6px)}
   .diskrow{display:flex;align-items:center;gap:10px}
-  .cd{width:58px;height:58px;border-radius:50%;
+  .cd{width:52px;height:52px;border-radius:50%;
     background:radial-gradient(circle at 50% 50%,#111 0 7px,transparent 7px),
       conic-gradient(#e5e7eb 0 10%,#cbd5e1 10% 20%,#9ca3af 20% 30%,#cbd5e1 30% 40%,
                      #e5e7eb 40% 50%,#cbd5e1 50% 60%,#9ca3af 60% 70%,#cbd5e1 70% 80%,#e5e7eb 80% 100%);
     box-shadow:inset 0 0 10px rgba(0,0,0,.35),0 2px 10px rgba(0,0,0,.25);position:relative;overflow:hidden}
-  .cd::before{content:"";position:absolute;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%);border-radius:50%;
+  .cd::before{content:"";position:absolute;left:50%;top:50%;width:20px;height:20px;transform:translate(-50%,-50%);border-radius:50%;
     background:radial-gradient(circle at 60% 40%,#22c55e,#16a34a 60%);box-shadow:inset 0 0 4px rgba(0,0,0,.35)}
   .cd::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:10px;transform:translateX(-50%);border-radius:2px;background:#e11d48}
   .spin{animation:spin 3.5s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-  .title{font-weight:800;font-size:.98rem}
-  .viz{width:100%;height:54px;border-radius:10px;background:rgba(255,255,255,.05)}
+  .title{font-weight:800;font-size:.95rem}
+  .viz{width:100%;height:44px;border-radius:10px;background:rgba(255,255,255,.05)}
   .controls{display:flex;align-items:center;gap:8px}
-  .play{appearance:none;border:none;cursor:pointer;border-radius:10px;padding:9px 12px;background:var(--accent);color:#06290d;font-weight:900;box-shadow:0 6px 18px rgba(0,0,0,.25)}
-  .time{font-size:.86rem;color:#e9f7ee;min-width:78px;text-align:right}
+  .play{appearance:none;border:none;cursor:pointer;border-radius:10px;padding:8px 11px;background:var(--accent);color:#06290d;font-weight:900;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .time{font-size:.84rem;color:#e9f7ee;min-width:72px;text-align:right}
   .bar{position:relative;height:10px;flex:1;background:rgba(255,255,255,.15);border-radius:999px;cursor:pointer;overflow:hidden}
   .bar>i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#34d399,#22c55e,#86efac)}
   .vol{width:80px;accent-color:#86efac}
-  .replay{display:none;margin-top:6px;align-self:flex-start;background:#10b981;color:#06290d;font-weight:900;border:none;padding:8px 12px;border-radius:10px}
+  .replay{display:none;margin-top:4px;align-self:flex-start;background:#10b981;color:#06290d;font-weight:900;border:none;padding:8px 12px;border-radius:10px}
 
-  .hint{color:var(--muted);font-size:.88rem}
   footer{text-align:center;color:#bdbdcc;font-size:.82rem;margin-top:10px}
 
+  /* corações / brilhos / pétalas */
   .heart{position:fixed;bottom:-20px;font-size:20px;opacity:.85;animation:float 6s linear forwards;pointer-events:none}
   @keyframes float{to{transform:translateY(-120vh) translateX(var(--x));opacity:0}}
-  .sparkle{position:fixed;width:6px;height:6px;border-radius:50%;
-    background:radial-gradient(#fff,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.35);filter:hue-rotate(var(--h,0deg));animation:spark 2.2s linear forwards}
+  .sparkle{position:fixed;width:6px;height:6px;border-radius:50%;background:radial-gradient(#fff,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.35);filter:hue-rotate(var(--h,0deg));animation:spark 2.2s linear forwards}
   @keyframes spark{from{transform:translateY(0);opacity:1}to{transform:translateY(-120px);opacity:0}}
   .petal{position:fixed;top:-20px;font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));animation:fall var(--d) linear forwards;pointer-events:none}
-  @keyframes fall{to{transform:translate(var(--tx),105vh)rotate(540deg);opacity:.9}}
+  @keyframes fall{to{transform:translate(var(--tx),105vh) rotate(540deg);opacity:.9}}
 
+  /* Lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1000}
   .lightbox img{max-width:95vw;max-height:95vh;border-radius:14px}
   .lightbox.show{display:flex}
   .lightbox .close{position:fixed;top:16px;right:20px;background:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}
 
   :root{--wrap:900px}
-  @media(max-width:520px){
-    :root{--wrap:440px}
-    .cta-heart{width:120px;height:110px}
-    .title{font-size:.94rem}
-    .viz{height:48px}
-  }
+  @media (max-width:520px){ :root{--wrap:440px} .cta-heart{width:120px;height:110px} .viz{height:40px} }
 </style>
 </head>
 <body>
 <button id="fallback" class="fallback-open" aria-controls="carta">Abrir carta</button>
 
 <div class="wrap">
-<!-- CAPA -->
-<section id="capa" class="capa" aria-label="Envelope">
-  <div class="flap" id="flap"></div>
-  <div class="selo">💌</div>
-  <div class="cta-wrap">
+  <!-- CAPA -->
+  <section id="capa" class="capa" aria-label="Envelope">
+    <div class="flap" id="flap"></div>
+    <div class="selo">💌</div>
     <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta">
       <svg viewBox="0 0 120 110" role="img" aria-hidden="true">
-        <path d="M60 100 C 20 70, 10 55, 10 40 C 10 25, 22 15, 36 15 C 48 15, 55 22, 60 30 C 65 22, 72 15, 84 15 C 98 15, 110 25, 110 40 C 110 55, 100 70, 60 100 Z" fill="#16a34a" stroke="#e11d48" stroke-width="6"></path>
+        <path d="M60 100 C 20 70, 10 55, 10 40 C 10 25, 22 15, 36 15 C 48 15, 55 22, 60 30 C 65 22, 72 15, 84 15 C 98 15, 110 25, 110 40 C 110 55, 100 70, 60 100 Z" fill="#16a34a" stroke="#e11d48" stroke-width="6"/>
       </svg>
-      <span class="label">Abrir<br>carta</span>
+      <span class="label">Abrir<br/>carta</span>
     </button>
-  </div>
-</section>
+  </section>
 
-<!-- CARTA -->
-<section id="carta" class="carta" aria-label="Carta de aniversário" hidden>
-  <div class="letter">
-    <h2>Para Jéssica ❤️</h2>
-    <div class="controls-line">
-      <button id="speed" class="mini" type="button">⏩ Acelerar texto</button>
-      <button id="restart" class="mini" type="button">↺ Rever do início</button>
-    </div>
-    <p class="tline" data-typer="Hoje é o seu aniversário, mas o presente somos nós. Desde o primeiro dia em que te vi, eu me apaixonei por você."></p>
-    <p class="tline" data-typer="Quero que saiba: eu estarei sempre ao seu lado. Estamos há 16 anos juntos, 14 anos de casados, e depois de 10 anos Deus nos presenteou com a Alê (Alexandra), que trouxe tantas alegrias e nos ensina a sermos melhores a cada dia."></p>
-    <p class "tline" data-typer="Que este dia seja tão especial quanto você é em nossas vidas. Obrigado por ser essa mulher maravilhosa, por todo o carinho e pelas suas orações."></p>
-    <p class="tline" data-typer="Que o Senhor ouça cada uma delas — você é 'amiga de Deus' — e que todos os seus sonhos, projetos e desejos se realizem."></p>
-    <p class="tline" data-typer="Te amo todos os dias!!!"></p>
-    <div class="meta" id="meta">
-      <span class="pill">Para: <strong>Jéssica</strong></span>
-      <span class="pill">De: <strong>Felipe Palhares</strong></span>
-    </div>
-    <div class="signature" id="signature">
-      <svg class="sig" viewBox="0 0 380 60" width="100%" height="50" aria-hidden="true">
-        <path d="M10 35 C40 10, 70 10, 100 35 S160 60, 190 35 240 10, 280 35 330 60, 370 35"></path>
+  <!-- CARTA (altura fixa; carta com scroll interno; imagem + player SEM sumir) -->
+  <section id="carta" class="carta" aria-label="Carta de aniversário" hidden>
+    <!-- Coluna/linha 1: CARTA -->
+    <div class="letter" id="letter">
+      <h2>Para Jéssica ❤️</h2>
+      <div class="controls-line">
+        <button id="speed" class="mini" type="button">⏩ Acelerar texto</button>
+        <button id="restart" class="mini" type="button">↺ Rever do início</button>
+      </div>
+
+      <p class="tline" data-typer="Hoje é o seu aniversário, mas o presente somos nós. Desde o primeiro dia em que te vi, eu me apaixonei por você."></p>
+      <p class="tline" data-typer="Quero que saiba: eu estarei sempre ao seu lado. Estamos há 16 anos juntos, 14 anos de casados, e depois de 10 anos Deus nos presenteou com a Alê (Alexandra), que trouxe tantas alegrias e nos ensina a sermos melhores a cada dia."></p>
+      <p class="tline" data-typer="Que este dia seja tão especial quanto você é em nossas vidas. Obrigado por ser essa mulher maravilhosa, por todo o carinho e pelas suas orações."></p>
+      <p class="tline" data-typer="Que o Senhor ouça cada uma delas — você é 'amiga de Deus' — e que todos os seus sonhos, projetos e desejos se realizem."></p>
+      <p class="tline" data-typer="Te amo todos os dias!!!"></p>
+
+      <div class="meta" id="meta">
+        <span class="pill">Para: <strong>Jéssica</strong></span>
+        <span class="pill">De: <strong>Felipe Palhares</strong></span>
+      </div>
+
+      <!-- Lápis animado -->
+      <svg class="pencil" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/>
+          </linearGradient>
+        </defs>
+        <path d="M8 52 L56 8" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="56" cy="8" r="6" fill="#111"/>
       </svg>
-      <div style="font-weight:800;color:#0a7a3b;margin-top:4px;">Felipe Palhares</div>
     </div>
-    <div class="hint" style="margin-top:6px"></div>
-  </div>
-  <div>
-    <figure class="hero" id="zoom"><img src="assets/imagem_cartao.png" alt="Imagem do cartão"></figure>
-    <aside class="player" aria-label="Música do cartão">
-      <div class="diskrow">
-        <div id="cd" class="cd" aria-hidden="true"></div>
-        <div class="title">Todo dia, até morrer</div>
-      </div>
-      <canvas id="viz" class="viz" aria-hidden="true"></canvas>
-      <div class="controls">
-        <button id="btnPlay" class="play">▶ Tocar</button>
-        <div class="bar" id="seek" aria-label="Barra de progresso"><i id="fill"></i></div>
-        <div class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></div>
-        <input id="vol" class="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
-      </div>
-      <button id="replay" class="replay">🔁 Ouvir novamente</button>
-      <audio id="audio" preload="auto">
-        <source src="assets/musica.mp3" type="audio/mpeg">
-      </audio>
-    </aside>
-  </div>
-</section>
 
-<footer>Feito com amor ❤️</footer>
+    <!-- Coluna/linha 2: IMAGEM + PLAYER (sempre visível no mobile) -->
+    <div class="media">
+      <figure class="hero" id="zoom"><img src="assets/imagem_cartao.png" alt="Imagem do cartão"/></figure>
+
+      <aside class="player" aria-label="Música do cartão">
+        <div class="diskrow">
+          <div id="cd" class="cd" aria-hidden="true"></div>
+          <div class="title">Todo dia, até morrer</div>
+        </div>
+        <canvas id="viz" class="viz" aria-hidden="true"></canvas>
+        <div class="controls">
+          <button id="btnPlay" class="play">▶ Tocar</button>
+          <div class="bar" id="seek" aria-label="Barra de progresso"><i id="fill"></i></div>
+          <div class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></div>
+          <input id="vol" class="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+        </div>
+        <button id="replay" class="replay">🔁 Ouvir novamente</button>
+        <audio id="audio" preload="auto">
+          <source src="assets/musica.mp3" type="audio/mpeg">
+        </audio>
+      </aside>
+    </div>
+  </section>
+
+  <footer>Feito com amor ❤️</footer>
 </div>
 
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox" aria-hidden="true">
   <button class="close" id="closeLb" aria-label="Fechar imagem">Fechar ✕</button>
   <img src="assets/imagem_cartao.png" alt="Imagem em tela cheia">
 </div>
 
 <script>
-const $ = s => document.querySelector(s);
-const capa=$('#capa'), carta=$('#carta'), abrir=$('#abrir'), flap=$('#flap'), fallback=$('#fallback');
-const speedBtn=$('#speed'), restartBtn=$('#restart');
-const lines=[...document.querySelectorAll('.tline')];
-const meta=$('#meta'), signature=$('#signature');
-const hero=$('#zoom'), btn=$('#btnPlay'), audio=$('#audio'), cd=$('#cd');
-const vizCanvas=$('#viz'), cur=$('#cur'), dur=$('#dur'), seek=$('#seek'), fill=$('#fill'), vol=$('#vol'), replay=$('#replay');
+  const $ = s => document.querySelector(s);
 
-let cps=8;
-async function typeLine(el,text){
-  el.style.opacity=1; el.textContent="";
-  let i=0, delay=1000/cps;
-  return new Promise(res=>{
-    const iv=setInterval(()=>{ el.textContent+=text[i++]||""; if(i>text.length){ clearInterval(iv); res(); }}, delay);
+  const capa=$('#capa'), carta=$('#carta'), abrir=$('#abrir'), flap=$('#flap'), fallback=$('#fallback');
+  const letter=$('#letter'), speedBtn=$('#speed'), restartBtn=$('#restart');
+  const lines=[...document.querySelectorAll('.tline')];
+  const meta=$('#meta');
+  const hero=$('#zoom'), btn=$('#btnPlay'), audio=$('#audio'), cd=$('#cd'),
+        vizCanvas=$('#viz'), cur=$('#cur'), dur=$('#dur'), seek=$('#seek'), fill=$('#fill'), vol=$('#vol'), replay=$('#replay');
+
+  /* Máquina de escrever + lápis */
+  let cps=8; // velocidade calma
+  async function typeLine(el,text){
+    letter.classList.add('writing');
+    el.style.opacity=1; el.textContent="";
+    let i=0, delay=1000/cps;
+    await new Promise(resolve=>{
+      const iv=setInterval(()=>{
+        el.textContent+=text[i++]||"";
+        if(i>text.length){ clearInterval(iv); resolve(); }
+      }, delay);
+    });
+  }
+  async function runTypewriter(){
+    meta.style.opacity=0;
+    for(const el of lines){
+      await typeLine(el, el.dataset.typer);
+      await new Promise(r=>setTimeout(r,220));
+    }
+    letter.classList.remove('writing');
+    meta.style.transition="opacity .5s"; meta.style.opacity=1;
+    fireworks();
+  }
+  function resetTypewriter(){
+    lines.forEach(p=>{ p.textContent=''; p.style.opacity=0; });
+    runTypewriter();
+  }
+  speedBtn.addEventListener('click',()=>{
+    cps = (cps>=16)?8:(cps+4);
+    speedBtn.textContent = (cps>8? '⏸ Desacelerar':'⏩ Acelerar texto');
   });
-}
-async function runTypewriter(){
-  meta.style.opacity=0; signature.style.display='none';
-  for(const el of lines){
-    await typeLine(el, el.dataset.typer);
-    await new Promise(r=>setTimeout(r,220));
-  }
-  meta.style.transition="opacity .6s"; meta.style.opacity=1;
-  signature.style.display='block';
-  fireworks();
-}
-function resetTypewriter(){
-  lines.forEach(p=>{ p.textContent=''; p.style.opacity=0;});
-  runTypewriter();
-}
-speedBtn.addEventListener('click',()=>{
-  cps=cps>=16?8:cps+4;
-  speedBtn.textContent=(cps>8?'⏸ Desacelerar':'⏩ Acelerar texto');
-});
-restartBtn.addEventListener('click',resetTypewriter);
+  restartBtn.addEventListener('click', resetTypewriter);
 
-let audioCtx, analyser, dataArray, peaks=[], smoothed=[];
-const BARS=32, CHORUS_TIME=60, CHORUS_LEN=14;
-function ensureAudioGraph(){
-  if(audioCtx) return;
-  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  const src=audioCtx.createMediaElementSource(audio);
-  analyser=audioCtx.createAnalyser();
-  analyser.fftSize=512; analyser.minDecibels=-90; analyser.maxDecibels=-10; analyser.smoothingTimeConstant=.65;
-  dataArray=new Uint8Array(analyser.frequencyBinCount);
-  peaks=Array(BARS).fill(0); smoothed=Array(BARS).fill(0);
-  src.connect(analyser); analyser.connect(audioCtx.destination);
-}
-function fmt(secs){
-  if(!isFinite(secs)) return "0:00";
-  const m=Math.floor(secs/60), s=Math.floor(secs%60);
-  return m+":"+(s<10?"0":"")+s;
-}
-audio.addEventListener('loadedmetadata',()=>{ dur.textContent=fmt(audio.duration); });
-audio.addEventListener('timeupdate',()=>{
-  cur.textContent=fmt(audio.currentTime);
-  fill.style.width=((audio.currentTime/(audio.duration||1))*100)+"%";
-  const t=audio.currentTime;
-  hero.classList.toggle('glow', t>=CHORUS_TIME && t<=CHORUS_TIME+CHORUS_LEN);
-  // atualizar luzes de fundo
-  const bass=getBandEnergy(0,4);
-  document.body.style.setProperty('--glowX', `${50 + Math.sin(t*.7)*20}%`);
-  document.body.style.setProperty('--glowY', `${40 + Math.cos(t*.6)*15}%`);
-  document.body.style.setProperty('--glowC', `rgba(34,197,94, ${.12 + .35*bass})`);
-});
-btn.addEventListener('click', async ()=>{
-  try{
-    if(audio.paused){
-      ensureAudioGraph();
-      await audio.play();
-      btn.textContent='⏸ Pausar';
-      cd.classList.add('spin');
-      abrir.classList.add('beat');
-    } else {
-      audio.pause();
-      btn.textContent='▶ Tocar';
-      cd.classList.remove('spin');
-      abrir.classList.remove('beat');
-      hero.classList.remove('glow');
-    }
-  }catch(e){}
-});
-audio.addEventListener('ended', ()=>{
-  btn.textContent='▶ Tocar';
-  cd.classList.remove('spin');
-  abrir.classList.remove('beat');
-  hero.classList.remove('glow');
-  replay.style.display='inline-flex';
-});
-replay.addEventListener('click', async()=>{
-  replay.style.display='none';
-  try{
-    await audio.play();
-    btn.textContent='⏸ Pausar';
-    cd.classList.add('spin');
-    abrir.classList.add('beat');
-  }catch(e){}
-});
-function setFromClientX(x){
-  const r=seek.getBoundingClientRect();
-  const k=Math.min(1, Math.max(0, (x-r.left)/r.width));
-  audio.currentTime=k*(audio.duration||0);
-}
-seek.addEventListener('click', e=>setFromClientX(e.clientX));
-let dragging=false;
-seek.addEventListener('pointerdown', e=>{ dragging=true; setFromClientX(e.clientX); seek.setPointerCapture(e.pointerId); });
-seek.addEventListener('pointermove', e=>{ if(dragging) setFromClientX(e.clientX); });
-seek.addEventListener('pointerup', ()=>{ dragging=false; });
-vol.addEventListener('input', ()=>{ audio.volume=+vol.value; });
-
-const ctx=vizCanvas.getContext('2d',{ alpha:true });
-function binFor(i){
-  const f=i/(BARS-1);
-  const e=Math.pow(f,1.8);
-  return Math.min(dataArray.length-1, Math.floor(e*(dataArray.length-1)));
-}
-function getBandEnergy(a,b){
-  if(!analyser) return 0;
-  let m=0;
-  for(let i=a;i<=b;i++){
-    m=Math.max(m, (dataArray[i]||0)/255);
+  /* Player e efeitos */
+  let audioCtx, analyser, dataArray, peaks=[], smoothed=[];
+  const BARS=32, CHORUS_TIME=60, CHORUS_LEN=14;
+  function ensureAudioGraph(){
+    if(audioCtx) return;
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=audioCtx.createMediaElementSource(audio);
+    analyser=audioCtx.createAnalyser();
+    analyser.fftSize=512; analyser.minDecibels=-90; analyser.maxDecibels=-10; analyser.smoothingTimeConstant=.65;
+    dataArray=new Uint8Array(analyser.frequencyBinCount);
+    peaks=Array(BARS).fill(0); smoothed=Array(BARS).fill(0);
+    src.connect(analyser); analyser.connect(audioCtx.destination);
   }
-  return m;
-}
-function drawViz(){
-  requestAnimationFrame(drawViz);
-  if(!analyser) return;
-  analyser.getByteFrequencyData(dataArray);
-  const w=vizCanvas.width=vizCanvas.clientWidth, h=vizCanvas.height=vizCanvas.clientHeight, bw=w/BARS-2;
-  ctx.clearRect(0,0,w,h);
-  for(let i=0;i<BARS;i++){
-    const idx=binFor(i);
-    const v=(dataArray[idx]||0)/255;
-    const vBoost=Math.pow(v,1.2);
-    const bh=Math.max(2,(h-8)*vBoost);
-    smoothed[i]=smoothed[i]*0.6 + bh*0.4;
-    peaks[i]=Math.max(peaks[i]*0.98, smoothed[i]);
-    const x=i*(bw+2);
-    const y=h-smoothed[i]-4;
-    const hue=130+i*(220/BARS);
-    ctx.fillStyle=`hsla(${hue},85%,${40+v*35}%,.88)`;
-    ctx.beginPath();
-    const r=4;
-    ctx.moveTo(x+r,y);
-    ctx.lineTo(x+bw-r,y);
-    ctx.quadraticCurveTo(x+bw,y,x+bw,y+r);
-    ctx.lineTo(x+bw,y+smoothed[i]-r);
-    ctx.quadraticCurveTo(x+bw,y+smoothed[i],x+bw-r,y+smoothed[i]);
-    ctx.lineTo(x+r,y+smoothed[i]);
-    ctx.quadraticCurveTo(x,y+smoothed[i],x,y+smoothed[i]-r);
-    ctx.lineTo(x,y+r);
-    ctx.quadraticCurveTo(x,y,x+r,y);
-    ctx.closePath();
-    ctx.fill();
-    const capY=h-peaks[i]-6;
-    ctx.fillStyle=`hsla(${hue},95%,90%,.95)`;
-    ctx.fillRect(x,capY,bw,3);
-  }
-}
-drawViz();
-
-function heartBurst(q=3){
-  for(let i=0;i<q;i++){
-    const h=document.createElement('div');
-    h.className='heart';
-    h.textContent=['💚','💖','💘','❤️'][i%4];
-    h.style.left=(Math.random()*100)+'vw';
-    h.style.setProperty('--x',(Math.random()*140-70)+'vw');
-    h.style.animationDelay=(Math.random()*1.2)+'s';
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),6500);
-  }
-}
-function sparkles(q=3){
-  for(let i=0;i<q;i++){
-    const s=document.createElement('div');
-    s.className='sparkle';
-    s.style.left=(Math.random()*100)+'vw';
-    s.style.top=(Math.random()*40+10)+'vh';
-    s.style.setProperty('--h',(Math.random()*120-60)+'deg');
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),2200);
-  }
-}
-function petals(q=2){
-  for(let i=0;i<q;i++){
-    const p=document.createElement('div');
-    p.className='petal';
-    p.textContent=Math.random()>.5?'🌹':'🥀';
-    p.style.left=(Math.random()*100)+'vw';
-    p.style.setProperty('--tx',(Math.random()*60-30)+'vw');
-    p.style.setProperty('--d',(7+Math.random()*6)+'s');
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),13000);
-  }
-}
-setInterval(()=>heartBurst(2),2800);
-setInterval(()=>sparkles(2),2200);
-setInterval(()=>petals(2),2000);
-
-function fireworks(){
-  const colors=['#34d399','#22c55e','#86efac','#a7f3d0','#6ee7b7','#f9a8d4','#93c5fd'];
-  for(let i=0;i<4;i++){
-    const cx=Math.random()*80+10, cy=Math.random()*40+10;
-    for(let p=0;p<22;p++){
-      const dot=document.createElement('div');
-      dot.style.position='fixed';
-      dot.style.width='6px';
-      dot.style.height='6px';
-      dot.style.borderRadius='50%';
-      dot.style.left=cx+'vw';
-      dot.style.top=cy+'vh';
-      dot.style.background=colors[(i+p)%colors.length];
-      const ang=(p/22)*Math.PI*2, dist=Math.random()*14+10;
-      const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist;
-      const st=document.createElement('style');
-      const name=`fw${i}_${p}`;
-      st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh);opacity:0}}`;
-      document.head.appendChild(st);
-      dot.style.animation=`${name} 900ms ease-out forwards`;
-      document.body.appendChild(dot);
-      setTimeout(()=>{dot.remove();st.remove();},1000);
-    }
-  }
-}
-function confettiOnce(){
-  const arr=['🎉','✨','💚','💗','💙','💛','🧡'];
-  for(let i=0;i<26;i++){
-    const c=document.createElement('div');
-    c.textContent=arr[i%arr.length];
-    c.style.position='fixed';
-    c.style.left='50%';
-    c.style.top='50%';
-    c.style.transform='translate(-50%,-50%)';
-    c.style.fontSize=(Math.random()*14+14)+'px';
-    const name=`conf${Date.now()}_${i}`;
-    const dx=(Math.random()*2-1)*45;
-    const dy=(Math.random()*2-1)*35;
-    const rot=(Math.random()*360)+'deg';
-    const st=document.createElement('style');
-    st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`;
-    document.head.appendChild(st);
-    c.style.animation=`${name} 900ms ease-out forwards`;
-    document.body.appendChild(c);
-    setTimeout(()=>{c.remove();st.remove();},950);
-  }
-}
-function abrirCarta(){
-  flap.style.transform='rotateX(155deg)';
-  setTimeout(()=>{
-    capa.style.display='none';
-    carta.hidden=false;
-    carta.style.display='grid';
-    confettiOnce();
-    resetTypewriter();
+  function fmt(t){ if(!isFinite(t)) return "0:00"; const m=Math.floor(t/60), s=Math.floor(t%60); return m+":"+(s<10?"0":"")+s; }
+  audio.addEventListener('loadedmetadata',()=>{ dur.textContent=fmt(audio.duration); });
+  audio.addEventListener('timeupdate',()=>{
+    cur.textContent=fmt(audio.currentTime);
+    fill.style.width=((audio.currentTime/(audio.duration||1))*100)+"%";
+    const t=audio.currentTime;
+    hero.classList.toggle('glow', t>=CHORUS_TIME && t<=CHORUS_TIME+CHORUS_LEN);
+    // Luzes do fundo
+    const bass = getBandEnergy(0,4);
+    document.body.style.setProperty('--glowX', `${50 + Math.sin(t*.7)*20}%`);
+    document.body.style.setProperty('--glowY', `${40 + Math.cos(t*.6)*15}%`);
+    document.body.style.setProperty('--glowC', `rgba(34,197,94, ${.12 + .35*bass})`);
+  });
+  btn.addEventListener('click', async ()=>{
     try{
-      ensureAudioGraph();
-      audio.play();
-      btn.textContent='⏸ Pausar';
-      cd.classList.add('spin');
-      abrir.classList.add('beat');
+      if(audio.paused){ ensureAudioGraph(); await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }
+      else{ audio.pause(); btn.textContent='▶ Tocar'; cd.classList.remove('spin'); abrir.classList.remove('beat'); hero.classList.remove('glow'); }
     }catch(e){}
-  },600);
-}
-abrir.addEventListener('click',abrirCarta);
-fallback.addEventListener('click',abrirCarta);
+  });
+  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); abrir.classList.remove('beat'); hero.classList.remove('glow'); replay.style.display='inline-flex'; });
+  replay.addEventListener('click', async()=>{ replay.style.display='none'; try{ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){} });
 
-const lightbox=$('#lightbox'), closeLb=$('#closeLb');
-hero.addEventListener('click',()=>lightbox.classList.add('show'));
-closeLb.addEventListener('click',()=>lightbox.classList.remove('show'));
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape') lightbox.classList.remove('show');
-});
-lightbox.addEventListener('click',e=>{
-  if(e.target===lightbox) lightbox.classList.remove('show');
-});
+  function setFromClientX(x){ const r=seek.getBoundingClientRect(); const k=Math.min(1,Math.max(0,(x-r.left)/r.width)); audio.currentTime=k*(audio.duration||0); }
+  seek.addEventListener('click', e=>setFromClientX(e.clientX));
+  let dragging=false;
+  seek.addEventListener('pointerdown', e=>{ dragging=true; setFromClientX(e.clientX); seek.setPointerCapture(e.pointerId); });
+  seek.addEventListener('pointermove', e=>{ if(dragging) setFromClientX(e.clientX); });
+  seek.addEventListener('pointerup', ()=>{ dragging=false });
+
+  vol.addEventListener('input', ()=>{ audio.volume=+vol.value; });
+
+  /* Equalizador (log + picos) */
+  const ctx=vizCanvas.getContext('2d',{alpha:true});
+  function binFor(i){ const f=i/(BARS-1); const e=Math.pow(f,1.8); return Math.min(dataArray.length-1, Math.floor(e*(dataArray.length-1))); }
+  function getBandEnergy(a,b){ if(!analyser) return 0; let m=0; for(let i=a;i<=b;i++){ m=Math.max(m,(dataArray[i]||0)/255);} return m; }
+  function drawViz(){
+    requestAnimationFrame(drawViz);
+    if(!analyser) return;
+    analyser.getByteFrequencyData(dataArray);
+    const w=vizCanvas.width=vizCanvas.clientWidth, h=vizCanvas.height=vizCanvas.clientHeight, bw=w/BARS-2;
+    ctx.clearRect(0,0,w,h);
+    for(let i=0;i<BARS;i++){
+      const idx=binFor(i), v=(dataArray[idx]||0)/255, vBoost=Math.pow(v,1.2), bh=Math.max(2,(h-8)*vBoost);
+      smoothed[i]=smoothed[i]*0.6 + bh*0.4; peaks[i]=Math.max(peaks[i]*0.98, smoothed[i]);
+      const x=i*(bw+2), y=h-smoothed[i]-4, r=4, hue=130+i*(220/BARS);
+      ctx.fillStyle=`hsla(${hue},85%,${40+v*35}%,.88)`;
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.lineTo(x+bw-r,y); ctx.quadraticCurveTo(x+bw,y,x+bw,y+r);
+      ctx.lineTo(x+bw,y+smoothed[i]-r); ctx.quadraticCurveTo(x+bw,y+smoothed[i],x+bw-r,y+smoothed[i]);
+      ctx.lineTo(x+r,y+smoothed[i]); ctx.quadraticCurveTo(x,y+smoothed[i],x,y+smoothed[i]-r);
+      ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); ctx.fill();
+      const capY=h-peaks[i]-6; ctx.fillStyle=`hsla(${hue},95%,90%,.95)`; ctx.fillRect(x,capY,bw,3);
+    }
+  }
+  drawViz();
+
+  /* Efeitos contínuos */
+  function heartBurst(q=3){ for(let i=0;i<q;i++){ const h=document.createElement('div'); h.className='heart'; h.textContent=['💚','💖','💘','❤️'][i%4]; h.style.left=(Math.random()*100)+'vw'; h.style.setProperty('--x',(Math.random()*140-70)+'vw'); h.style.animationDelay=(Math.random()*1.2)+'s'; document.body.appendChild(h); setTimeout(()=>h.remove(),6500);} }
+  function sparkles(q=3){ for(let i=0;i<q;i++){ const s=document.createElement('div'); s.className='sparkle'; s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh'; s.style.setProperty('--h',(Math.random()*120-60)+'deg'); document.body.appendChild(s); setTimeout(()=>s.remove(),2200);} }
+  function petals(q=2){ for(let i=0;i<q;i++){ const p=document.createElement('div'); p.className='petal'; p.textContent=Math.random()>.5?'🌹':'🥀'; p.style.left=(Math.random()*100)+'vw'; p.style.setProperty('--tx',(Math.random()*60-30)+'vw'); p.style.setProperty('--d',(7+Math.random()*6)+'s'); document.body.appendChild(p); setTimeout(()=>p.remove(),13000);} }
+  setInterval(()=>heartBurst(2),2800);
+  setInterval(()=>sparkles(2),2200);
+  setInterval(()=>petals(2),2000);
+
+  /* Fogos/confete + abrir carta */
+  function fireworks(){ const colors=['#34d399','#22c55e','#86efac','#a7f3d0','#6ee7b7','#f9a8d4','#93c5fd']; for(let i=0;i<4;i++){ const cx=Math.random()*80+10, cy=Math.random()*40+10; for(let p=0;p<22;p++){ const d=document.createElement('div'); d.style.position='fixed'; d.style.width='6px'; d.style.height='6px'; d.style.borderRadius='50%'; d.style.left=cx+'vw'; d.style.top=cy+'vh'; d.style.background=colors[(i+p)%colors.length]; const ang=(p/22)*Math.PI*2, dist=Math.random()*14+10; const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist; const st=document.createElement('style'); const name=`fw${i}_${p}`; st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh);opacity:0}}`; document.head.appendChild(st); d.style.animation=`${name} 900ms ease-out forwards`; document.body.appendChild(d); setTimeout(()=>{d.remove();st.remove();},1000);} } }
+  function confettiOnce(){ const arr=['🎉','✨','💚','💗','💙','💛','🧡']; for(let i=0;i<26;i++){ const c=document.createElement('div'); c.textContent=arr[i%arr.length]; c.style.position='fixed'; c.style.left='50%'; c.style.top='50%'; c.style.transform='translate(-50%,-50%)'; c.style.fontSize=(Math.random()*14+14)+'px'; const name=`conf${Date.now()}_${i}`, dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35, rot=(Math.random()*360)+'deg'; const st=document.createElement('style'); st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`; document.head.appendChild(st); c.style.animation=`${name} 900ms ease-out forwards`; document.body.appendChild(c); setTimeout(()=>{c.remove();st.remove();},950);} }
+  function abrirCarta(){
+    flap.style.transform='rotateX(155deg)';
+    setTimeout(()=>{
+      capa.style.display='none';
+      carta.hidden=false;
+      carta.style.display='grid';
+      confettiOnce();
+      resetTypewriter();
+      try{ ensureAudioGraph(); audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){}
+    },600);
+  }
+  abrir.addEventListener('click', abrirCarta);
+  fallback.addEventListener('click', abrirCarta);
+
+  /* Lightbox */
+  const lightbox=$('#lightbox'), closeLb=$('#closeLb');
+  hero.addEventListener('click',()=>lightbox.classList.add('show'));
+  closeLb.addEventListener('click',()=>lightbox.classList.remove('show'));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') lightbox.classList.remove('show'); });
+  lightbox.addEventListener('click',e=>{ if(e.target===lightbox) lightbox.classList.remove('show'); });
 </script>
 
 <noscript>
