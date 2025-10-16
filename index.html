@@ -89,9 +89,9 @@
     background:conic-gradient(#22c55e,#e11d48,#86efac,#a7f3d0,#22c55e);
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
-    animation:spin 4s linear infinite;
+    animation:ring 4s linear infinite;
   }
-  @keyframes spin{ to{ transform:rotate(360deg) } }
+  @keyframes ring{ to{ transform:rotate(360deg) } }
 
   .letter{
     background:linear-gradient(#fff,#fff7f9); color:var(--ink);
@@ -120,19 +120,27 @@
   }
   .diskrow{ display:flex; align-items:center; gap:12px }
   .cd{
-    width:60px; height:60px; border-radius:50%;
+    width:66px; height:66px; border-radius:50%;
+    /* setores para dar noção forte de rotação */
     background:
-      radial-gradient(circle at 50% 50%, #fff 0 6px, transparent 6px),
-      radial-gradient(circle at 50% 50%, #d8d8d8 7px, #a8a8a8 24px, #efefef 50px, #c9c9c9);
-    box-shadow:inset 0 0 8px rgba(0,0,0,.25), 0 2px 10px rgba(0,0,0,.25);
+      radial-gradient(circle at 50% 50%, #111 0 8px, transparent 8px),
+      conic-gradient(#e5e7eb 0 10%, #cbd5e1 10% 20%, #9ca3af 20% 30%, #cbd5e1 30% 40%,
+                     #e5e7eb 40% 50%, #cbd5e1 50% 60%, #9ca3af 60% 70%, #cbd5e1 70% 80%, #e5e7eb 80% 100%);
+    box-shadow:inset 0 0 10px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
     position:relative; overflow:hidden;
   }
-  .cd::after{
-    content:""; position:absolute; inset:-20% -20%;
-    background:conic-gradient(from 0turn, #34d399, #22c55e, #86efac, #a7f3d0, #6ee7b7, #34d399);
-    mix-blend-mode:overlay; opacity:.75;
+  .cd::before{ /* rótulo central */
+    content:""; position:absolute; left:50%; top:50%; width:26px; height:26px;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle at 60% 40%, #22c55e, #16a34a 60%);
+    box-shadow:inset 0 0 4px rgba(0,0,0,.35);
   }
-  .spin{ animation:spin 5s linear infinite }
+  .cd::after{ /* marcador para evidenciar movimento */
+    content:""; position:absolute; left:50%; top:7px; width:4px; height:10px;
+    transform:translateX(-50%); border-radius:2px; background:#e11d48;
+  }
+  .spin{ animation:spin 3.5s linear infinite } /* giro mais rápido */
+  @keyframes spin{ to{ transform:rotate(360deg) } }
 
   .title{ font-weight:800; font-size:1rem }
   .viz{ width:100%; height:44px; border-radius:10px; background:rgba(255,255,255,.05) }
@@ -171,7 +179,7 @@
     .controls{ gap:8px }
     .time{ min-width:70px; font-size:.82rem }
     .vol{ width:70px }
-    .cd{ width:52px; height:52px }
+    .cd{ width:60px; height:60px }
   }
 </style>
 </head>
@@ -187,7 +195,7 @@
       <div class="selo">💌</div>
 
       <div class="cta-wrap">
-        <!-- Botão coração: fill verde, stroke vermelho -->
+        <!-- Coração verde com contorno vermelho -->
         <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta">
           <svg viewBox="0 0 120 110" role="img" aria-hidden="true">
             <path d="M60 100
@@ -214,11 +222,11 @@
           <button id="restart" class="mini" type="button">↺ Rever do início</button>
         </div>
 
-        <!-- Texto com efeito máquina (mais lento) -->
-        <p class="tline" data-typer="Desde o primeiro olhar eu me apaixonei por você. Hoje, celebramos 14 anos de casados e meu coração continua dizendo sim, todos os dias."></p>
-        <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, um raio de alegria que enche a casa de risos. Já são 3 aninhos de bênçãos e descobertas ao seu lado."></p>
-        <p class="tline" data-typer="Juntos conquistamos tanta coisa: construímos nossa casa, nossos sonhos e um amor que amadurece e floresce. A cada dia eu me apaixono mais por você."></p>
-        <p class="tline" data-typer="Obrigado por ser meu porto seguro, minha amiga e o grande amor da minha vida. Eu te amo — ontem, hoje e sempre."></p>
+        <!-- Texto com efeito máquina (aniversário + 14 anos amando mais) -->
+        <p class="tline" data-typer="Hoje é o seu dia! Desde o primeiro olhar eu me apaixonei por você — e, nestes 14 anos ao seu lado, esse amor só cresce a cada dia."></p>
+        <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, que iluminou nossa casa com sorrisos. Já são 3 aninhos de bênçãos e descobertas com você."></p>
+        <p class="tline" data-typer="Juntos conquistamos tanto: construímos nossa casa, nossos sonhos e um caminho de carinho, fé e parceria."></p>
+        <p class="tline" data-typer="Feliz aniversário, meu amor. Que o Senhor te cubra de saúde e alegria. Eu te amo — ontem, hoje e sempre."></p>
 
         <div class="meta" id="meta">
           <span class="pill">Para: <strong>Jéssica</strong></span>
@@ -278,7 +286,7 @@
   const capa   = $('#capa'), carta = $('#carta'), abrir = $('#abrir'), flap = $('#flap'), fallback = $('#fallback');
 
   /* typewriter */
-  let cps = 10; // ainda mais devagar
+  let cps = 10; // bem calmo
   const speedBtn = $('#speed'), restartBtn = $('#restart');
   const lines = Array.from(document.querySelectorAll('.tline'));
   const meta = $('#meta'); const signature = $('#signature');
@@ -313,18 +321,17 @@
   /* player */
   const audio  = $('#audio'), btn = $('#btnPlay'), cur = $('#cur'), dur = $('#dur'),
         seek   = $('#seek'), fill = $('#fill'), vol = $('#vol'), cd = $('#cd'),
-        hero   = $('#zoom'); // figura para brilho do refrão
+        hero   = $('#zoom');
 
-  // defina aqui o ponto aproximado do refrão (em segundos)
-  const CHORUS_TIME = 60;       // <<< ajuste se quiser
-  const CHORUS_LEN  = 14;       // quanto tempo o brilho fica ativo
+  // tempo aproximado do refrão (edite se quiser)
+  const CHORUS_TIME = 60; // segundos
+  const CHORUS_LEN  = 14;
 
   audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmt(audio.duration); });
   audio.addEventListener('timeupdate', ()=>{
     cur.textContent = fmt(audio.currentTime);
     fill.style.width = ((audio.currentTime/(audio.duration||1))*100) + "%";
 
-    // brilho no refrão
     const t = audio.currentTime;
     const on = t >= CHORUS_TIME && t <= CHORUS_TIME + CHORUS_LEN;
     hero.classList.toggle('glow', on);
