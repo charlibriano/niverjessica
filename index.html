@@ -45,4 +45,159 @@
   }
   .seal{
     position:absolute; left:50%; top:48%; transform:translate(-50%,-50%);
-    background:#ffd6de; color:#a2263b; border-radius:999px; paddi
+    background:#ffd6de; color:#a2263b; border-radius:999px; padding:10px 16px;
+    font-weight:800; box-shadow:0 6px 18px rgba(0,0,0,.25); letter-spacing:.04em;
+  }
+  .cta{
+    position:relative; z-index:2; appearance:none; border:none; cursor:pointer;
+    background:#fff; color:#a2263b; font-weight:900; font-size:1.15rem;
+    padding:14px 20px; border-radius:14px; box-shadow:0 10px 20px rgba(0,0,0,.25);
+    transition:transform .15s ease;
+  }
+  .cta:active{ transform:translateY(1px) }
+
+  /* CARTA aberta */
+  .card{
+    display:none; grid-template-columns: 1fr 360px; gap:24px;
+    background:linear-gradient(180deg,rgba(255,77,109,.08),transparent 30%), var(--card);
+    border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35); padding:22px;
+    animation:fade .6s both;
+  }
+  @media (max-width: 900px){ .card{grid-template-columns:1fr} }
+  @keyframes fade{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+
+  .hero{
+    position:relative; border-radius:18px; overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    aspect-ratio: 16/10; background:#111;
+  }
+  .hero img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05) }
+  .letter{
+    background:linear-gradient(#fff,#fff7f9); color:#2b2b2b;
+    border-radius:18px; padding:22px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
+  }
+  .letter h2{ margin:0 0 12px; color:#a2263b }
+  .letter p{ margin:0 0 12px; line-height:1.65 }
+  .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:.92rem; color:#555 }
+  .pill{ background:#ffe8ee; border:1px solid #ffd6de; border-radius:999px; padding:6px 10px }
+
+  .player{
+    background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+    border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:12px;
+  }
+  .track{ display:flex; gap:12px; align-items:center }
+  .art{ width:64px; height:64px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.08) }
+  .art img{ width:100%; height:100%; object-fit:cover }
+  .tinfo strong{ font-size:1rem; color:#fff } .tinfo span{ font-size:.9rem; color:#cfcfe3 }
+
+  .btn{ appearance:none; border:none; cursor:pointer; font-weight:800;
+        padding:12px 14px; border-radius:12px; }
+  .btn.primary{ background:var(--accent); color:#fff }
+  .hint{ color:var(--muted); font-size:.9rem }
+
+  /* corações */
+  .heart{ position:fixed; bottom:-20px; font-size:20px; opacity:.85; animation:float 6s linear forwards; pointer-events:none }
+  @keyframes float{ to{ transform:translateY(-120vh) translateX(var(--x)); opacity:0 } }
+
+  footer{ text-align:center; color:#bdbdcc; font-size:.85rem; margin-top:10px }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- CAPA: envelope + botão Abrir carta -->
+    <section id="capa" class="envelope" aria-label="Envelope">
+      <div class="flap" id="flap"></div>
+      <div class="seal">💌</div>
+      <button id="abrir" class="cta" aria-controls="carta">Abrir carta</button>
+    </section>
+
+    <!-- CONTEÚDO: carta aberta + imagem + player -->
+    <section id="carta" class="card" aria-label="Carta de aniversário" hidden>
+      <div class="letter">
+        <h2>Para Jéssica ❤️</h2>
+        <p><strong>Meu amor,</strong> hoje celebro sua vida e agradeço a Deus por você. Que Ele te envolva com carinho, cuide dos seus passos e faça florescer cada sonho do seu coração. Eu te amo — ontem, hoje e sempre.</p>
+        <p><em>“Mulher virtuosa, quem a achará? O seu valor muito excede o de rubis.”</em> (Provérbios 31:10)</p>
+        <div class="meta">
+          <span class="pill">Para: <strong>Jéssica</strong></span>
+          <span class="pill">De: <strong>Seu marido</strong></span>
+        </div>
+        <div style="margin-top:14px">
+          <button id="tocar" class="btn primary">▶ Tocar música</button>
+          <div class="hint">Em celulares, a música só começa após um toque.</div>
+        </div>
+      </div>
+
+      <div>
+        <figure class="hero"><img src="assets/imagem_cartao.png" alt="Foto especial" /></figure>
+
+        <aside class="player" aria-label="Música do cartão" style="margin-top:14px">
+          <div class="track">
+            <div class="art"><img src="assets/imagem_cartao.png" alt="Capa" /></div>
+            <div class="tinfo">
+              <strong>Todo dia, até morrer</strong>
+              <span>Rodolfo Abrantes & O Muro de Pedra</span>
+            </div>
+          </div>
+          <audio id="audio" preload="auto">
+            <source src="assets/musica.mp3" type="audio/mpeg">
+          </audio>
+          <button id="pausar" class="btn">⏸ Pausar</button>
+        </aside>
+      </div>
+    </section>
+
+    <footer>Feito com amor ❤️</footer>
+  </div>
+
+<script>
+  const capa = document.getElementById('capa');
+  const carta = document.getElementById('carta');
+  const abrir = document.getElementById('abrir');
+  const flap  = document.getElementById('flap');
+  const audio = document.getElementById('audio');
+  const tocar = document.getElementById('tocar');
+  const pausar= document.getElementById('pausar');
+
+  function spawnHearts(){
+    const qty=18;
+    for(let i=0;i<qty;i++){
+      const h=document.createElement('div');
+      h.className='heart';
+      h.textContent=['💖','❤️','💘','💗'][i%4];
+      h.style.left=Math.random()*100+'vw';
+      h.style.setProperty('--x',(Math.random()*140-70)+'vw');
+      h.style.animationDelay=(Math.random()*1.2)+'s';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),7000);
+    }
+  }
+
+  async function revelarCarta(){
+    // anima a aba do envelope
+    flap.style.transform='rotateX(155deg)';
+    setTimeout(()=>{
+      capa.style.display='none';
+      carta.hidden=false;
+      carta.style.display='grid';
+      spawnHearts();
+    }, 650);
+
+    // tenta tocar música já no clique (autorizado pelos navegadores)
+    try{ await audio.play(); }catch(e){}
+  }
+
+  abrir.addEventListener('click', revelarCarta);
+  tocar.addEventListener('click', async ()=>{
+    try{ await audio.play(); }catch(e){}
+  });
+  pausar.addEventListener('click', ()=>{
+    if(audio.paused){ audio.play(); pausar.textContent='⏸ Pausar'; }
+    else{ audio.pause(); pausar.textContent='▶ Tocar'; }
+  });
+
+  // quando terminar a faixa
+  audio.addEventListener('ended', ()=>{ pausar.textContent='▶ Tocar'; });
+</script>
+</body>
+</html>
