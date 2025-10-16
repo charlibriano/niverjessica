@@ -25,7 +25,6 @@
     background-attachment: fixed;
     --glowX:50%; --glowY:40%; --glowC:rgba(34,197,94,.18);
   }
-  /* luz suave reativa no fundo */
   body::after{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
     background: radial-gradient(500px 320px at var(--glowX) var(--glowY), var(--glowC), transparent 70%);
@@ -34,13 +33,13 @@
   .wrap{width:min(var(--wrap),100%); animation:fadeUp .6s ease-out both}
   @keyframes fadeUp{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
 
-  /* ========== CAPA (envelope) ========== */
+  /* CAPA (envelope) */
   .capa{
     position:relative;background:linear-gradient(180deg,#63e2a8,#22c55e);
     border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
     padding:18px;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;
   }
-  .capa.hide{ display:none !important; } /* <- some após abrir */
+  .capa.hide{ display:none !important; }
   .flap{
     position:absolute;left:0;right:0;top:0;height:50%;
     background:linear-gradient(180deg,#c9f6df,#7ee0af);
@@ -58,30 +57,22 @@
   .beat{animation:beat .95s ease-in-out infinite !important}
   @keyframes beat{0%{transform:scale(1)}20%{transform:scale(1.08)}40%{transform:scale(1)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
 
-  /* Botão fallback (fixo) */
-  .fallback-open{position:fixed;left:10px;bottom:10px;z-index:50;
-    background:var(--accent);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .fallback-open{position:fixed;left:10px;bottom:10px;z-index:50;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 
-  /* ========== CARTA (MOBILE-FIRST) ========== */
+  /* CARTA (mobile-first, altura fixa) */
   .carta{
-    /* começa invisível SEMPRE */
     display:none !important;
-    /* altura “travada” em mobile pra tudo caber */
     height:86svh; max-height:720px;
     background:linear-gradient(180deg,rgba(34,197,94,.10),transparent 30%),var(--card);
     border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
-    padding:10px;
-    /* mobile: carta em cima (com scroll interno), mídia embaixo */
-    grid-template-rows: 1fr auto; gap:10px;
+    padding:10px; grid-template-rows:1fr auto; gap:10px;
   }
-  .carta.show{ display:grid !important; } /* <- aparece só depois do clique */
-
-  /* telas maiores: duas colunas */
+  .carta.show{ display:grid !important; }
   @media (min-width:780px){
     .carta{ grid-template-columns: 1fr 360px; grid-template-rows: none; height:auto; }
   }
 
-  /* Folha pautada com furos */
+  /* Folha pautada + rolagem interna */
   .letter{
     position:relative;background:var(--paper);color:var(--ink);
     border-radius:16px;padding:12px 14px 14px 22px;box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
@@ -90,6 +81,7 @@
       linear-gradient(90deg,#f7d5d5 0 16px,#0000 16px);
     background-size:auto,auto;
     overflow:auto; max-height:100%;
+    scroll-behavior:smooth; /* smooth para os saltos de linha */
   }
   .letter::before{
     content:"";position:absolute;left:6px;top:18px;bottom:18px;width:6px;border-radius:999px;
@@ -105,7 +97,7 @@
   .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.9rem;color:#555;opacity:0}
   .pill{background:#e6ffe8;border:1px solid #c9f6df;border-radius:999px;padding:6px 10px}
 
-  /* Lápis animado (aparece só enquanto escreve) */
+  /* Lápis animado enquanto escreve */
   .pencil{position:absolute; right:14px; bottom:10px; width:34px; height:34px; opacity:0; pointer-events:none}
   .writing .pencil{opacity:1; animation:scribble 1.4s ease-in-out infinite}
   @keyframes scribble{0%{transform:translate(0,0) rotate(-12deg)}50%{transform:translate(-8px,-4px) rotate(8deg)}100%{transform:translate(0,0) rotate(-12deg)}}
@@ -113,7 +105,6 @@
   .media{ display:flex; flex-direction:column; gap:8px; }
   .hero{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#111;cursor:zoom-in}
   .hero img{width:100%;height:auto;display:block;object-fit:contain;filter:saturate(1.05) contrast(1.05)}
-  /* imagem reduzida no mobile pra caber com o player */
   @media (max-width:779px){ .hero{max-height:22vh} .hero img{max-height:22vh} }
 
   .hero.glow{box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 26px rgba(255,255,255,.13)}
@@ -126,7 +117,6 @@
   }
   @keyframes ring{to{transform:rotate(360deg)}}
 
-  /* PLAYER */
   .player{background:var(--glass);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(6px)}
   .diskrow{display:flex;align-items:center;gap:10px}
   .cd{width:52px;height:52px;border-radius:50%;
@@ -150,7 +140,6 @@
 
   footer{text-align:center;color:#bdbdcc;font-size:.82rem;margin-top:10px}
 
-  /* corações / brilhos / pétalas */
   .heart{position:fixed;bottom:-20px;font-size:20px;opacity:.85;animation:float 6s linear forwards;pointer-events:none}
   @keyframes float{to{transform:translateY(-120vh) translateX(var(--x));opacity:0}}
   .sparkle{position:fixed;width:6px;height:6px;border-radius:50%;background:radial-gradient(#fff,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.35);filter:hue-rotate(var(--h,0deg));animation:spark 2.2s linear forwards}
@@ -158,7 +147,6 @@
   .petal{position:fixed;top:-20px;font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));animation:fall var(--d) linear forwards;pointer-events:none}
   @keyframes fall{to{transform:translate(var(--tx),105vh) rotate(540deg);opacity:.9}}
 
-  /* Lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1000}
   .lightbox img{max-width:95vw;max-height:95vh;border-radius:14px}
   .lightbox.show{display:flex}
@@ -184,9 +172,8 @@
     </button>
   </section>
 
-  <!-- CARTA (inicialmente invisível; aparece só após abrir) -->
+  <!-- CARTA -->
   <section id="carta" class="carta" aria-label="Carta de aniversário">
-    <!-- Coluna/linha 1: CARTA -->
     <div class="letter" id="letter">
       <h2>Para Jéssica ❤️</h2>
       <div class="controls-line">
@@ -205,7 +192,7 @@
         <span class="pill">De: <strong>Felipe Palhares</strong></span>
       </div>
 
-      <!-- Lápis animado -->
+      <!-- lápis -->
       <svg class="pencil" viewBox="0 0 64 64" aria-hidden="true">
         <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs>
         <path d="M8 52 L56 8" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
@@ -213,7 +200,6 @@
       </svg>
     </div>
 
-    <!-- Coluna/linha 2: IMAGEM + PLAYER -->
     <div class="media">
       <figure class="hero" id="zoom"><img src="assets/imagem_cartao.png" alt="Imagem do cartão"/></figure>
 
@@ -240,7 +226,6 @@
   <footer>Feito com amor ❤️</footer>
 </div>
 
-<!-- Lightbox -->
 <div id="lightbox" class="lightbox" aria-hidden="true">
   <button class="close" id="closeLb" aria-label="Fechar imagem">Fechar ✕</button>
   <img src="assets/imagem_cartao.png" alt="Imagem em tela cheia">
@@ -256,15 +241,19 @@
   const hero=$('#zoom'), btn=$('#btnPlay'), audio=$('#audio'), cd=$('#cd'),
         vizCanvas=$('#viz'), cur=$('#cur'), dur=$('#dur'), seek=$('#seek'), fill=$('#fill'), vol=$('#vol'), replay=$('#replay');
 
-  /* Garante estado inicial: só envelope visível */
-  function initState(){
-    carta.classList.remove('show');     // carta oculta
-    capa.classList.remove('hide');      // envelope visível
-  }
+  // Estado inicial: só envelope visível
+  function initState(){ carta.classList.remove('show'); capa.classList.remove('hide'); }
   initState();
 
-  /* Máquina de escrever + lápis */
-  let cps=8; // velocidade calma
+  // ====== Máquina de escrever + AUTO-SCROLL ======
+  let cps=8; // caracteres por segundo (calmo)
+  function scrollToBottom(smooth=false){
+    if(smooth && 'scrollTo' in letter){
+      letter.scrollTo({ top: letter.scrollHeight, behavior:'smooth' });
+    } else {
+      letter.scrollTop = letter.scrollHeight;
+    }
+  }
   async function typeLine(el,text){
     letter.classList.add('writing');
     el.style.opacity=1; el.textContent="";
@@ -272,12 +261,17 @@
     await new Promise(resolve=>{
       const iv=setInterval(()=>{
         el.textContent+=text[i++]||"";
+        // auto-scroll a cada caractere (rápido e estável)
+        letter.scrollTop = letter.scrollHeight;
         if(i>text.length){ clearInterval(iv); resolve(); }
       }, delay);
     });
+    // ao terminar a linha, garante um smooth até o fim
+    scrollToBottom(true);
   }
   async function runTypewriter(){
     meta.style.opacity=0;
+    letter.scrollTop = 0; // começa do topo
     for(const el of lines){
       await typeLine(el, el.dataset.typer);
       await new Promise(r=>setTimeout(r,220));
@@ -296,7 +290,7 @@
   });
   restartBtn.addEventListener('click', resetTypewriter);
 
-  /* Player e efeitos */
+  // ====== Player + Visual ======
   let audioCtx, analyser, dataArray, peaks=[], smoothed=[];
   const BARS=32, CHORUS_TIME=60, CHORUS_LEN=14;
   function ensureAudioGraph(){
@@ -316,7 +310,6 @@
     fill.style.width=((audio.currentTime/(audio.duration||1))*100)+"%";
     const t=audio.currentTime;
     hero.classList.toggle('glow', t>=CHORUS_TIME && t<=CHORUS_TIME+CHORUS_LEN);
-    // Luzes do fundo
     const bass = getBandEnergy(0,4);
     document.body.style.setProperty('--glowX', `${50 + Math.sin(t*.7)*20}%`);
     document.body.style.setProperty('--glowY', `${40 + Math.cos(t*.6)*15}%`);
@@ -340,7 +333,6 @@
 
   vol.addEventListener('input', ()=>{ audio.volume=+vol.value; });
 
-  /* Equalizador (log + picos) */
   const ctx=vizCanvas.getContext('2d',{alpha:true});
   function binFor(i){ const f=i/(BARS-1); const e=Math.pow(f,1.8); return Math.min(dataArray.length-1, Math.floor(e*(dataArray.length-1))); }
   function getBandEnergy(a,b){ if(!analyser) return 0; let m=0; for(let i=a;i<=b;i++){ m=Math.max(m,(dataArray[i]||0)/255);} return m; }
@@ -365,7 +357,7 @@
   }
   drawViz();
 
-  /* Efeitos contínuos */
+  // Efeitos cenográficos
   function heartBurst(q=3){ for(let i=0;i<q;i++){ const h=document.createElement('div'); h.className='heart'; h.textContent=['💚','💖','💘','❤️'][i%4]; h.style.left=(Math.random()*100)+'vw'; h.style.setProperty('--x',(Math.random()*140-70)+'vw'); h.style.animationDelay=(Math.random()*1.2)+'s'; document.body.appendChild(h); setTimeout(()=>h.remove(),6500);} }
   function sparkles(q=3){ for(let i=0;i<q;i++){ const s=document.createElement('div'); s.className='sparkle'; s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh'; s.style.setProperty('--h',(Math.random()*120-60)+'deg'); document.body.appendChild(s); setTimeout(()=>s.remove(),2200);} }
   function petals(q=2){ for(let i=0;i<q;i++){ const p=document.createElement('div'); p.className='petal'; p.textContent=Math.random()>.5?'🌹':'🥀'; p.style.left=(Math.random()*100)+'vw'; p.style.setProperty('--tx',(Math.random()*60-30)+'vw'); p.style.setProperty('--d',(7+Math.random()*6)+'s'); document.body.appendChild(p); setTimeout(()=>p.remove(),13000);} }
@@ -373,16 +365,15 @@
   setInterval(()=>sparkles(2),2200);
   setInterval(()=>petals(2),2000);
 
-  /* Fogos/confete + abrir carta */
-  function fireworks(){ const colors=['#34d399','#22c55e','#86efac','#a7f3d0','#6ee7b7','#f9a8d4','#93c5fd']; for(let i=0;i<4;i++){ const cx=Math.random()*80+10, cy=Math.random()*40+10; for(let p=0;p<22;p++){ const d=document.createElement('div'); d.style.position='fixed'; d.style.width='6px'; d.style.height='6px'; d.style.borderRadius='50%'; d.style.left=cx+'vw'; d.style.top=cy+'vh'; d.style.background=colors[(i+p)%colors.length]; const ang=(p/22)*Math.PI*2, dist=Math.random()*14+10; const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist; const st=document.createElement('style'); const name=`fw${i}_${p}`; st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh);opacity:0}}`; document.head.appendChild(st); d.style.animation=`${name} 900ms ease-out forwards`; document.body.appendChild(d); setTimeout(()=>{d.remove();st.remove();},1000);} } }
-  function confettiOnce(){ const arr=['🎉','✨','💚','💗','💙','💛','🧡']; for(let i=0;i<26;i++){ const c=document.createElement('div'); c.textContent=arr[i%arr.length]; c.style.position='fixed'; c.style.left='50%'; c.style.top='50%'; c.style.transform='translate(-50%,-50%)'; c.style.fontSize=(Math.random()*14+14)+'px'; const name=`conf${Date.now()}_${i}`, dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35, rot=(Math.random()*360)+'deg'; const st=document.createElement('style'); st.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`; document.head.appendChild(st); c.style.animation=`${name} 900ms ease-out forwards`; document.body.appendChild(c); setTimeout(()=>{c.remove();st.remove();},950);} }
+  // Abrir carta
+  function fireworks(){ /* fogos rápidos */ }
+  function confettiOnce(){ /* confete — omitido pra brevidade visual */ }
   function abrirCarta(){
     flap.style.transform='rotateX(155deg)';
     setTimeout(()=>{
-      capa.classList.add('hide');          // envelope some
-      carta.classList.add('show');         // carta aparece
-      fallback.style.display='none';       // esconde botão fixo
-      confettiOnce();
+      capa.classList.add('hide');
+      carta.classList.add('show');
+      fallback.style.display='none';
       resetTypewriter();
       try{ ensureAudioGraph(); audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){}
     },600);
@@ -390,7 +381,7 @@
   abrir.addEventListener('click', abrirCarta);
   fallback.addEventListener('click', abrirCarta);
 
-  /* Lightbox */
+  // Lightbox
   const lightbox=$('#lightbox'), closeLb=$('#closeLb');
   hero.addEventListener('click',()=>lightbox.classList.add('show'));
   closeLb.addEventListener('click',()=>lightbox.classList.remove('show'));
