@@ -5,75 +5,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Carta para Jéssica 💌</title>
 <meta name="theme-color" content="#ff4d6d">
+
 <style>
   :root{
-    --bg:#0f0f12;--card:#15151b;--paper:#fff7f9;--accent:#ff4d6d;--muted:#b9b9c3;--text:#f7f7fb;
+    --bg:#0f0f12; --card:#15151b; --paper:#fff7f9; --accent:#ff4d6d;
+    --ink:#2b2b2b; --muted:#b9b9c3; --text:#f7f7fb;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    color:var(--text); background:
+    color:var(--text);
+    background:
       radial-gradient(1200px 700px at -10% -10%, #1c1420 0, transparent 60%),
-      radial-gradient(1200px 700px at 110% 10%, #12202c 0, transparent 55%), var(--bg);
+      radial-gradient(1200px 700px at 110% 10%, #12202c 0, transparent 55%),
+      var(--bg);
     display:flex; align-items:center; justify-content:center; padding:20px;
+    min-height:100svh; /* robusto em celular */
   }
+  .wrap{width:min(980px,100%);}
 
-  /* container */
-  .wrap{width:min(920px,100%);}
-
-  /* ENVELOPE (capa) */
-  .envelope{
+  /* CAPA */
+  .capa{
     position:relative; background:linear-gradient(180deg,#ff7b94,#ff4d6d);
     border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35);
-    padding:28px; display:grid; place-items:center; aspect-ratio: 16/9;
-    overflow:hidden;
-  }
-  .envelope::before{
-    content:""; position:absolute; inset:0;
-    background:
-      conic-gradient(from 180deg at 50% 0, rgba(255,255,255,.2), rgba(255,255,255,0) 40%),
-      radial-gradient(800px 200px at 50% -20%, rgba(255,255,255,.3), transparent 60%);
-    mix-blend-mode:overlay; pointer-events:none;
+    padding:28px; display:grid; place-items:center; aspect-ratio:16/9; overflow:hidden;
   }
   .flap{
-    position:absolute; inset:0 0 50% 0;
+    position:absolute; left:0; right:0; top:0; height:52%;
     background:linear-gradient(180deg,#ffc7d1,#ff8aa1);
-    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    clip-path:polygon(0 0,100% 0,50% 100%);
     transform-origin:50% 0; transition:transform .9s cubic-bezier(.22,1,.36,1);
     box-shadow:0 12px 30px rgba(0,0,0,.35);
   }
-  .seal{
+  .selo{
     position:absolute; left:50%; top:48%; transform:translate(-50%,-50%);
     background:#ffd6de; color:#a2263b; border-radius:999px; padding:10px 16px;
-    font-weight:800; box-shadow:0 6px 18px rgba(0,0,0,.25); letter-spacing:.04em;
+    font-weight:800; letter-spacing:.04em; box-shadow:0 6px 18px rgba(0,0,0,.25);
   }
   .cta{
     position:relative; z-index:2; appearance:none; border:none; cursor:pointer;
-    background:#fff; color:#a2263b; font-weight:900; font-size:1.15rem;
+    background:#fff; color:#a2263b; font-weight:900; font-size:1.1rem;
     padding:14px 20px; border-radius:14px; box-shadow:0 10px 20px rgba(0,0,0,.25);
-    transition:transform .15s ease;
   }
-  .cta:active{ transform:translateY(1px) }
 
-  /* CARTA aberta */
-  .card{
-    display:none; grid-template-columns: 1fr 360px; gap:24px;
-    background:linear-gradient(180deg,rgba(255,77,109,.08),transparent 30%), var(--card);
-    border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35); padding:22px;
-    animation:fade .6s both;
+  /* BOTÃO FALLBACK (sempre visível) */
+  .fallback-open{
+    position:fixed; left:16px; bottom:16px; z-index:50;
+    background:var(--accent); color:#fff; border:none; border-radius:12px;
+    padding:10px 14px; font-weight:800; cursor:pointer;
   }
-  @media (max-width: 900px){ .card{grid-template-columns:1fr} }
+
+  /* CARTA */
+  .carta{
+    display:none; grid-template-columns:1fr 380px; gap:24px;
+    background:linear-gradient(180deg,rgba(255,77,109,.08),transparent 30%), var(--card);
+    border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35); padding:22px; animation:fade .6s both;
+  }
+  @media (max-width: 920px){ .carta{grid-template-columns:1fr} }
   @keyframes fade{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
 
   .hero{
     position:relative; border-radius:18px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.08);
-    aspect-ratio: 16/10; background:#111;
+    border:1px solid rgba(255,255,255,.08); aspect-ratio:16/10; background:#111;
   }
-  .hero img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05) }
+  .hero img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05); }
+
   .letter{
-    background:linear-gradient(#fff,#fff7f9); color:#2b2b2b;
+    background:linear-gradient(#fff,#fff7f9); color:var(--ink);
     border-radius:18px; padding:22px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
   }
   .letter h2{ margin:0 0 12px; color:#a2263b }
@@ -83,15 +82,14 @@
 
   .player{
     background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
-    border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:12px;
+    border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:12px; margin-top:14px;
   }
   .track{ display:flex; gap:12px; align-items:center }
   .art{ width:64px; height:64px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.08) }
   .art img{ width:100%; height:100%; object-fit:cover }
   .tinfo strong{ font-size:1rem; color:#fff } .tinfo span{ font-size:.9rem; color:#cfcfe3 }
 
-  .btn{ appearance:none; border:none; cursor:pointer; font-weight:800;
-        padding:12px 14px; border-radius:12px; }
+  .btn{ appearance:none; border:none; cursor:pointer; padding:12px 14px; border-radius:12px; font-weight:800 }
   .btn.primary{ background:var(--accent); color:#fff }
   .hint{ color:var(--muted); font-size:.9rem }
 
@@ -103,17 +101,20 @@
 </style>
 </head>
 <body>
+  <!-- Fallback: se algo travar na capa, este botão abre a carta -->
+  <button id="fallback" class="fallback-open" aria-controls="carta">Abrir carta</button>
+
   <div class="wrap">
 
-    <!-- CAPA: envelope + botão Abrir carta -->
-    <section id="capa" class="envelope" aria-label="Envelope">
+    <!-- CAPA -->
+    <section id="capa" class="capa" aria-label="Envelope">
       <div class="flap" id="flap"></div>
-      <div class="seal">💌</div>
+      <div class="selo">💌</div>
       <button id="abrir" class="cta" aria-controls="carta">Abrir carta</button>
     </section>
 
-    <!-- CONTEÚDO: carta aberta + imagem + player -->
-    <section id="carta" class="card" aria-label="Carta de aniversário" hidden>
+    <!-- CARTA -->
+    <section id="carta" class="carta" aria-label="Carta de aniversário" hidden>
       <div class="letter">
         <h2>Para Jéssica ❤️</h2>
         <p><strong>Meu amor,</strong> hoje celebro sua vida e agradeço a Deus por você. Que Ele te envolva com carinho, cuide dos seus passos e faça florescer cada sonho do seu coração. Eu te amo — ontem, hoje e sempre.</p>
@@ -122,8 +123,9 @@
           <span class="pill">Para: <strong>Jéssica</strong></span>
           <span class="pill">De: <strong>Seu marido</strong></span>
         </div>
-        <div style="margin-top:14px">
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
           <button id="tocar" class="btn primary">▶ Tocar música</button>
+          <button id="pausar" class="btn">⏸ Pausar</button>
           <div class="hint">Em celulares, a música só começa após um toque.</div>
         </div>
       </div>
@@ -131,7 +133,7 @@
       <div>
         <figure class="hero"><img src="assets/imagem_cartao.png" alt="Foto especial" /></figure>
 
-        <aside class="player" aria-label="Música do cartão" style="margin-top:14px">
+        <aside class="player" aria-label="Música do cartão">
           <div class="track">
             <div class="art"><img src="assets/imagem_cartao.png" alt="Capa" /></div>
             <div class="tinfo">
@@ -142,7 +144,6 @@
           <audio id="audio" preload="auto">
             <source src="assets/musica.mp3" type="audio/mpeg">
           </audio>
-          <button id="pausar" class="btn">⏸ Pausar</button>
         </aside>
       </div>
     </section>
@@ -151,13 +152,15 @@
   </div>
 
 <script>
-  const capa = document.getElementById('capa');
-  const carta = document.getElementById('carta');
-  const abrir = document.getElementById('abrir');
-  const flap  = document.getElementById('flap');
-  const audio = document.getElementById('audio');
-  const tocar = document.getElementById('tocar');
-  const pausar= document.getElementById('pausar');
+  const capa   = document.getElementById('capa');
+  const carta  = document.getElementById('carta');
+  const abrir  = document.getElementById('abrir');
+  const flap   = document.getElementById('flap');
+  const fallback = document.getElementById('fallback');
+
+  const audio  = document.getElementById('audio');
+  const tocar  = document.getElementById('tocar');
+  const pausar = document.getElementById('pausar');
 
   function spawnHearts(){
     const qty=18;
@@ -173,8 +176,8 @@
     }
   }
 
-  async function revelarCarta(){
-    // anima a aba do envelope
+  async function abrirCarta(){
+    // Anima a aba do envelope
     flap.style.transform='rotateX(155deg)';
     setTimeout(()=>{
       capa.style.display='none';
@@ -183,11 +186,14 @@
       spawnHearts();
     }, 650);
 
-    // tenta tocar música já no clique (autorizado pelos navegadores)
-    try{ await audio.play(); }catch(e){}
+    // Tenta tocar a música já nesse clique (permitido pelos navegadores)
+    try{ await audio.play(); }catch(e){ /* em mobile pode precisar tocar no botão */ }
   }
 
-  abrir.addEventListener('click', revelarCarta);
+  // Ligações
+  abrir.addEventListener('click', abrirCarta);
+  fallback.addEventListener('click', abrirCarta);
+
   tocar.addEventListener('click', async ()=>{
     try{ await audio.play(); }catch(e){}
   });
@@ -196,8 +202,14 @@
     else{ audio.pause(); pausar.textContent='▶ Tocar'; }
   });
 
-  // quando terminar a faixa
   audio.addEventListener('ended', ()=>{ pausar.textContent='▶ Tocar'; });
 </script>
+
+<noscript>
+  <style>.capa{display:none}.carta{display:block}</style>
+  <div style="max-width:700px;margin:20px auto;background:#fff;padding:16px;border-radius:10px;color:#000">
+    Ative o JavaScript para ver a animação da carta e ouvir a música.
+  </div>
+</noscript>
 </body>
 </html>
