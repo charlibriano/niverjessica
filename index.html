@@ -47,7 +47,7 @@
   }
   .cta{
     position:relative; z-index:2; appearance:none; border:none; cursor:pointer;
-    background:#0ea94d; color:#fff; font-weight:900; font-size:1.1rem;
+    background:#16a34a; color:#fff; font-weight:900; font-size:1.1rem;
     padding:14px 20px; border-radius:14px; box-shadow:0 10px 20px rgba(0,0,0,.25);
     transition:transform .12s ease, box-shadow .12s ease;
   }
@@ -82,9 +82,19 @@
     border-radius:18px; padding:18px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
   }
   .letter h2{ margin:0 0 10px; color:#0a7a3b }
-  .tline{ margin:0 0 12px; line-height:1.7; font-size:1.04rem; opacity:.0; }
+  .controls-line{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px}
+  .mini{background:#e8f9ef; border:1px solid #c9f6df; color:#0a7a3b; font-weight:800; border-radius:10px; padding:6px 10px; cursor:pointer}
+  .tline{ margin:0 0 12px; line-height:1.7; font-size:1.04rem; opacity:.0; min-height:1.4em }
   .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:.92rem; color:#555; opacity:0 }
   .pill{ background:#e6ffe8; border:1px solid #c9f6df; border-radius:999px; padding:6px 10px }
+
+  /* Assinatura manuscrita */
+  .signature{ margin-top:10px; height:50px }
+  .sig path{
+    fill:none; stroke:#0a7a3b; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray: 700; stroke-dashoffset: 700; animation:draw 3.8s ease forwards; animation-delay:.4s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0 } }
 
   /* PLAYER minimalista + CD + equalizador colorido */
   .player{
@@ -99,13 +109,12 @@
       radial-gradient(circle at 50% 50%, #fff 0 6px, transparent 6px),
       radial-gradient(circle at 50% 50%, #d8d8d8 7px, #a8a8a8 24px, #efefef 50px, #c9c9c9);
     box-shadow:inset 0 0 8px rgba(0,0,0,.25), 0 2px 10px rgba(0,0,0,.25);
-    position:relative;
-    overflow:hidden;
+    position:relative; overflow:hidden;
   }
-  .cd::after{ /* brilho colorido do CD */
+  .cd::after{
     content:""; position:absolute; inset:-20% -20%;
-    background:conic-gradient(from 0turn, #ff7ab3, #fff176, #7ee0af, #6ecbff, #b388ff, #ff7ab3);
-    mix-blend-mode:overlay; opacity:.7;
+    background:conic-gradient(from 0turn, #34d399, #22c55e, #86efac, #a7f3d0, #6ee7b7, #34d399);
+    mix-blend-mode:overlay; opacity:.75;
   }
   .spin{ animation:spin 5s linear infinite }
   @keyframes spin{ to{ transform:rotate(360deg) } }
@@ -142,7 +151,7 @@
   .lightbox.show{ display:flex }
   .lightbox .close{ position:fixed; top:20px; right:24px; background:#fff; border:none; border-radius:999px; padding:10px 14px; font-weight:800; cursor:pointer }
 
-  /* responsividade mais apertada */
+  /* responsividade */
   @media (max-width:520px){
     .controls{ gap:8px }
     .time{ min-width:70px; font-size:.82rem }
@@ -152,7 +161,7 @@
 </style>
 </head>
 <body>
-  <!-- Fallback: se algo travar na capa, este botão abre a carta -->
+  <!-- Fallback -->
   <button id="fallback" class="fallback-open" aria-controls="carta">Abrir carta</button>
 
   <div class="wrap">
@@ -161,7 +170,7 @@
     <section id="capa" class="capa" aria-label="Envelope">
       <div class="flap" id="flap"></div>
       <div class="selo">💌</div>
-      <button id="abrir" class="cta" aria-controls="carta" aria-label="Abrir carta">Abrir carta</button>
+      <button id="abrir" class="cta" aria-controls="carta">Abrir carta</button>
     </section>
 
     <!-- CARTA -->
@@ -169,7 +178,12 @@
       <div class="letter">
         <h2>Para Jéssica ❤️</h2>
 
-        <!-- Texto com efeito máquina de escrever -->
+        <div class="controls-line">
+          <button id="speed" class="mini" type="button">⏩ Acelerar texto</button>
+          <button id="restart" class="mini" type="button">↺ Rever do início</button>
+        </div>
+
+        <!-- Texto com efeito máquina de escrever (mais lento) -->
         <p class="tline" data-typer="Desde o primeiro olhar eu me apaixonei por você. Hoje, celebramos 14 anos de casados e meu coração continua dizendo sim, todos os dias."></p>
         <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, um raio de alegria que enche a casa de risos. Já são 3 aninhos de bênçãos e descobertas ao seu lado."></p>
         <p class="tline" data-typer="Juntos conquistamos tanta coisa: construímos nossa casa, nossos sonhos e um amor que amadurece e floresce. A cada dia eu me apaixono mais por você."></p>
@@ -180,7 +194,15 @@
           <span class="pill">De: <strong>Seu marido</strong></span>
         </div>
 
-        <div class="hint" style="margin-top:10px">No celular, a música começa após um toque.</div>
+        <!-- Assinatura manuscrita (só aparece no final) -->
+        <div class="signature" id="signature" style="display:none">
+          <svg class="sig" viewBox="0 0 260 50" width="100%" height="50" aria-hidden="true">
+            <path d="M10 30 C30 10, 50 10, 70 30 S110 50, 130 30 160 10, 190 30 220 50, 250 30" />
+          </svg>
+          <div style="font-weight:800;color:#0a7a3b;margin-top:4px;">Com amor, seu marido</div>
+        </div>
+
+        <div class="hint" style="margin-top:8px">No celular, a música começa após um toque.</div>
       </div>
 
       <div>
@@ -219,90 +241,20 @@
   </div>
 
 <script>
-  /* util */
   const $ = sel => document.querySelector(sel);
 
-  /* elementos principais */
-  const capa   = $('#capa');
-  const carta  = $('#carta');
-  const abrir  = $('#abrir');
-  const flap   = $('#flap');
-  const fallback = $('#fallback');
+  /* principais */
+  const capa   = $('#capa'), carta = $('#carta'), abrir = $('#abrir'), flap = $('#flap'), fallback = $('#fallback');
 
-  /* player */
-  const audio  = $('#audio');
-  const btn    = $('#btnPlay');
-  const cur    = $('#cur');
-  const dur    = $('#dur');
-  const seek   = $('#seek');
-  const fill   = $('#fill');
-  const vol    = $('#vol');
-  const cd     = $('#cd');
-
-  /* visualizador */
-  const vizCanvas = $('#viz');
-  const ctx = vizCanvas.getContext('2d', { alpha: true });
-
-  /* lightbox */
-  const zoom = $('#zoom');
-  const lightbox = $('#lightbox');
-  const closeLb  = $('#closeLb');
-
-  function fmt(secs){ if(!isFinite(secs)) return "0:00"; const m = Math.floor(secs/60); const s = Math.floor(secs%60); return m+":"+(s<10?"0":"")+s; }
-
-  /* ---- Efeitos contínuos ---- */
-  function heartBurst(qty=10){
-    for(let i=0;i<qty;i++){
-      const h=document.createElement('div');
-      h.className='heart';
-      h.textContent=['💚','💖','💘','❤️'][i%4];
-      h.style.left=(Math.random()*100)+'vw';
-      h.style.setProperty('--x',(Math.random()*140-70)+'vw');
-      h.style.animationDelay=(Math.random()*1.2)+'s';
-      document.body.appendChild(h);
-      setTimeout(()=>h.remove(),6500);
-    }
-  }
-  function sparklesBurst(qty=12){
-    for(let i=0;i<qty;i++){
-      const s=document.createElement('div');
-      s.className='sparkle';
-      s.style.left=(Math.random()*100)+'vw';
-      s.style.top=(Math.random()*40+10)+'vh';
-      s.style.setProperty('--h', (Math.random()*120-60)+'deg');
-      document.body.appendChild(s);
-      setTimeout(()=>s.remove(),2200);
-    }
-  }
-  setInterval(()=>heartBurst(3), 2500);
-  setInterval(()=>sparklesBurst(3), 2000);
-
-  /* ---- Confete ao abrir ---- */
-  function confettiOnce(){
-    const colors=['🎉','✨','💚','💗','💙','💛','🧡'];
-    for(let i=0;i<28;i++){
-      const c=document.createElement('div');
-      c.textContent=colors[i%colors.length];
-      c.style.position='fixed';
-      c.style.left='50%'; c.style.top='50%';
-      c.style.transform='translate(-50%,-50%)';
-      c.style.fontSize=(Math.random()*14+14)+'px';
-      c.style.animation=`conf${i} 900ms ease-out forwards`;
-      document.body.appendChild(c);
-      const dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35, rot=(Math.random()*360)+'deg';
-      const style=document.createElement('style');
-      style.textContent=`@keyframes conf${i}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`;
-      document.head.appendChild(style);
-      setTimeout(()=>{c.remove();style.remove();},950);
-    }
-  }
-
-  /* ---- Máquina de escrever ---- */
+  /* typewriter */
+  let cps = 14; // <<< mais lento
+  const speedBtn = $('#speed'), restartBtn = $('#restart');
   const lines = Array.from(document.querySelectorAll('.tline'));
-  async function typeLine(el, text, cps=28){ // caracteres por segundo
-    el.style.opacity = 1;
-    el.textContent = "";
-    let i=0; const delay = 1000/cps;
+  const meta = $('#meta'); const signature = $('#signature');
+
+  async function typeLine(el, text){
+    el.style.opacity = 1; el.textContent = "";
+    let i=0, delay = 1000/cps;
     return new Promise(resolve=>{
       const iv = setInterval(()=>{
         el.textContent += text[i++] || "";
@@ -311,41 +263,32 @@
     });
   }
   async function runTypewriter(){
-    for(const el of lines){
-      await typeLine(el, el.getAttribute('data-typer'));
-    }
-    // mostra os chips "meta"
-    const meta = document.getElementById('meta');
-    meta.style.transition="opacity .6s";
-    meta.style.opacity=1;
+    meta.style.opacity = 0; signature.style.display='none';
+    for(const el of lines){ await typeLine(el, el.getAttribute('data-typer')); }
+    meta.style.transition="opacity .6s"; meta.style.opacity=1;
+    // assinatura e fogos ao final
+    signature.style.display='block';
+    fireworks();
   }
-
-  /* ---- Abrir carta ---- */
-  async function abrirCarta(){
-    flap.style.transform='rotateX(155deg)';        // anima a aba do envelope
-    setTimeout(()=>{
-      capa.style.display='none';
-      carta.hidden=false;
-      carta.style.display='grid';
-      confettiOnce();
-      runTypewriter();
-    }, 650);
-
-    try{ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }catch(e){ /* mobile: precisa de toque */ }
+  function resetTypewriter(){
+    lines.forEach(p=>{ p.textContent=''; p.style.opacity=0; });
+    runTypewriter();
   }
+  speedBtn.addEventListener('click', ()=>{
+    cps = cps>=28 ? 14 : cps*2; // alterna 14 -> 28 -> 56 -> volta
+    speedBtn.textContent = (cps>14? '⏸ Desacelerar' : '⏩ Acelerar texto');
+  });
+  restartBtn.addEventListener('click', resetTypewriter);
 
-  abrir.addEventListener('click', abrirCarta);
-  fallback.addEventListener('click', abrirCarta);
+  /* player */
+  const audio  = $('#audio'), btn = $('#btnPlay'), cur = $('#cur'), dur = $('#dur'),
+        seek   = $('#seek'), fill = $('#fill'), vol = $('#vol'), cd = $('#cd');
 
-  /* ---- Player ---- */
   audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmt(audio.duration); });
-
   audio.addEventListener('timeupdate', ()=>{
     cur.textContent = fmt(audio.currentTime);
-    const p = (audio.currentTime / (audio.duration||1))*100;
-    fill.style.width = p + "%";
+    fill.style.width = ((audio.currentTime/(audio.duration||1))*100) + "%";
   });
-
   btn.addEventListener('click', async ()=>{
     try{
       if(audio.paused){ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }
@@ -354,7 +297,6 @@
   });
   audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); });
 
-  // buscar/arrastar na barra
   function setFromClientX(x){
     const rect = seek.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (x-rect.left)/rect.width));
@@ -365,11 +307,12 @@
   seek.addEventListener('pointerdown', e=>{ dragging=true; setFromClientX(e.clientX); seek.setPointerCapture(e.pointerId); });
   seek.addEventListener('pointermove', e=>{ if(dragging) setFromClientX(e.clientX); });
   seek.addEventListener('pointerup',   e=>{ dragging=false; });
-
-  // volume
   vol.addEventListener('input', ()=>{ audio.volume = +vol.value; });
 
-  // visualizador colorido com WebAudio
+  function fmt(secs){ if(!isFinite(secs)) return "0:00"; const m=Math.floor(secs/60), s=Math.floor(secs%60); return m+":"+(s<10?"0":"")+s; }
+
+  /* equalizador colorido */
+  const vizCanvas = $('#viz'); const ctx = vizCanvas.getContext('2d', { alpha:true });
   let audioCtx, analyser, dataArray;
   function ensureAudioGraph(){
     if(audioCtx) return;
@@ -387,42 +330,93 @@
     requestAnimationFrame(drawViz);
     if(!analyser) return;
     analyser.getByteFrequencyData(dataArray);
-    const w = vizCanvas.width = vizCanvas.clientWidth;
-    const h = vizCanvas.height = vizCanvas.clientHeight;
-    const bars = 26, step = Math.floor(dataArray.length / bars);
-    const bw = w / bars;
+    const w = vizCanvas.width = vizCanvas.clientWidth, h = vizCanvas.height = vizCanvas.clientHeight;
+    const bars = 26, step = Math.floor(dataArray.length / bars), bw = w / bars;
     ctx.clearRect(0,0,w,h);
     for(let i=0;i<bars;i++){
-      const v = dataArray[i*step]/255;
-      const bh = (h-6)*v;
-      const x = i*bw, y = h - bh - 3, r = 4;
-      const hue = 130 + i*(220/bars); // degrade colorido (verde -> azul -> rosa)
+      const v = dataArray[i*step]/255, bh=(h-6)*v, x=i*bw, y=h-bh-3, r=4, hue = 130 + i*(220/bars);
       ctx.fillStyle = `hsla(${hue}, 80%, ${40+v*35}%, ${0.7*(0.3+v)})`;
       ctx.beginPath();
-      ctx.moveTo(x+r, y);
-      ctx.lineTo(x+bw-r, y);
-      ctx.quadraticCurveTo(x+bw, y, x+bw, y+r);
-      ctx.lineTo(x+bw, y+bh-r);
-      ctx.quadraticCurveTo(x+bw, y+bh, x+bw-r, y+bh);
-      ctx.lineTo(x+r, y+bh);
-      ctx.quadraticCurveTo(x, y+bh, x, y+bh-r);
-      ctx.lineTo(x, y+r);
-      ctx.quadraticCurveTo(x, y, x+r, y);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(x+r, y); ctx.lineTo(x+bw-r, y); ctx.quadraticCurveTo(x+bw, y, x+bw, y+r);
+      ctx.lineTo(x+bw, y+bh-r); ctx.quadraticCurveTo(x+bw, y+bh, x+bw-r, y+bh);
+      ctx.lineTo(x+r, y+bh); ctx.quadraticCurveTo(x, y+bh, x, y+bh-r);
+      ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath(); ctx.fill();
     }
   }
   drawViz();
 
-  // micro-parallax na capa
-  document.addEventListener('pointermove',(e)=>{
-    if(capa.style.display==='none') return;
-    const x=(e.clientX/window.innerWidth - .5)*6;
-    const y=(e.clientY/window.innerHeight- .5)*6;
-    capa.style.transform=`translate3d(${x}px,${y}px,0)`;
-  },{passive:true});
+  /* efeitos contínuos */
+  function heartBurst(qty=10){
+    for(let i=0;i<qty;i++){
+      const h=document.createElement('div');
+      h.className='heart';
+      h.textContent=['💚','💖','💘','❤️'][i%4];
+      h.style.left=(Math.random()*100)+'vw';
+      h.style.setProperty('--x',(Math.random()*140-70)+'vw');
+      h.style.animationDelay=(Math.random()*1.2)+'s';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),6500);
+    }
+  }
+  function sparklesBurst(qty=12){
+    for(let i=0;i<qty;i++){
+      const s=document.createElement('div'); s.className='sparkle';
+      s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh';
+      s.style.setProperty('--h', (Math.random!*120-60)+'deg'); // keeps variety
+      document.body.appendChild(s); setTimeout(()=>s.remove(),2200);
+    }
+  }
+  setInterval(()=>heartBurst(3), 2500);
+  setInterval(()=>sparklesBurst(3), 2000);
 
-  /* Lightbox (zoom ao clicar na imagem) */
+  /* fogos ao final */
+  function fireworks(){
+    const colors=['#34d399','#22c55e','#86efac','#a7f3d0','#6ee7b7','#f9a8d4','#93c5fd'];
+    for(let i=0;i<5;i++){
+      const cx = Math.random()*80+10, cy = Math.random()*40+10;
+      for(let p=0;p<28;p++){
+        const dot = document.createElement('div');
+        dot.style.position='fixed'; dot.style.width='6px'; dot.style.height='6px'; dot.style.borderRadius='50%';
+        dot.style.left = cx+'vw'; dot.style.top = cy+'vh';
+        dot.style.background = colors[(i+p)%colors.length];
+        const ang = (p/28)*Math.PI*2, dist = Math.random()*14+10;
+        const dx = Math.cos(ang)*dist, dy = Math.sin(ang)*dist;
+        const style = document.createElement('style'); const name = `fw${i}_${p}`;
+        style.textContent = `@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh);opacity:0}}`; document.head.appendChild(style);
+        dot.style.animation = `${name} 900ms ease-out forwards`; document.body.appendChild(dot);
+        setTimeout(()=>{dot.remove();style.remove();},1000);
+      }
+    }
+  }
+
+  /* abrir carta */
+  async function abrirCarta(){
+    flap.style.transform='rotateX(155deg)';
+    setTimeout(()=>{
+      capa.style.display='none'; carta.hidden=false; carta.style.display='grid';
+      confettiOnce(); resetTypewriter(); // começa digitação lenta
+      try{ audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }catch(e){}
+    }, 650);
+  }
+  abrir.addEventListener('click', abrirCarta);
+  fallback.addEventListener('click', abrirCarta);
+
+  /* confete */
+  function confettiOnce(){
+    const colors=['🎉','✨','💚','💗','💙','💛','🧡'];
+    for(let i=0;i<28;i++){
+      const c=document.createElement('div'); c.textContent=colors[i%colors.length];
+      c.style.position='fixed'; c.style.left='50%'; c.style.top='50%';
+      c.style.transform='translate(-50%,-50%)'; c.style.fontSize=(Math.random()*14+14)+'px';
+      const name=`conf${Date.now()}_${i}`, dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35, rot=(Math.random()*360)+'deg';
+      const style=document.createElement('style'); style.textContent=`@keyframes ${name}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`;
+      document.head.appendChild(style); c.style.animation=`${name} 900ms ease-out forwards`;
+      document.body.appendChild(c); setTimeout(()=>{c.remove();style.remove();},950);
+    }
+  }
+
+  /* lightbox */
+  const zoom = $('#zoom'), lightbox = $('#lightbox'), closeLb  = $('#closeLb');
   zoom.addEventListener('click', ()=>{ lightbox.classList.add('show'); });
   closeLb.addEventListener('click', ()=>{ lightbox.classList.remove('show'); });
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') lightbox.classList.remove('show'); });
