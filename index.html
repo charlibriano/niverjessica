@@ -4,11 +4,12 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Carta para Jéssica 💌</title>
-<meta name="theme-color" content="#ff4d6d">
+<meta name="theme-color" content="#22c55e">
 
 <style>
   :root{
-    --bg:#0f0f12; --card:#15151b; --paper:#fff7f9; --accent:#ff4d6d;
+    --bg:#0f1115; --card:#151821; --paper:#fff7f9;
+    --accent:#22c55e; /* VERDE */
     --ink:#2b2b2b; --muted:#b9b9c3; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
   }
   *{box-sizing:border-box}
@@ -17,10 +18,10 @@
     margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--text);
     background:
-      radial-gradient(1200px 700px at -10% -10%, #1c1420 0, transparent 60%),
+      radial-gradient(1200px 700px at -10% -10%, #23182b 0, transparent 60%),
       radial-gradient(1200px 700px at 110% 10%, #12202c 0, transparent 55%),
       var(--bg);
-    min-height:100svh; display:flex; align-items:center; justify-content:center; padding:20px;
+    min-height:100svh; display:flex; align-items:center; justify-content:center; padding:16px;
     overflow-x:hidden;
   }
   .wrap{width:min(980px,100%); animation:fadeUp .7s ease-out both}
@@ -28,25 +29,25 @@
 
   /* CAPA */
   .capa{
-    position:relative; background:linear-gradient(180deg,#ff7b94,#ff4d6d);
+    position:relative; background:linear-gradient(180deg,#63e2a8,#22c55e);
     border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35);
     padding:28px; display:grid; place-items:center; aspect-ratio:16/9; overflow:hidden;
   }
   .flap{
     position:absolute; left:0; right:0; top:0; height:52%;
-    background:linear-gradient(180deg,#ffc7d1,#ff8aa1);
+    background:linear-gradient(180deg,#c9f6df,#7ee0af);
     clip-path:polygon(0 0,100% 0,50% 100%);
     transform-origin:50% 0; transition:transform .9s cubic-bezier(.22,1,.36,1);
     box-shadow:0 12px 30px rgba(0,0,0,.35);
   }
   .selo{
     position:absolute; left:50%; top:48%; transform:translate(-50%,-50%);
-    background:#ffd6de; color:#a2263b; border-radius:999px; padding:10px 16px;
+    background:#e7ffe7; color:#096d36; border-radius:999px; padding:10px 16px;
     font-weight:800; letter-spacing:.04em; box-shadow:0 6px 18px rgba(0,0,0,.25);
   }
   .cta{
     position:relative; z-index:2; appearance:none; border:none; cursor:pointer;
-    background:#fff; color:#a2263b; font-weight:900; font-size:1.1rem;
+    background:#0ea94d; color:#fff; font-weight:900; font-size:1.1rem;
     padding:14px 20px; border-radius:14px; box-shadow:0 10px 20px rgba(0,0,0,.25);
     transition:transform .12s ease, box-shadow .12s ease;
   }
@@ -55,16 +56,16 @@
 
   /* BOTÃO FALLBACK (sempre visível) */
   .fallback-open{
-    position:fixed; left:16px; bottom:16px; z-index:50;
+    position:fixed; left:12px; bottom:12px; z-index:50;
     background:var(--accent); color:#fff; border:none; border-radius:12px;
     padding:10px 14px; font-weight:800; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.3);
   }
 
   /* CARTA */
   .carta{
-    display:none; grid-template-columns:1fr 390px; gap:24px;
-    background:linear-gradient(180deg,rgba(255,77,109,.08),transparent 30%), var(--card);
-    border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35); padding:22px; animation:fadeUp .6s .15s both;
+    display:none; grid-template-columns:1fr 380px; gap:20px;
+    background:linear-gradient(180deg,rgba(34,197,94,.10),transparent 30%), var(--card);
+    border-radius:22px; box-shadow:0 15px 40px rgba(0,0,0,.35); padding:18px; animation:fadeUp .6s .15s both;
   }
   @media (max-width: 920px){ .carta{grid-template-columns:1fr} }
 
@@ -72,52 +73,56 @@
     position:relative; border-radius:18px; overflow:hidden;
     border:1px solid rgba(255,255,255,.08); background:#111; cursor:zoom-in;
   }
-  /* mostra a arte inteira, sem cortes */
-  .hero img{
-    width:100%; height:auto; object-fit:contain; display:block;
-    filter:saturate(1.05) contrast(1.05);
-  }
-  /* limite de altura para não estourar a tela */
+  .hero img{ width:100%; height:auto; object-fit:contain; display:block; filter:saturate(1.05) contrast(1.05); }
   @media (min-width:901px){ .hero img{ max-height:520px } }
   @media (max-width:900px){ .hero img{ max-height:360px } }
 
   .letter{
     background:linear-gradient(#fff,#fff7f9); color:var(--ink);
-    border-radius:18px; padding:22px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
+    border-radius:18px; padding:18px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
   }
-  .letter h2{ margin:0 0 12px; color:#a2263b }
-  .letter p{ margin:0 0 12px; line-height:1.65; font-size:1.05rem; opacity:0; transform:translateY(6px) }
-  .letter p.reveal{ animation:reveal .6s forwards }
-  .letter p.reveal:nth-of-type(1){ animation-delay:.1s }
-  .letter p.reveal:nth-of-type(2){ animation-delay:.25s }
-  .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:.92rem; color:#555; opacity:0; transform:translateY(6px) }
-  .meta.reveal{ animation:reveal .6s .4s forwards }
-  .pill{ background:#ffe8ee; border:1px solid #ffd6de; border-radius:999px; padding:6px 10px }
+  .letter h2{ margin:0 0 10px; color:#0a7a3b }
+  .tline{ margin:0 0 12px; line-height:1.7; font-size:1.04rem; opacity:.0; }
+  .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:.92rem; color:#555; opacity:0 }
+  .pill{ background:#e6ffe8; border:1px solid #c9f6df; border-radius:999px; padding:6px 10px }
 
-  @keyframes reveal{ to{ opacity:1; transform:none } }
-
-  /* PLAYER minimalista + visualizador */
+  /* PLAYER minimalista + CD + equalizador colorido */
   .player{
     background:var(--glass); border:1px solid rgba(255,255,255,.08);
-    border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:12px; margin-top:14px;
+    border-radius:18px; padding:14px; display:flex; flex-direction:column; gap:12px; margin-top:14px;
     backdrop-filter: blur(6px);
   }
-  .track{ display:flex; gap:12px; align-items:center }
-  .art{ width:52px; height:52px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.1) }
-  .art img{ width:100%; height:100%; object-fit:cover }
+  .diskrow{ display:flex; align-items:center; gap:12px }
+  .cd{
+    width:60px; height:60px; border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 50%, #fff 0 6px, transparent 6px),
+      radial-gradient(circle at 50% 50%, #d8d8d8 7px, #a8a8a8 24px, #efefef 50px, #c9c9c9);
+    box-shadow:inset 0 0 8px rgba(0,0,0,.25), 0 2px 10px rgba(0,0,0,.25);
+    position:relative;
+    overflow:hidden;
+  }
+  .cd::after{ /* brilho colorido do CD */
+    content:""; position:absolute; inset:-20% -20%;
+    background:conic-gradient(from 0turn, #ff7ab3, #fff176, #7ee0af, #6ecbff, #b388ff, #ff7ab3);
+    mix-blend-mode:overlay; opacity:.7;
+  }
+  .spin{ animation:spin 5s linear infinite }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
   .title{ font-weight:800; font-size:1rem }
-  .controls{ display:flex; align-items:center; gap:12px }
+  .viz{ width:100%; height:44px; border-radius:10px; background:rgba(255,255,255,.05) }
+  .controls{ display:flex; align-items:center; gap:10px }
   .play{
     appearance:none; border:none; cursor:pointer; border-radius:11px; padding:10px 14px;
-    background:var(--accent); color:#fff; font-weight:800; box-shadow:0 6px 18px rgba(0,0,0,.25);
+    background:var(--accent); color:#06290d; font-weight:900; box-shadow:0 6px 18px rgba(0,0,0,.25);
     transition:transform .12s ease;
   }
   .play:active{ transform:translateY(1px) }
-  .time{ font-size:.9rem; color:#dfe0ef; min-width:80px; text-align:right }
-  .bar{ position:relative; height:8px; flex:1; background:rgba(255,255,255,.15); border-radius:999px; cursor:pointer; overflow:hidden }
-  .bar > i{ position:absolute; left:0; top:0; bottom:0; width:0%; background:#fff; opacity:.9 }
-  .vol{ width:90px; accent-color:#fff }
-  .viz{ width:100%; height:42px; border-radius:10px; background:rgba(255,255,255,.05) }
+  .time{ font-size:.9rem; color:#e9f7ee; min-width:84px; text-align:right }
+  .bar{ position:relative; height:10px; flex:1; background:rgba(255,255,255,.15); border-radius:999px; cursor:pointer; overflow:hidden }
+  .bar > i{ position:absolute; left:0; top:0; bottom:0; width:0%; background:linear-gradient(90deg,#34d399,#22c55e,#86efac); }
+  .vol{ width:90px; accent-color:#86efac }
 
   .hint{ color:var(--muted); font-size:.9rem }
   footer{ text-align:center; color:#bdbdcc; font-size:.85rem; margin-top:10px }
@@ -136,6 +141,14 @@
   .lightbox img{ max-width:95vw; max-height:95vh; border-radius:16px }
   .lightbox.show{ display:flex }
   .lightbox .close{ position:fixed; top:20px; right:24px; background:#fff; border:none; border-radius:999px; padding:10px 14px; font-weight:800; cursor:pointer }
+
+  /* responsividade mais apertada */
+  @media (max-width:520px){
+    .controls{ gap:8px }
+    .time{ min-width:70px; font-size:.82rem }
+    .vol{ width:70px }
+    .cd{ width:52px; height:52px }
+  }
 </style>
 </head>
 <body>
@@ -148,20 +161,26 @@
     <section id="capa" class="capa" aria-label="Envelope">
       <div class="flap" id="flap"></div>
       <div class="selo">💌</div>
-      <button id="abrir" class="cta" aria-controls="carta">Abrir carta</button>
+      <button id="abrir" class="cta" aria-controls="carta" aria-label="Abrir carta">Abrir carta</button>
     </section>
 
     <!-- CARTA -->
     <section id="carta" class="carta" aria-label="Carta de aniversário" hidden>
       <div class="letter">
         <h2>Para Jéssica ❤️</h2>
-        <p class="reveal"><strong>Meu amor,</strong> hoje celebro sua vida e agradeço a Deus por você. Que Ele te envolva com carinho, cuide dos seus passos e faça florescer cada sonho do seu coração. Eu te amo — ontem, hoje e sempre.</p>
-        <p class="reveal"><em>“Mulher virtuosa, quem a achará? O seu valor muito excede o de rubis.”</em> (Provérbios 31:10)</p>
-        <div class="meta reveal">
+
+        <!-- Texto com efeito máquina de escrever -->
+        <p class="tline" data-typer="Desde o primeiro olhar eu me apaixonei por você. Hoje, celebramos 14 anos de casados e meu coração continua dizendo sim, todos os dias."></p>
+        <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, um raio de alegria que enche a casa de risos. Já são 3 aninhos de bênçãos e descobertas ao seu lado."></p>
+        <p class="tline" data-typer="Juntos conquistamos tanta coisa: construímos nossa casa, nossos sonhos e um amor que amadurece e floresce. A cada dia eu me apaixono mais por você."></p>
+        <p class="tline" data-typer="Obrigado por ser meu porto seguro, minha amiga e o grande amor da minha vida. Eu te amo — ontem, hoje e sempre."></p>
+
+        <div class="meta" id="meta">
           <span class="pill">Para: <strong>Jéssica</strong></span>
           <span class="pill">De: <strong>Seu marido</strong></span>
         </div>
-        <div class="hint" style="margin-top:12px">Em celulares, a música só começa após um toque.</div>
+
+        <div class="hint" style="margin-top:10px">No celular, a música começa após um toque.</div>
       </div>
 
       <div>
@@ -169,8 +188,8 @@
 
         <!-- PLAYER -->
         <aside class="player" aria-label="Música do cartão">
-          <div class="track">
-            <div class="art"><img src="assets/imagem_cartao.png" alt="Capa" /></div>
+          <div class="diskrow">
+            <div id="cd" class="cd" aria-hidden="true"></div>
             <div class="title">Todo dia, até morrer</div>
           </div>
 
@@ -178,7 +197,7 @@
 
           <div class="controls">
             <button id="btnPlay" class="play">▶ Tocar</button>
-            <div class="bar" id="seek"><i id="fill"></i></div>
+            <div class="bar" id="seek" aria-label="Barra de progresso"><i id="fill"></i></div>
             <div class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></div>
             <input id="vol" class="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
           </div>
@@ -195,44 +214,48 @@
 
   <!-- LIGHTBOX -->
   <div id="lightbox" class="lightbox" aria-hidden="true">
-    <button class="close" id="closeLb">Fechar ✕</button>
+    <button class="close" id="closeLb" aria-label="Fechar imagem">Fechar ✕</button>
     <img src="assets/imagem_cartao.png" alt="Imagem em tela cheia">
   </div>
 
 <script>
-  // elementos principais
-  const capa   = document.getElementById('capa');
-  const carta  = document.getElementById('carta');
-  const abrir  = document.getElementById('abrir');
-  const flap   = document.getElementById('flap');
-  const fallback = document.getElementById('fallback');
+  /* util */
+  const $ = sel => document.querySelector(sel);
 
-  // player
-  const audio  = document.getElementById('audio');
-  const btn    = document.getElementById('btnPlay');
-  const cur    = document.getElementById('cur');
-  const dur    = document.getElementById('dur');
-  const seek   = document.getElementById('seek');
-  const fill   = document.getElementById('fill');
-  const vol    = document.getElementById('vol');
+  /* elementos principais */
+  const capa   = $('#capa');
+  const carta  = $('#carta');
+  const abrir  = $('#abrir');
+  const flap   = $('#flap');
+  const fallback = $('#fallback');
 
-  // visualizador
-  const vizCanvas = document.getElementById('viz');
+  /* player */
+  const audio  = $('#audio');
+  const btn    = $('#btnPlay');
+  const cur    = $('#cur');
+  const dur    = $('#dur');
+  const seek   = $('#seek');
+  const fill   = $('#fill');
+  const vol    = $('#vol');
+  const cd     = $('#cd');
+
+  /* visualizador */
+  const vizCanvas = $('#viz');
   const ctx = vizCanvas.getContext('2d', { alpha: true });
 
-  // lightbox
-  const zoom = document.getElementById('zoom');
-  const lightbox = document.getElementById('lightbox');
-  const closeLb  = document.getElementById('closeLb');
+  /* lightbox */
+  const zoom = $('#zoom');
+  const lightbox = $('#lightbox');
+  const closeLb  = $('#closeLb');
 
-  function fmt(secs){ if(!isFinite(secs)) return "0:00"; const m = Math.floor(secs/60); const s = Math.floor(secs%10?secs%60:0); return m+":"+(s<10?"0":"")+s; }
+  function fmt(secs){ if(!isFinite(secs)) return "0:00"; const m = Math.floor(secs/60); const s = Math.floor(secs%60); return m+":"+(s<10?"0":"")+s; }
 
-  /* ---- Animações contínuas ---- */
-  function heartBurst(qty=12){
+  /* ---- Efeitos contínuos ---- */
+  function heartBurst(qty=10){
     for(let i=0;i<qty;i++){
       const h=document.createElement('div');
       h.className='heart';
-      h.textContent=['💖','❤️','💘','💗'][i%4];
+      h.textContent=['💚','💖','💘','❤️'][i%4];
       h.style.left=(Math.random()*100)+'vw';
       h.style.setProperty('--x',(Math.random()*140-70)+'vw');
       h.style.animationDelay=(Math.random()*1.2)+'s';
@@ -240,25 +263,23 @@
       setTimeout(()=>h.remove(),6500);
     }
   }
-  function sparklesBurst(qty=16){
+  function sparklesBurst(qty=12){
     for(let i=0;i<qty;i++){
       const s=document.createElement('div');
       s.className='sparkle';
       s.style.left=(Math.random()*100)+'vw';
       s.style.top=(Math.random()*40+10)+'vh';
-      s.style.setProperty('--h', (Math.random()*60-30)+'deg');
+      s.style.setProperty('--h', (Math.random()*120-60)+'deg');
       document.body.appendChild(s);
       setTimeout(()=>s.remove(),2200);
     }
   }
-  // Loop contínuo (leve)
   setInterval(()=>heartBurst(3), 2500);
-  setInterval(()=>sparklesBurst(4), 2000);
+  setInterval(()=>sparklesBurst(3), 2000);
 
-  /* ---- Revelar carta + confete ---- */
+  /* ---- Confete ao abrir ---- */
   function confettiOnce(){
-    // confete simples sem lib: emojis coloridos que explodem do centro
-    const colors=['🎉','✨','💛','💗','💙','💚','🧡'];
+    const colors=['🎉','✨','💚','💗','💙','💛','🧡'];
     for(let i=0;i<28;i++){
       const c=document.createElement('div');
       c.textContent=colors[i%colors.length];
@@ -268,8 +289,7 @@
       c.style.fontSize=(Math.random()*14+14)+'px';
       c.style.animation=`conf${i} 900ms ease-out forwards`;
       document.body.appendChild(c);
-      const dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35;
-      const rot=(Math.random()*360)+'deg';
+      const dx=(Math.random()*2-1)*45, dy=(Math.random()*2-1)*35, rot=(Math.random()*360)+'deg';
       const style=document.createElement('style');
       style.textContent=`@keyframes conf${i}{to{transform:translate(${dx}vw,${dy}vh) rotate(${rot});opacity:0}}`;
       document.head.appendChild(style);
@@ -277,6 +297,30 @@
     }
   }
 
+  /* ---- Máquina de escrever ---- */
+  const lines = Array.from(document.querySelectorAll('.tline'));
+  async function typeLine(el, text, cps=28){ // caracteres por segundo
+    el.style.opacity = 1;
+    el.textContent = "";
+    let i=0; const delay = 1000/cps;
+    return new Promise(resolve=>{
+      const iv = setInterval(()=>{
+        el.textContent += text[i++] || "";
+        if(i>text.length){ clearInterval(iv); resolve(); }
+      }, delay);
+    });
+  }
+  async function runTypewriter(){
+    for(const el of lines){
+      await typeLine(el, el.getAttribute('data-typer'));
+    }
+    // mostra os chips "meta"
+    const meta = document.getElementById('meta');
+    meta.style.transition="opacity .6s";
+    meta.style.opacity=1;
+  }
+
+  /* ---- Abrir carta ---- */
   async function abrirCarta(){
     flap.style.transform='rotateX(155deg)';        // anima a aba do envelope
     setTimeout(()=>{
@@ -284,11 +328,12 @@
       carta.hidden=false;
       carta.style.display='grid';
       confettiOnce();
+      runTypewriter();
     }, 650);
-    try{ await audio.play(); btn.textContent='⏸ Pausar'; }catch(e){ /* mobile exige toque extra */ }
+
+    try{ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }catch(e){ /* mobile: precisa de toque */ }
   }
 
-  // ligações
   abrir.addEventListener('click', abrirCarta);
   fallback.addEventListener('click', abrirCarta);
 
@@ -303,11 +348,11 @@
 
   btn.addEventListener('click', async ()=>{
     try{
-      if(audio.paused){ await audio.play(); btn.textContent='⏸ Pausar'; }
-      else{ audio.pause(); btn.textContent='▶ Tocar'; }
+      if(audio.paused){ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }
+      else{ audio.pause(); btn.textContent='▶ Tocar'; cd.classList.remove('spin'); }
     }catch(e){}
   });
-  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; });
+  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); });
 
   // buscar/arrastar na barra
   function setFromClientX(x){
@@ -324,7 +369,7 @@
   // volume
   vol.addEventListener('input', ()=>{ audio.volume = +vol.value; });
 
-  // mini visualizador com WebAudio
+  // visualizador colorido com WebAudio
   let audioCtx, analyser, dataArray;
   function ensureAudioGraph(){
     if(audioCtx) return;
@@ -344,16 +389,15 @@
     analyser.getByteFrequencyData(dataArray);
     const w = vizCanvas.width = vizCanvas.clientWidth;
     const h = vizCanvas.height = vizCanvas.clientHeight;
-    const bars = 24, step = Math.floor(dataArray.length / bars);
+    const bars = 26, step = Math.floor(dataArray.length / bars);
     const bw = w / bars;
+    ctx.clearRect(0,0,w,h);
     for(let i=0;i<bars;i++){
       const v = dataArray[i*step]/255;
       const bh = (h-6)*v;
-      const x = i*bw;
-      // barras arredondadas
-      ctx.fillStyle = `rgba(255,255,255,${0.65*(0.3+v)})`;
-      const y = h - bh - 3;
-      const r = 4;
+      const x = i*bw, y = h - bh - 3, r = 4;
+      const hue = 130 + i*(220/bars); // degrade colorido (verde -> azul -> rosa)
+      ctx.fillStyle = `hsla(${hue}, 80%, ${40+v*35}%, ${0.7*(0.3+v)})`;
       ctx.beginPath();
       ctx.moveTo(x+r, y);
       ctx.lineTo(x+bw-r, y);
@@ -378,7 +422,7 @@
     capa.style.transform=`translate3d(${x}px,${y}px,0)`;
   },{passive:true});
 
-  /* ---- Lightbox (zoom ao clicar na imagem) ---- */
+  /* Lightbox (zoom ao clicar na imagem) */
   zoom.addEventListener('click', ()=>{ lightbox.classList.add('show'); });
   closeLb.addEventListener('click', ()=>{ lightbox.classList.remove('show'); });
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') lightbox.classList.remove('show'); });
