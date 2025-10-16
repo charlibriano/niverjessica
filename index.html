@@ -9,8 +9,7 @@
 <style>
   :root{
     --bg:#0f1115; --card:#151821; --paper:#fff7f9;
-    --accent:#22c55e; /* VERDE */
-    --ink:#2b2b2b; --muted:#b9b9c3; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
+    --accent:#22c55e; --ink:#2b2b2b; --muted:#b9b9c3; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -46,28 +45,19 @@
     font-weight:800; letter-spacing:.04em; box-shadow:0 6px 18px rgba(0,0,0,.25);
   }
 
-  /* BOTÃO CORAÇÃO VERDE */
+  /* BOTÃO CORAÇÃO (SVG) */
+  .cta-wrap{ position:relative; z-index:2 }
   .cta-heart{
-    --size: 86px;
-    position:relative; z-index:2; width:var(--size); height:var(--size);
-    background:#16a34a; cursor:pointer; border:none;
-    transform:rotate(-45deg); border-radius:12px; box-shadow:0 10px 20px rgba(0,0,0,.25);
-    animation:pulse 1.6s ease-in-out infinite;
+    width:140px; height:130px; background:transparent; border:none; cursor:pointer; padding:0;
+    animation:pulse 1.6s ease-in-out infinite; display:block;
   }
-  .cta-heart::before, .cta-heart::after{
-    content:""; position:absolute; width:var(--size); height:var(--size);
-    background:#16a34a; border-radius:50%;
+  .cta-heart svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 10px 20px rgba(0,0,0,.25)) }
+  .cta-heart .label{
+    position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+    color:#fff; font-weight:900; font-size:1.05rem; line-height:1.05; white-space:nowrap;
+    pointer-events:none;
   }
-  .cta-heart::before{ top:-50%; left:0 }
-  .cta-heart::after { left:50%; top:0 }
-  .cta-heart span{
-    position:absolute; inset:0; display:grid; place-items:center;
-    transform:rotate(45deg); color:#fff; font-weight:900; font-size:.95rem;
-  }
-  @keyframes pulse{
-    0%,100%{ transform:rotate(-45deg) scale(1) }
-    50%{ transform:rotate(-45deg) scale(1.06) }
-  }
+  @keyframes pulse{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.06) } }
 
   /* BOTÃO FALLBACK (sempre visível) */
   .fallback-open{
@@ -92,6 +82,17 @@
   @media (min-width:901px){ .hero img{ max-height:520px } }
   @media (max-width:900px){ .hero img{ max-height:360px } }
 
+  /* brilho do refrão */
+  .hero.glow{ box-shadow:0 0 0 2px rgba(255,255,255,.08), 0 0 30px rgba(255,255,255,.12) }
+  .hero.glow::after{
+    content:''; position:absolute; inset:-2px; padding:2px; border-radius:20px;
+    background:conic-gradient(#22c55e,#e11d48,#86efac,#a7f3d0,#22c55e);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:spin 4s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
   .letter{
     background:linear-gradient(#fff,#fff7f9); color:var(--ink);
     border-radius:18px; padding:18px; box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
@@ -103,7 +104,7 @@
   .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:.92rem; color:#555; opacity:0 }
   .pill{ background:#e6ffe8; border:1px solid #c9f6df; border-radius:999px; padding:6px 10px }
 
-  /* Assinatura manuscrita */
+  /* Assinatura */
   .signature{ margin-top:10px; height:50px }
   .sig path{
     fill:none; stroke:#0a7a3b; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;
@@ -111,7 +112,7 @@
   }
   @keyframes draw{ to{ stroke-dashoffset:0 } }
 
-  /* PLAYER minimalista + CD + equalizador colorido */
+  /* PLAYER + CD + equalizador */
   .player{
     background:var(--glass); border:1px solid rgba(255,255,255,.08);
     border-radius:18px; padding:14px; display:flex; flex-direction:column; gap:12px; margin-top:14px;
@@ -132,7 +133,6 @@
     mix-blend-mode:overlay; opacity:.75;
   }
   .spin{ animation:spin 5s linear infinite }
-  @keyframes spin{ to{ transform:rotate(360deg) } }
 
   .title{ font-weight:800; font-size:1rem }
   .viz{ width:100%; height:44px; border-radius:10px; background:rgba(255,255,255,.05) }
@@ -151,7 +151,7 @@
   .hint{ color:var(--muted); font-size:.9rem }
   footer{ text-align:center; color:#bdbdcc; font-size:.85rem; margin-top:10px }
 
-  /* ANIMAÇÕES contínuas: corações + brilhinhos */
+  /* corações + brilhinhos contínuos */
   .heart{ position:fixed; bottom:-20px; font-size:20px; opacity:.85; animation:float 6s linear forwards; pointer-events:none }
   @keyframes float{ to{ transform:translateY(-120vh) translateX(var(--x)); opacity:0 } }
   .sparkle{ position:fixed; width:6px; height:6px; border-radius:50%;
@@ -172,7 +172,6 @@
     .time{ min-width:70px; font-size:.82rem }
     .vol{ width:70px }
     .cd{ width:52px; height:52px }
-    .cta-heart{ --size: 74px }
   }
 </style>
 </head>
@@ -186,7 +185,23 @@
     <section id="capa" class="capa" aria-label="Envelope">
       <div class="flap" id="flap"></div>
       <div class="selo">💌</div>
-      <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta"><span>Abrir<br/>carta</span></button>
+
+      <div class="cta-wrap">
+        <!-- Botão coração: fill verde, stroke vermelho -->
+        <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta">
+          <svg viewBox="0 0 120 110" role="img" aria-hidden="true">
+            <path d="M60 100
+                     C 20 70, 10 55, 10 40
+                     C 10 25, 22 15, 36 15
+                     C 48 15, 55 22, 60 30
+                     C 65 22, 72 15, 84 15
+                     C 98 15, 110 25, 110 40
+                     C 110 55, 100 70, 60 100 Z"
+                  fill="#16a34a" stroke="#e11d48" stroke-width="6" />
+          </svg>
+          <span class="label">Abrir<br/>carta</span>
+        </button>
+      </div>
     </section>
 
     <!-- CARTA -->
@@ -199,7 +214,7 @@
           <button id="restart" class="mini" type="button">↺ Rever do início</button>
         </div>
 
-        <!-- Texto com efeito máquina de escrever (lento) -->
+        <!-- Texto com efeito máquina (mais lento) -->
         <p class="tline" data-typer="Desde o primeiro olhar eu me apaixonei por você. Hoje, celebramos 14 anos de casados e meu coração continua dizendo sim, todos os dias."></p>
         <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, um raio de alegria que enche a casa de risos. Já são 3 aninhos de bênçãos e descobertas ao seu lado."></p>
         <p class="tline" data-typer="Juntos conquistamos tanta coisa: construímos nossa casa, nossos sonhos e um amor que amadurece e floresce. A cada dia eu me apaixono mais por você."></p>
@@ -207,15 +222,15 @@
 
         <div class="meta" id="meta">
           <span class="pill">Para: <strong>Jéssica</strong></span>
-          <span class="pill">De: <strong>Seu marido</strong></span>
+          <span class="pill">De: <strong>Felipe Palhares</strong></span>
         </div>
 
-        <!-- Assinatura manuscrita (só aparece no final) -->
+        <!-- Assinatura -->
         <div class="signature" id="signature" style="display:none">
-          <svg class="sig" viewBox="0 0 260 50" width="100%" height="50" aria-hidden="true">
-            <path d="M10 30 C30 10, 50 10, 70 30 S110 50, 130 30 160 10, 190 30 220 50, 250 30" />
+          <svg class="sig" viewBox="0 0 380 60" width="100%" height="50" aria-hidden="true">
+            <path d="M10 35 C40 10, 70 10, 100 35 S160 60, 190 35 240 10, 280 35 330 60, 370 35" />
           </svg>
-          <div style="font-weight:800;color:#0a7a3b;margin-top:4px;">Com amor, seu marido</div>
+          <div style="font-weight:800;color:#0a7a3b;margin-top:4px;">Felipe Palhares</div>
         </div>
 
         <div class="hint" style="margin-top:8px">No celular, a música começa após um toque.</div>
@@ -260,14 +275,10 @@
   const $ = sel => document.querySelector(sel);
 
   /* principais */
-  const capa   = $('#capa');
-  const carta  = $('#carta');
-  const abrir  = $('#abrir');
-  const flap   = $('#flap');
-  const fallback = $('#fallback');
+  const capa   = $('#capa'), carta = $('#carta'), abrir = $('#abrir'), flap = $('#flap'), fallback = $('#fallback');
 
   /* typewriter */
-  let cps = 14; // lento e romântico :)
+  let cps = 10; // ainda mais devagar
   const speedBtn = $('#speed'), restartBtn = $('#restart');
   const lines = Array.from(document.querySelectorAll('.tline'));
   const meta = $('#meta'); const signature = $('#signature');
@@ -294,27 +305,37 @@
     runTypewriter();
   }
   speedBtn.addEventListener('click', ()=>{
-    cps = cps>=28 ? 14 : cps*2; // 14 -> 28 -> 56 -> volta
-    speedBtn.textContent = (cps>14? '⏸ Desacelerar' : '⏩ Acelerar texto');
+    cps = cps>=20 ? 10 : cps+5; // 10 -> 15 -> 20 -> volta
+    speedBtn.textContent = (cps>10? '⏸ Desacelerar' : '⏩ Acelerar texto');
   });
   restartBtn.addEventListener('click', resetTypewriter);
 
   /* player */
   const audio  = $('#audio'), btn = $('#btnPlay'), cur = $('#cur'), dur = $('#dur'),
-        seek   = $('#seek'), fill = $('#fill'), vol = $('#vol'), cd = $('#cd');
+        seek   = $('#seek'), fill = $('#fill'), vol = $('#vol'), cd = $('#cd'),
+        hero   = $('#zoom'); // figura para brilho do refrão
+
+  // defina aqui o ponto aproximado do refrão (em segundos)
+  const CHORUS_TIME = 60;       // <<< ajuste se quiser
+  const CHORUS_LEN  = 14;       // quanto tempo o brilho fica ativo
 
   audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmt(audio.duration); });
   audio.addEventListener('timeupdate', ()=>{
     cur.textContent = fmt(audio.currentTime);
     fill.style.width = ((audio.currentTime/(audio.duration||1))*100) + "%";
+
+    // brilho no refrão
+    const t = audio.currentTime;
+    const on = t >= CHORUS_TIME && t <= CHORUS_TIME + CHORUS_LEN;
+    hero.classList.toggle('glow', on);
   });
   btn.addEventListener('click', async ()=>{
     try{
       if(audio.paused){ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }
-      else{ audio.pause(); btn.textContent='▶ Tocar'; cd.classList.remove('spin'); }
+      else{ audio.pause(); btn.textContent='▶ Tocar'; cd.classList.remove('spin'); hero.classList.remove('glow'); }
     }catch(e){}
   });
-  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); });
+  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); hero.classList.remove('glow'); });
 
   function setFromClientX(x){
     const rect = seek.getBoundingClientRect();
@@ -349,7 +370,7 @@
     requestAnimationFrame(drawViz);
     if(!analyser) return;
     analyser.getByteFrequencyData(dataArray);
-    const w = vizCanvas.width = vizCanvas.clientWidth, h = vizCanvas.height = vizCanvas.clientHeight;
+    const w = vizCanvas.width = vizCanvas.clientWidth, h = vizCanvas.clientHeight;
     const bars = 26, step = Math.floor(dataArray.length / bars), bw = w / bars;
     ctx.clearRect(0,0,w,h);
     for(let i=0;i<bars;i++){
@@ -364,7 +385,7 @@
   }
   drawViz();
 
-  /* efeitos contínuos (hearts + sparkles) */
+  /* corações + brilhinhos contínuos */
   function heartBurst(qty=10){
     for(let i=0;i<qty;i++){
       const h=document.createElement('div');
@@ -381,7 +402,7 @@
     for(let i=0;i<qty;i++){
       const s=document.createElement('div'); s.className='sparkle';
       s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh';
-      s.style.setProperty('--h', (Math.random()*120-60)+'deg'); /* <- corrigido */
+      s.style.setProperty('--h', (Math.random()*120-60)+'deg');
       document.body.appendChild(s); setTimeout(()=>s.remove(),2200);
     }
   }
@@ -423,7 +444,7 @@
   }
 
   /* abrir carta */
-  async function abrirCarta(){
+  function abrirCarta(){
     flap.style.transform='rotateX(155deg)';
     setTimeout(()=>{
       capa.style.display='none'; carta.hidden=false; carta.style.display='grid';
