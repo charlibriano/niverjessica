@@ -8,7 +8,7 @@
 <style>
   :root{
     --bg:#0f1115; --card:#141821; --paper:#fffdf8; --line:#e9eef6;
-    --accent:#22c55e; --ink:#2b2b2b; --muted:#b9b9c3; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
+    --accent:#22c55e; --ink:#2b2b2b; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
     --wrap:900px;
   }
   *{box-sizing:border-box}
@@ -34,12 +34,13 @@
   .wrap{width:min(var(--wrap),100%); animation:fadeUp .6s ease-out both}
   @keyframes fadeUp{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
 
-  /* CAPA */
+  /* ========== CAPA (envelope) ========== */
   .capa{
     position:relative;background:linear-gradient(180deg,#63e2a8,#22c55e);
     border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
     padding:18px;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;
   }
+  .capa.hide{ display:none !important; } /* <- some após abrir */
   .flap{
     position:absolute;left:0;right:0;top:0;height:50%;
     background:linear-gradient(180deg,#c9f6df,#7ee0af);
@@ -49,8 +50,6 @@
   }
   .selo{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
     background:#e7ffe7;color:#096d36;border-radius:999px;padding:8px 14px;font-weight:800;letter-spacing:.04em;box-shadow:0 6px 18px rgba(0,0,0,.25)}
-
-  /* Botão coração */
   .cta-heart{width:130px;height:118px;background:transparent;border:none;cursor:pointer;padding:0;
     display:block;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));animation:pulse 1.8s ease-in-out infinite}
   .cta-heart svg{width:100%;height:100%;display:block}
@@ -63,18 +62,21 @@
   .fallback-open{position:fixed;left:10px;bottom:10px;z-index:50;
     background:var(--accent);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 
-  /* === CARTA (MOBILE-FIRST COM ALTURA FIXA) === */
+  /* ========== CARTA (MOBILE-FIRST) ========== */
   .carta{
-    display:none;
-    /* Altura “travada” pra caber tudo sem sumir o topo */
+    /* começa invisível SEMPRE */
+    display:none !important;
+    /* altura “travada” em mobile pra tudo caber */
     height:86svh; max-height:720px;
     background:linear-gradient(180deg,rgba(34,197,94,.10),transparent 30%),var(--card);
     border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
     padding:10px;
-    /* No mobile: duas linhas (carta em cima com scroll próprio; imagem + player embaixo) */
-    display:grid; grid-template-rows: 1fr auto; gap:10px;
+    /* mobile: carta em cima (com scroll interno), mídia embaixo */
+    grid-template-rows: 1fr auto; gap:10px;
   }
-  /* Em telas maiores: duas colunas */
+  .carta.show{ display:grid !important; } /* <- aparece só depois do clique */
+
+  /* telas maiores: duas colunas */
   @media (min-width:780px){
     .carta{ grid-template-columns: 1fr 360px; grid-template-rows: none; height:auto; }
   }
@@ -87,7 +89,6 @@
       repeating-linear-gradient(#0000,#0000 26px,var(--line) 27px,#0000 28px),
       linear-gradient(90deg,#f7d5d5 0 16px,#0000 16px);
     background-size:auto,auto;
-    /* Faz a carta rolar só dentro dela */
     overflow:auto; max-height:100%;
   }
   .letter::before{
@@ -107,13 +108,8 @@
   /* Lápis animado (aparece só enquanto escreve) */
   .pencil{position:absolute; right:14px; bottom:10px; width:34px; height:34px; opacity:0; pointer-events:none}
   .writing .pencil{opacity:1; animation:scribble 1.4s ease-in-out infinite}
-  @keyframes scribble{
-    0%{ transform: translate(0,0) rotate(-12deg) }
-    50%{ transform: translate(-8px,-4px) rotate(8deg) }
-    100%{ transform: translate(0,0) rotate(-12deg) }
-  }
+  @keyframes scribble{0%{transform:translate(0,0) rotate(-12deg)}50%{transform:translate(-8px,-4px) rotate(8deg)}100%{transform:translate(0,0) rotate(-12deg)}}
 
-  /* Bloco mídia (imagem + player) sempre visível no mobile */
   .media{ display:flex; flex-direction:column; gap:8px; }
   .hero{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#111;cursor:zoom-in}
   .hero img{width:100%;height:auto;display:block;object-fit:contain;filter:saturate(1.05) contrast(1.05)}
@@ -188,8 +184,8 @@
     </button>
   </section>
 
-  <!-- CARTA (altura fixa; carta com scroll interno; imagem + player SEM sumir) -->
-  <section id="carta" class="carta" aria-label="Carta de aniversário" hidden>
+  <!-- CARTA (inicialmente invisível; aparece só após abrir) -->
+  <section id="carta" class="carta" aria-label="Carta de aniversário">
     <!-- Coluna/linha 1: CARTA -->
     <div class="letter" id="letter">
       <h2>Para Jéssica ❤️</h2>
@@ -211,17 +207,13 @@
 
       <!-- Lápis animado -->
       <svg class="pencil" viewBox="0 0 64 64" aria-hidden="true">
-        <defs>
-          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs>
         <path d="M8 52 L56 8" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
         <circle cx="56" cy="8" r="6" fill="#111"/>
       </svg>
     </div>
 
-    <!-- Coluna/linha 2: IMAGEM + PLAYER (sempre visível no mobile) -->
+    <!-- Coluna/linha 2: IMAGEM + PLAYER -->
     <div class="media">
       <figure class="hero" id="zoom"><img src="assets/imagem_cartao.png" alt="Imagem do cartão"/></figure>
 
@@ -263,6 +255,13 @@
   const meta=$('#meta');
   const hero=$('#zoom'), btn=$('#btnPlay'), audio=$('#audio'), cd=$('#cd'),
         vizCanvas=$('#viz'), cur=$('#cur'), dur=$('#dur'), seek=$('#seek'), fill=$('#fill'), vol=$('#vol'), replay=$('#replay');
+
+  /* Garante estado inicial: só envelope visível */
+  function initState(){
+    carta.classList.remove('show');     // carta oculta
+    capa.classList.remove('hide');      // envelope visível
+  }
+  initState();
 
   /* Máquina de escrever + lápis */
   let cps=8; // velocidade calma
@@ -380,9 +379,9 @@
   function abrirCarta(){
     flap.style.transform='rotateX(155deg)';
     setTimeout(()=>{
-      capa.style.display='none';
-      carta.hidden=false;
-      carta.style.display='grid';
+      capa.classList.add('hide');          // envelope some
+      carta.classList.add('show');         // carta aparece
+      fallback.style.display='none';       // esconde botão fixo
       confettiOnce();
       resetTypewriter();
       try{ ensureAudioGraph(); audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){}
