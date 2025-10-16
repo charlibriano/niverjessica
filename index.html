@@ -45,14 +45,29 @@
     background:#e7ffe7; color:#096d36; border-radius:999px; padding:10px 16px;
     font-weight:800; letter-spacing:.04em; box-shadow:0 6px 18px rgba(0,0,0,.25);
   }
-  .cta{
-    position:relative; z-index:2; appearance:none; border:none; cursor:pointer;
-    background:#16a34a; color:#fff; font-weight:900; font-size:1.1rem;
-    padding:14px 20px; border-radius:14px; box-shadow:0 10px 20px rgba(0,0,0,.25);
-    transition:transform .12s ease, box-shadow .12s ease;
+
+  /* BOTÃO CORAÇÃO VERDE */
+  .cta-heart{
+    --size: 86px;
+    position:relative; z-index:2; width:var(--size); height:var(--size);
+    background:#16a34a; cursor:pointer; border:none;
+    transform:rotate(-45deg); border-radius:12px; box-shadow:0 10px 20px rgba(0,0,0,.25);
+    animation:pulse 1.6s ease-in-out infinite;
   }
-  .cta:hover{ transform:translateY(-1px); box-shadow:0 14px 24px rgba(0,0,0,.28) }
-  .cta:active{ transform:translateY(0) }
+  .cta-heart::before, .cta-heart::after{
+    content:""; position:absolute; width:var(--size); height:var(--size);
+    background:#16a34a; border-radius:50%;
+  }
+  .cta-heart::before{ top:-50%; left:0 }
+  .cta-heart::after { left:50%; top:0 }
+  .cta-heart span{
+    position:absolute; inset:0; display:grid; place-items:center;
+    transform:rotate(45deg); color:#fff; font-weight:900; font-size:.95rem;
+  }
+  @keyframes pulse{
+    0%,100%{ transform:rotate(-45deg) scale(1) }
+    50%{ transform:rotate(-45deg) scale(1.06) }
+  }
 
   /* BOTÃO FALLBACK (sempre visível) */
   .fallback-open{
@@ -157,6 +172,7 @@
     .time{ min-width:70px; font-size:.82rem }
     .vol{ width:70px }
     .cd{ width:52px; height:52px }
+    .cta-heart{ --size: 74px }
   }
 </style>
 </head>
@@ -170,7 +186,7 @@
     <section id="capa" class="capa" aria-label="Envelope">
       <div class="flap" id="flap"></div>
       <div class="selo">💌</div>
-      <button id="abrir" class="cta" aria-controls="carta">Abrir carta</button>
+      <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta"><span>Abrir<br/>carta</span></button>
     </section>
 
     <!-- CARTA -->
@@ -183,7 +199,7 @@
           <button id="restart" class="mini" type="button">↺ Rever do início</button>
         </div>
 
-        <!-- Texto com efeito máquina de escrever (mais lento) -->
+        <!-- Texto com efeito máquina de escrever (lento) -->
         <p class="tline" data-typer="Desde o primeiro olhar eu me apaixonei por você. Hoje, celebramos 14 anos de casados e meu coração continua dizendo sim, todos os dias."></p>
         <p class="tline" data-typer="Deus nos presenteou com a nossa Alexandra, um raio de alegria que enche a casa de risos. Já são 3 aninhos de bênçãos e descobertas ao seu lado."></p>
         <p class="tline" data-typer="Juntos conquistamos tanta coisa: construímos nossa casa, nossos sonhos e um amor que amadurece e floresce. A cada dia eu me apaixono mais por você."></p>
@@ -244,10 +260,14 @@
   const $ = sel => document.querySelector(sel);
 
   /* principais */
-  const capa   = $('#capa'), carta = $('#carta'), abrir = $('#abrir'), flap = $('#flap'), fallback = $('#fallback');
+  const capa   = $('#capa');
+  const carta  = $('#carta');
+  const abrir  = $('#abrir');
+  const flap   = $('#flap');
+  const fallback = $('#fallback');
 
   /* typewriter */
-  let cps = 14; // <<< mais lento
+  let cps = 14; // lento e romântico :)
   const speedBtn = $('#speed'), restartBtn = $('#restart');
   const lines = Array.from(document.querySelectorAll('.tline'));
   const meta = $('#meta'); const signature = $('#signature');
@@ -266,7 +286,6 @@
     meta.style.opacity = 0; signature.style.display='none';
     for(const el of lines){ await typeLine(el, el.getAttribute('data-typer')); }
     meta.style.transition="opacity .6s"; meta.style.opacity=1;
-    // assinatura e fogos ao final
     signature.style.display='block';
     fireworks();
   }
@@ -275,7 +294,7 @@
     runTypewriter();
   }
   speedBtn.addEventListener('click', ()=>{
-    cps = cps>=28 ? 14 : cps*2; // alterna 14 -> 28 -> 56 -> volta
+    cps = cps>=28 ? 14 : cps*2; // 14 -> 28 -> 56 -> volta
     speedBtn.textContent = (cps>14? '⏸ Desacelerar' : '⏩ Acelerar texto');
   });
   restartBtn.addEventListener('click', resetTypewriter);
@@ -345,7 +364,7 @@
   }
   drawViz();
 
-  /* efeitos contínuos */
+  /* efeitos contínuos (hearts + sparkles) */
   function heartBurst(qty=10){
     for(let i=0;i<qty;i++){
       const h=document.createElement('div');
@@ -362,7 +381,7 @@
     for(let i=0;i<qty;i++){
       const s=document.createElement('div'); s.className='sparkle';
       s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh';
-      s.style.setProperty('--h', (Math.random!*120-60)+'deg'); // keeps variety
+      s.style.setProperty('--h', (Math.random()*120-60)+'deg'); /* <- corrigido */
       document.body.appendChild(s); setTimeout(()=>s.remove(),2200);
     }
   }
@@ -389,19 +408,7 @@
     }
   }
 
-  /* abrir carta */
-  async function abrirCarta(){
-    flap.style.transform='rotateX(155deg)';
-    setTimeout(()=>{
-      capa.style.display='none'; carta.hidden=false; carta.style.display='grid';
-      confettiOnce(); resetTypewriter(); // começa digitação lenta
-      try{ audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }catch(e){}
-    }, 650);
-  }
-  abrir.addEventListener('click', abrirCarta);
-  fallback.addEventListener('click', abrirCarta);
-
-  /* confete */
+  /* confete ao abrir */
   function confettiOnce(){
     const colors=['🎉','✨','💚','💗','💙','💛','🧡'];
     for(let i=0;i<28;i++){
@@ -414,6 +421,18 @@
       document.body.appendChild(c); setTimeout(()=>{c.remove();style.remove();},950);
     }
   }
+
+  /* abrir carta */
+  async function abrirCarta(){
+    flap.style.transform='rotateX(155deg)';
+    setTimeout(()=>{
+      capa.style.display='none'; carta.hidden=false; carta.style.display='grid';
+      confettiOnce(); resetTypewriter();
+      try{ audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); }catch(e){}
+    }, 650);
+  }
+  abrir.addEventListener('click', abrirCarta);
+  fallback.addEventListener('click', abrirCarta);
 
   /* lightbox */
   const zoom = $('#zoom'), lightbox = $('#lightbox'), closeLb  = $('#closeLb');
