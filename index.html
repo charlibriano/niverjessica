@@ -1,399 +1,472 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Carta para Jéssica 💌</title>
-<meta name="theme-color" content="#22c55e">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>O livro da Jéssica</title>
+<meta name="theme-color" content="#123224">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0f1115; --card:#141821; --paper:#fffdf8; --line:#e9eef6;
-    --accent:#22c55e; --ink:#2b2b2b; --text:#f7f7fb; --glass:rgba(255,255,255,.06);
-    --wrap:900px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    color:var(--text);
-    background:
-      radial-gradient(1400px 900px at -20% -10%, #20172a 0, transparent 60%),
-      radial-gradient(1200px 700px at 120% 0%, #112230 0, transparent 55%),
-      var(--bg);
-    min-height:100svh;display:flex;align-items:center;justify-content:center;padding:12px;
-    overflow-x:hidden;
-    background-attachment: fixed;
-    --glowX:50%; --glowY:40%; --glowC:rgba(34,197,94,.18);
-  }
-  body::after{
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
-    background: radial-gradient(500px 320px at var(--glowX) var(--glowY), var(--glowC), transparent 70%);
-    filter: blur(28px);
-  }
-  .wrap{width:min(var(--wrap),100%); animation:fadeUp .6s ease-out both}
-  @keyframes fadeUp{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
 
-  /* CAPA (envelope) */
-  .capa{
-    position:relative;background:linear-gradient(180deg,#63e2a8,#22c55e);
-    border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
-    padding:18px;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;
-  }
-  .capa.hide{ display:none !important; }
-  .flap{
-    position:absolute;left:0;right:0;top:0;height:50%;
-    background:linear-gradient(180deg,#c9f6df,#7ee0af);
-    clip-path:polygon(0 0,100% 0,50% 100%);
-    transform-origin:50% 0;transition:transform .9s cubic-bezier(.22,1,.36,1);
-    box-shadow:0 10px 26px rgba(0,0,0,.35);
-  }
-  .selo{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
-    background:#e7ffe7;color:#096d36;border-radius:999px;padding:8px 14px;font-weight:800;letter-spacing:.04em;box-shadow:0 6px 18px rgba(0,0,0,.25)}
-  .cta-heart{width:130px;height:118px;background:transparent;border:none;cursor:pointer;padding:0;
-    display:block;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));animation:pulse 1.8s ease-in-out infinite}
-  .cta-heart svg{width:100%;height:100%;display:block}
-  .cta-heart .label{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;font-weight:900;font-size:1.02rem;line-height:1.05}
-  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-  .beat{animation:beat .95s ease-in-out infinite !important}
-  @keyframes beat{0%{transform:scale(1)}20%{transform:scale(1.08)}40%{transform:scale(1)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
-
-  .fallback-open{position:fixed;left:10px;bottom:10px;z-index:50;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
-
-  /* CARTA (mobile-first, altura fixa) */
-  .carta{
-    display:none !important;
-    height:86svh; max-height:720px;
-    background:linear-gradient(180deg,rgba(34,197,94,.10),transparent 30%),var(--card);
-    border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.35);
-    padding:10px; grid-template-rows:1fr auto; gap:10px;
-  }
-  .carta.show{ display:grid !important; }
-  @media (min-width:780px){
-    .carta{ grid-template-columns: 1fr 360px; grid-template-rows: none; height:auto; }
-  }
-
-  /* Folha pautada + rolagem interna */
-  .letter{
-    position:relative;background:var(--paper);color:var(--ink);
-    border-radius:16px;padding:12px 14px 14px 22px;box-shadow:inset 0 1px 0 rgba(0,0,0,.06);
-    background-image:
-      repeating-linear-gradient(#0000,#0000 26px,var(--line) 27px,#0000 28px),
-      linear-gradient(90deg,#f7d5d5 0 16px,#0000 16px);
-    background-size:auto,auto;
-    overflow:auto; max-height:100%;
-    scroll-behavior:smooth; /* smooth para os saltos de linha */
-  }
-  .letter::before{
-    content:"";position:absolute;left:6px;top:18px;bottom:18px;width:6px;border-radius:999px;
-    background:radial-gradient(circle at 50% 10%, #d9d9d9 0 3px,#0000 3px),
-               radial-gradient(circle at 50% 40%, #d9d9d9 0 3px,#0000 3px),
-               radial-gradient(circle at 50% 70%, #d9d9d9 0 3px,#0000 3px),
-               radial-gradient(circle at 50% 100%,#d9d9d9 0 3px,#0000 3px);
-  }
-  .letter h2{margin:0 0 6px;color:#0a7a3b;font-size:1.08rem}
-  .controls-line{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-  .mini{background:#e8f9ef;border:1px solid #c9f6df;color:#0a7a3b;font-weight:800;border-radius:10px;padding:6px 10px;cursor:pointer}
-  .tline{margin:0 0 8px;line-height:1.7;font-size:.98rem;opacity:0;min-height:1.4em}
-  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.9rem;color:#555;opacity:0}
-  .pill{background:#e6ffe8;border:1px solid #c9f6df;border-radius:999px;padding:6px 10px}
-
-  /* Lápis animado enquanto escreve */
-  .pencil{position:absolute; right:14px; bottom:10px; width:34px; height:34px; opacity:0; pointer-events:none}
-  .writing .pencil{opacity:1; animation:scribble 1.4s ease-in-out infinite}
-  @keyframes scribble{0%{transform:translate(0,0) rotate(-12deg)}50%{transform:translate(-8px,-4px) rotate(8deg)}100%{transform:translate(0,0) rotate(-12deg)}}
-
-  .media{ display:flex; flex-direction:column; gap:8px; }
-  .hero{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#111;cursor:zoom-in}
-  .hero img{width:100%;height:auto;display:block;object-fit:contain;filter:saturate(1.05) contrast(1.05)}
-  @media (max-width:779px){ .hero{max-height:22vh} .hero img{max-height:22vh} }
-
-  .hero.glow{box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 26px rgba(255,255,255,.13)}
-  .hero.glow::after{
-    content:'';position:absolute;inset:-2px;padding:2px;border-radius:16px;
-    background:conic-gradient(#22c55e,#e11d48,#86efac,#a7f3d0,#22c55e);
-    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;
-    animation:ring 3.6s linear infinite;
-  }
-  @keyframes ring{to{transform:rotate(360deg)}}
-
-  .player{background:var(--glass);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(6px)}
-  .diskrow{display:flex;align-items:center;gap:10px}
-  .cd{width:52px;height:52px;border-radius:50%;
-    background:radial-gradient(circle at 50% 50%,#111 0 7px,transparent 7px),
-      conic-gradient(#e5e7eb 0 10%,#cbd5e1 10% 20%,#9ca3af 20% 30%,#cbd5e1 30% 40%,
-                     #e5e7eb 40% 50%,#cbd5e1 50% 60%,#9ca3af 60% 70%,#cbd5e1 70% 80%,#e5e7eb 80% 100%);
-    box-shadow:inset 0 0 10px rgba(0,0,0,.35),0 2px 10px rgba(0,0,0,.25);position:relative;overflow:hidden}
-  .cd::before{content:"";position:absolute;left:50%;top:50%;width:20px;height:20px;transform:translate(-50%,-50%);border-radius:50%;
-    background:radial-gradient(circle at 60% 40%,#22c55e,#16a34a 60%);box-shadow:inset 0 0 4px rgba(0,0,0,.35)}
-  .cd::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:10px;transform:translateX(-50%);border-radius:2px;background:#e11d48}
-  .spin{animation:spin 3.5s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-  .title{font-weight:800;font-size:.95rem}
-  .viz{width:100%;height:44px;border-radius:10px;background:rgba(255,255,255,.05)}
-  .controls{display:flex;align-items:center;gap:8px}
-  .play{appearance:none;border:none;cursor:pointer;border-radius:10px;padding:8px 11px;background:var(--accent);color:#06290d;font-weight:900;box-shadow:0 6px 18px rgba(0,0,0,.25)}
-  .time{font-size:.84rem;color:#e9f7ee;min-width:72px;text-align:right}
-  .bar{position:relative;height:10px;flex:1;background:rgba(255,255,255,.15);border-radius:999px;cursor:pointer;overflow:hidden}
-  .bar>i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#34d399,#22c55e,#86efac)}
-  .vol{width:80px;accent-color:#86efac}
-  .replay{display:none;margin-top:4px;align-self:flex-start;background:#10b981;color:#06290d;font-weight:900;border:none;padding:8px 12px;border-radius:10px}
-
-  footer{text-align:center;color:#bdbdcc;font-size:.82rem;margin-top:10px}
-
-  .heart{position:fixed;bottom:-20px;font-size:20px;opacity:.85;animation:float 6s linear forwards;pointer-events:none}
-  @keyframes float{to{transform:translateY(-120vh) translateX(var(--x));opacity:0}}
-  .sparkle{position:fixed;width:6px;height:6px;border-radius:50%;background:radial-gradient(#fff,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.35);filter:hue-rotate(var(--h,0deg));animation:spark 2.2s linear forwards}
-  @keyframes spark{from{transform:translateY(0);opacity:1}to{transform:translateY(-120px);opacity:0}}
-  .petal{position:fixed;top:-20px;font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));animation:fall var(--d) linear forwards;pointer-events:none}
-  @keyframes fall{to{transform:translate(var(--tx),105vh) rotate(540deg);opacity:.9}}
-
-  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1000}
-  .lightbox img{max-width:95vw;max-height:95vh;border-radius:14px}
-  .lightbox.show{display:flex}
-  .lightbox .close{position:fixed;top:16px;right:20px;background:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}
-
-  :root{--wrap:900px}
-  @media (max-width:520px){ :root{--wrap:440px} .cta-heart{width:120px;height:110px} .viz{height:40px} }
+:root{
+  --bg:#0d1020; --paper:#f5eddc; --ink:#3a2a1c; --ink2:#6b5642; --green:#2f6b4a; --gold:#e3b865; --gold2:#f3d48f;
+  --leather1:#24573f; --leather2:#123224; --rose:#c4476a;
+  --serif:"Cormorant Garamond", Georgia, serif; --script:"Dancing Script", cursive; --title:"Great Vibes", cursive;
+  --sans:"Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0d1020; } }
+:root[data-theme="dark"]{ --bg:#0d1020; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%; margin:0; overflow:hidden; color:#f6eedd; font-family:var(--sans); -webkit-font-smoothing:antialiased; user-select:none; -webkit-user-select:none;
+  background:radial-gradient(120% 70% at 50% -10%, rgba(227,184,101,.22), transparent 60%), radial-gradient(90% 60% at 50% 110%, rgba(47,107,74,.35), transparent 70%), var(--bg)}
+.app{height:100%; display:grid; grid-template-rows:1fr auto; place-items:center; padding:14px 12px 10px}
+/* o livro */
+#stage{--bw:min(92vw, calc((100svh - 110px) * .7)); width:var(--bw); height:calc(var(--bw) / .7); position:relative; perspective:2200px; touch-action:pan-y}
+#book{position:absolute; inset:0; transform-style:preserve-3d}
+#book::before{content:""; position:absolute; inset:2px -6px -4px 2px; border-radius:4px 10px 10px 4px; background:repeating-linear-gradient(90deg,#e8dcc4 0 1px,#d9cbb0 1px 2px); box-shadow:0 18px 40px rgba(0,0,0,.55)}
+.page{position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d; transition:transform .9s cubic-bezier(.45,.05,.25,1)}
+.page.turned{transform:rotateY(-180deg)}
+.page.dragging{transition:none}
+.face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:3px 8px 8px 3px; overflow:hidden}
+.face.back{transform:rotateY(180deg); background:#efe5d0}
+.face.back::after,.face.front::after{content:""; position:absolute; inset:0; pointer-events:none; background:rgba(40,25,10,var(--shade,0))}
+.paper{background:
+  radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.35), transparent 60%),
+  radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(150,110,60,.28) 100%), var(--paper); color:var(--ink)}
+.paper::before{content:""; position:absolute; left:0; top:0; bottom:0; width:9%; background:linear-gradient(90deg, rgba(90,60,30,.25), transparent); pointer-events:none}
+.leather{background:linear-gradient(135deg, var(--leather1), var(--leather2)); color:var(--gold2)}
+.frame{position:absolute; inset:5%; border:2px solid var(--gold); border-radius:4px}
+.frame::after{content:""; position:absolute; inset:6px; border:1px solid rgba(227,184,101,.7); border-radius:2px}
+.inner{position:absolute; inset:0; padding:12% 11% 10%; display:flex; flex-direction:column; align-items:center; text-align:center}
+.cover .inner{justify-content:center; gap:4%}
+.cover h1{font-family:var(--title); font-weight:400; margin:0; font-size:calc(var(--bw) * .15); line-height:1.05; color:var(--gold2); text-shadow:0 0 22px rgba(227,184,101,.35)}
+.cover .orn{width:46%; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); position:relative}
+.cover .orn::after{content:""; position:absolute; left:50%; top:50%; width:8px; height:8px; border:1px solid var(--gold); transform:translate(-50%,-50%) rotate(45deg); background:var(--leather2)}
+.cover p{margin:0; font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .055); color:rgba(243,212,143,.9)}
+.hint{margin-top:9%; font-family:var(--sans); font-size:calc(var(--bw) * .036); color:rgba(243,212,143,.75); animation:nudge 2.4s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-10px)}}
+.flower{position:absolute; pointer-events:none; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.num{position:absolute; bottom:4.5%; left:0; right:0; text-align:center; font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .035); color:rgba(58,42,28,.55)}
+.topo{width:40%; height:1px; background:rgba(168,122,44,.6); margin:0 auto 8%; position:relative}
+.topo::after{content:""; position:absolute; left:50%; top:50%; width:7px; height:7px; border:1px solid rgba(168,122,44,.8); transform:translate(-50%,-50%) rotate(45deg); background:var(--paper)}
+.ded{font-family:var(--script); font-size:calc(var(--bw) * .062); line-height:1.35; color:var(--ink); margin:0 0 9%}
+.ded b{color:var(--green); font-weight:700}
+h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); margin:0 0 5%; color:var(--ink); letter-spacing:.02em}
+.toc{list-style:none; margin:0; padding:0; width:100%; text-align:left}
+.toc button{all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:baseline; gap:6px; width:100%; padding:3.2% 1%; font-family:var(--serif); font-size:calc(var(--bw) * .05); color:var(--ink); border-radius:6px}
+.toc button:focus-visible{outline:2px solid var(--green); outline-offset:2px}
+.toc .cap{font-weight:600; color:var(--green); white-space:nowrap}
+.toc .dots{flex:1; border-bottom:2px dotted rgba(58,42,28,.35); transform:translateY(-4px); min-width:12px}
+.toc .pg{font-style:italic}
+.chapter .inner{justify-content:center; gap:3.5%}
+.numbers .inner{justify-content:flex-start; gap:2%; padding-top:9%}
+.kicker{font-family:var(--serif); font-size:calc(var(--bw) * .045); letter-spacing:.3em; text-transform:uppercase; color:var(--ink2)}
+.ctitle{font-family:var(--title); font-size:calc(var(--bw) * .12); line-height:1.1; color:var(--green); margin:0}
+.ctext{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .05); color:var(--ink2); margin:0; max-width:90%}
+.cta{all:unset; cursor:pointer; margin-top:4%; display:inline-flex; align-items:center; gap:10px; padding:3.4% 7%; border-radius:999px; background:var(--green); color:#f6eedd; font-family:var(--sans); font-weight:600; font-size:calc(var(--bw) * .045); box-shadow:0 8px 18px rgba(47,107,74,.35)}
+.cta:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
+.ctitle.small{font-size:calc(var(--bw) * .085)}
+.big{width:100%; background:rgba(47,107,74,.08); border:1px solid rgba(47,107,74,.25); border-radius:12px; padding:3.5% 4%; margin-top:1%}
+.big .lbl{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .045); color:var(--ink2)}
+.big .yrs{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .13); line-height:1; color:var(--green); font-variant-numeric:tabular-nums}
+.big .md{font-family:var(--serif); font-size:calc(var(--bw) * .05); color:var(--ink)}
+.big .hms{font-family:var(--sans); font-size:calc(var(--bw) * .038); color:var(--rose); font-variant-numeric:tabular-nums; margin-top:1%}
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:3%; width:100%; margin-top:3%}
+.stats div{background:rgba(255,255,255,.45); border:1px solid rgba(168,122,44,.3); border-radius:10px; padding:4% 3%; display:flex; flex-direction:column; gap:2px}
+.stats b{white-space:nowrap; font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .048); color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.1}
+.stats span{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .035); color:var(--ink2); line-height:1.15}
+.note{font-family:var(--sans); font-size:calc(var(--bw) * .03); color:var(--rose); margin:2% 0 0}
+.flowers .inner{justify-content:flex-start; gap:1.5%; padding-top:9%}
+.gsub{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .042); color:var(--ink2); margin:0}
+.garden{position:absolute; left:6%; right:6%; top:27%; bottom:9%}
+.garden::after{content:""; position:absolute; left:-4%; right:-4%; bottom:-2%; height:9%; background:radial-gradient(ellipse at 50% 100%, rgba(79,143,95,.35), transparent 70%); pointer-events:none}
+.bud{all:unset; position:absolute; cursor:pointer; width:calc(var(--bw) * .115); height:calc(var(--bw) * .115); transform:translate(-50%,-50%) scale(var(--s,1)); display:grid; place-items:center; -webkit-tap-highlight-color:transparent}
+.bud::after{content:""; position:absolute; left:50%; top:62%; width:2px; height:calc(var(--bw) * var(--stem,.08)); background:#4f8f5f; transform:translateX(-50%); z-index:-1}
+.bud img{width:62%; height:auto; transition:transform .7s cubic-bezier(.3,1.6,.5,1), opacity .4s; transform-origin:50% 80%; animation:sway 3.6s ease-in-out infinite; animation-delay:var(--d,0s)}
+.bud .fl{position:absolute; width:118%; transform:scale(0) rotate(-40deg); opacity:0}
+.bud.open img.bd{transform:scale(0); opacity:0}
+.bud.open .fl{transform:scale(1) rotate(0); opacity:1}
+.bud:focus-visible{outline:2px solid var(--green); outline-offset:2px; border-radius:50%}
+@keyframes sway{0%,100%{rotate:-4deg}50%{rotate:4deg}}
+.reason{position:absolute; left:9%; right:9%; top:22%; z-index:5; background:#fffdf7; border-radius:12px; box-shadow:0 14px 34px rgba(0,0,0,.28); padding:7% 7% 6%; text-align:center; cursor:pointer; animation:pop .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.6); opacity:0}to{transform:none; opacity:1}}
+.reason img{width:30%; height:auto; margin:-20% auto 2%; display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.rnum{font-family:var(--serif); font-size:calc(var(--bw) * .04); letter-spacing:.25em; text-transform:uppercase; color:var(--ink2)}
+.rtext{font-family:var(--script); font-size:calc(var(--bw) * .068); line-height:1.3; color:var(--ink); margin:3% 0 4%}
+.rtext.done{color:var(--green)}
+.reason small{font-family:var(--sans); font-size:calc(var(--bw) * .03); color:rgba(58,42,28,.5)}
+.write .inner{justify-content:flex-start; gap:2%; padding-top:9%}
+.lined{width:100%; flex:1; min-height:0; max-height:52%; resize:none; border:0; outline:0; background:transparent; padding:0 2%;
+  font-family:var(--script); font-size:calc(var(--bw) * .06); line-height:calc(var(--bw) * .085); color:var(--ink);
+  background-image:repeating-linear-gradient(transparent 0, transparent calc(var(--bw) * .085 - 1px), rgba(47,107,74,.35) calc(var(--bw) * .085 - 1px), rgba(47,107,74,.35) calc(var(--bw) * .085)); background-attachment:local;
+  user-select:text; -webkit-user-select:text}
+.lined::placeholder{color:rgba(58,42,28,.45); font-style:italic}
+.lined:focus-visible{box-shadow:0 0 0 2px rgba(47,107,74,.35); border-radius:6px}
+.write .cta{margin-top:2%}
+.soon{font-family:var(--script); font-size:calc(var(--bw) * .06); color:var(--rose)}
+.quill{width:24%; height:auto}
+.backcover .inner{justify-content:center; gap:5%}
+.backcover p{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .06); margin:0; color:var(--gold2)}
+.backcover small{font-family:var(--script); font-size:calc(var(--bw) * .055); color:rgba(243,212,143,.85)}
+/* barra de navegação */
+.nav{display:flex; align-items:center; gap:18px; padding-top:10px}
+.nav button{all:unset; cursor:pointer; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:rgba(246,238,221,.1); color:#f6eedd; font-size:1.4rem}
+.nav button:disabled{opacity:.3; cursor:default}
+.nav button:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+.nav span{font-family:var(--serif); font-style:italic; font-size:1.05rem; min-width:84px; text-align:center; color:rgba(246,238,221,.75)}
+/* capítulo 1: o clipe em tela cheia por cima do livro */
+#clipLayer{position:fixed; inset:0; z-index:20; background:#0d1020; opacity:0; transition:opacity .6s}
+#clipLayer.show{opacity:1}
+#clipLayer iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+#closeClip{position:absolute; z-index:2; right:12px; top:calc(10px + env(safe-area-inset-top,0px)); border:0; cursor:pointer; border-radius:999px; padding:9px 14px; background:rgba(0,0,0,.45); color:#f6eedd; font:600 .9rem var(--sans)}
+#closeClip:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+[hidden]{display:none !important}
+.err{position:fixed; left:12px; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:30; background:#7a1f2b; color:#fff; padding:12px 14px; border-radius:12px; font-size:.9rem; line-height:1.4}
+@media (prefers-reduced-motion: reduce){ .page{transition-duration:.01s} .hint{animation:none} }
 </style>
 </head>
 <body>
-<button id="fallback" class="fallback-open" aria-controls="carta">Abrir carta</button>
-
-<div class="wrap">
-  <!-- CAPA -->
-  <section id="capa" class="capa" aria-label="Envelope">
-    <div class="flap" id="flap"></div>
-    <div class="selo">💌</div>
-    <button id="abrir" class="cta-heart" aria-controls="carta" aria-label="Abrir carta">
-      <svg viewBox="0 0 120 110" role="img" aria-hidden="true">
-        <path d="M60 100 C 20 70, 10 55, 10 40 C 10 25, 22 15, 36 15 C 48 15, 55 22, 60 30 C 65 22, 72 15, 84 15 C 98 15, 110 25, 110 40 C 110 55, 100 70, 60 100 Z" fill="#16a34a" stroke="#e11d48" stroke-width="6"/>
-      </svg>
-      <span class="label">Abrir<br/>carta</span>
-    </button>
-  </section>
-
-  <!-- CARTA -->
-  <section id="carta" class="carta" aria-label="Carta de aniversário">
-    <div class="letter" id="letter">
-      <h2>Para Jéssica ❤️</h2>
-      <div class="controls-line">
-        <button id="speed" class="mini" type="button">⏩ Acelerar texto</button>
-        <button id="restart" class="mini" type="button">↺ Rever do início</button>
-      </div>
-
-      <p class="tline" data-typer="Hoje é o seu aniversário, mas o presente somos nós. Desde o primeiro dia em que te vi, eu me apaixonei por você."></p>
-      <p class="tline" data-typer="Quero que saiba: eu estarei sempre ao seu lado. Estamos há 16 anos juntos, 14 anos de casados, e depois de 10 anos Deus nos presenteou com a Alê (Alexandra), que trouxe tantas alegrias e nos ensina a sermos melhores a cada dia."></p>
-      <p class="tline" data-typer="Que este dia seja tão especial quanto você é em nossas vidas. Obrigado por ser essa mulher maravilhosa, por todo o carinho e pelas suas orações."></p>
-      <p class="tline" data-typer="Que o Senhor ouça cada uma delas — você é 'amiga de Deus' — e que todos os seus sonhos, projetos e desejos se realizem."></p>
-      <p class="tline" data-typer="Te amo todos os dias!!!"></p>
-
-      <div class="meta" id="meta">
-        <span class="pill">Para: <strong>Jéssica</strong></span>
-        <span class="pill">De: <strong>Felipe Palhares</strong></span>
-      </div>
-
-      <!-- lápis -->
-      <svg class="pencil" viewBox="0 0 64 64" aria-hidden="true">
-        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs>
-        <path d="M8 52 L56 8" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
-        <circle cx="56" cy="8" r="6" fill="#111"/>
-      </svg>
-    </div>
-
-    <div class="media">
-      <figure class="hero" id="zoom"><img src="assets/imagem_cartao.png" alt="Imagem do cartão"/></figure>
-
-      <aside class="player" aria-label="Música do cartão">
-        <div class="diskrow">
-          <div id="cd" class="cd" aria-hidden="true"></div>
-          <div class="title">Todo dia, até morrer</div>
+<div class="err" id="err" role="alert" hidden></div>
+<div class="app">
+  <div id="stage">
+    <div id="book">
+      <!-- 0: capa -->
+      <section class="page" aria-label="Capa">
+        <div class="face front leather cover"><div class="frame"></div>
+          <div class="inner">
+            <p>Feliz aniversário</p>
+            <h1>O livro<br>da Jéssica</h1>
+            <div class="orn"></div>
+            <p>2026</p>
+            <div class="hint">arraste ou toque › para abrir</div>
+          </div>
         </div>
-        <canvas id="viz" class="viz" aria-hidden="true"></canvas>
-        <div class="controls">
-          <button id="btnPlay" class="play">▶ Tocar</button>
-          <div class="bar" id="seek" aria-label="Barra de progresso"><i id="fill"></i></div>
-          <div class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></div>
-          <input id="vol" class="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+        <div class="face back"></div>
+      </section>
+      <!-- 1: dedicatória e sumário -->
+      <section class="page" aria-label="Dedicatória e sumário">
+        <div class="face front paper"><div class="inner">
+          <div class="topo"></div>
+          <p class="ded">Para você, que ama livros,<br>escrevi <b>o nosso</b>.</p>
+          <h2>Sumário</h2>
+          <ul class="toc">
+            <li><button data-go="2"><span class="cap">I</span> Foi Deus quem escreveu <span class="dots"></span><span class="pg">3</span></button></li>
+            <li><button data-go="3"><span class="cap">II</span> A sua vida em números <span class="dots"></span><span class="pg">4</span></button></li>
+            <li><button data-go="4"><span class="cap">III</span> 35 flores, 35 motivos <span class="dots"></span><span class="pg">5</span></button></li>
+            <li><button data-go="5"><span class="cap">IV</span> A próxima página <span class="dots"></span><span class="pg">6</span></button></li>
+          </ul>
+        </div><div class="num">— 2 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 2: capítulo 1 -->
+      <section class="page chapter" aria-label="Capítulo 1">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo I</div>
+          <svg class="quill" viewBox="0 0 120 120" aria-hidden="true"><path d="M20 100 C 40 70, 70 35, 104 14 C 92 46, 66 78, 30 96 Z" fill="#fffaf0" stroke="#3a2a1c" stroke-width="2.5"/><path d="M20 100 L 96 22" stroke="#e3b865" stroke-width="2"/><path d="M12 108 l 10 -10" stroke="#3a2a1c" stroke-width="3" stroke-linecap="round"/><path d="M18 112 q 20 -2 40 -10" fill="none" stroke="#2f6b4a" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <h3 class="ctitle">Foi Deus quem escreveu</h3>
+          <p class="ctext">Uma música e um clipe, feitos para contar a nossa história.</p>
+          <button class="cta" id="openClip" type="button">▶ Abrir o capítulo</button>
+        </div><div class="num">— 3 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 3: capítulo 2 -->
+      <section class="page chapter numbers" aria-label="Capítulo 2">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo II</div>
+          <h3 class="ctitle small">A sua vida em números</h3>
+          <div class="big">
+            <div class="lbl" id="nLbl">Você tem</div>
+            <div class="yrs"><span id="nYears">0</span> anos</div>
+            <div class="md" id="nMD">0 meses e 0 dias</div>
+            <div class="hms" id="nHMS">0h 00min 00s</div>
+          </div>
+          <div class="stats">
+            <div><b id="nDays">0</b><span>dias de vida</span></div>
+            <div><b id="nMoons">0</b><span>luas cheias que você já viu</span></div>
+            <div><b id="nBeats">0</b><span>batidas do seu coração</span></div>
+            <div><b id="nBreath">0</b><span>respirações</span></div>
+          </div>
+          <p class="note" id="nNote" hidden></p>
+        </div><div class="num">— 4 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 4: capítulo 3 -->
+      <section class="page chapter flowers" aria-label="Capítulo 3">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo III</div>
+          <h3 class="ctitle small">35 flores, 35 motivos</h3>
+          <p class="gsub" id="gCount">Toque em cada botão para ele florescer</p>
         </div>
-        <button id="replay" class="replay">🔁 Ouvir novamente</button>
-        <audio id="audio" preload="auto">
-          <source src="assets/musica.mp3" type="audio/mpeg">
-        </audio>
-      </aside>
+        <div class="garden" id="garden" aria-label="Jardim com 35 botões de flor"></div>
+        <div class="reason" id="reason" hidden role="dialog" aria-live="polite">
+          <img id="rImg" alt="">
+          <div class="rnum" id="rNum"></div>
+          <p class="rtext" id="rText"></p>
+          <small>toque para continuar</small>
+        </div>
+        <div style="display:none">
+        </div><div class="num">— 5 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 5: capítulo 4 -->
+      <section class="page chapter write" aria-label="Capítulo 4">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo IV</div>
+          <h3 class="ctitle small">A próxima página</h3>
+          <p class="gsub">Esta página é sua. Escreva o que quiser — eu vou ler.</p>
+          <textarea id="nextPage" class="lined" maxlength="1200" aria-label="Escreva a próxima página" placeholder="continua…"></textarea>
+          <button class="cta" id="sendWA" type="button">Enviar para o Felipe 💚</button>
+          <p class="note" id="waNote" hidden></p>
+        </div><div class="num">— 6 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 6: contracapa -->
+      <section class="page" aria-label="Contracapa">
+        <div class="face front leather backcover"><div class="frame"></div>
+          <div class="inner"><p>e a história continua…</p><small>com amor, Felipe</small></div>
+        </div>
+        <div class="face back"></div>
+      </section>
     </div>
-  </section>
-
-  <footer>Feito com amor ❤️</footer>
+  </div>
+  <nav class="nav" aria-label="Folhear o livro">
+    <button id="prev" aria-label="Página anterior">‹</button>
+    <span id="pgLabel">Capa</span>
+    <button id="next" aria-label="Próxima página">›</button>
+  </nav>
 </div>
-
-<div id="lightbox" class="lightbox" aria-hidden="true">
-  <button class="close" id="closeLb" aria-label="Fechar imagem">Fechar ✕</button>
-  <img src="assets/imagem_cartao.png" alt="Imagem em tela cheia">
+<div id="clipLayer" hidden>
+  <button id="closeClip" type="button">✕ Fechar</button>
 </div>
 
 <script>
-  const $ = s => document.querySelector(s);
+(function(){
+  var errBox = document.getElementById('err');
+  function showError(m){ errBox.textContent = m; errBox.hidden = false; }
+  window.addEventListener('error', function(e){ showError('Erro na página: ' + (e.message || e)); });
 
-  const capa=$('#capa'), carta=$('#carta'), abrir=$('#abrir'), flap=$('#flap'), fallback=$('#fallback');
-  const letter=$('#letter'), speedBtn=$('#speed'), restartBtn=$('#restart');
-  const lines=[...document.querySelectorAll('.tline')];
-  const meta=$('#meta');
-  const hero=$('#zoom'), btn=$('#btnPlay'), audio=$('#audio'), cd=$('#cd'),
-        vizCanvas=$('#viz'), cur=$('#cur'), dur=$('#dur'), seek=$('#seek'), fill=$('#fill'), vol=$('#vol'), replay=$('#replay');
+  var pages = [].slice.call(document.querySelectorAll('.page'));
+  var N = pages.length, cur = 0; // cur = página que está à vista
+  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Contracapa'];
+  var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), label = document.getElementById('pgLabel');
 
-  // Estado inicial: só envelope visível
-  function initState(){ carta.classList.remove('show'); capa.classList.remove('hide'); }
-  initState();
-
-  // ====== Máquina de escrever + AUTO-SCROLL ======
-  let cps=8; // caracteres por segundo (calmo)
-  function scrollToBottom(smooth=false){
-    if(smooth && 'scrollTo' in letter){
-      letter.scrollTo({ top: letter.scrollHeight, behavior:'smooth' });
-    } else {
-      letter.scrollTop = letter.scrollHeight;
-    }
-  }
-  async function typeLine(el,text){
-    letter.classList.add('writing');
-    el.style.opacity=1; el.textContent="";
-    let i=0, delay=1000/cps;
-    await new Promise(resolve=>{
-      const iv=setInterval(()=>{
-        el.textContent+=text[i++]||"";
-        // auto-scroll a cada caractere (rápido e estável)
-        letter.scrollTop = letter.scrollHeight;
-        if(i>text.length){ clearInterval(iv); resolve(); }
-      }, delay);
+  // empilhamento: a página da frente fica por cima; as já viradas somem depois de virar
+  function stack(){
+    pages.forEach(function(p, i){
+      p.style.zIndex = p.classList.contains('turned') ? i : N - i;
     });
-    // ao terminar a linha, garante um smooth até o fim
-    scrollToBottom(true);
+    prevB.disabled = cur === 0; nextB.disabled = cur === N - 1;
+    label.textContent = LABELS[cur] || '';
+    pages.forEach(function(p, i){ p.setAttribute('aria-hidden', i === cur ? 'false' : 'true'); p.inert = i !== cur; });
   }
-  async function runTypewriter(){
-    meta.style.opacity=0;
-    letter.scrollTop = 0; // começa do topo
-    for(const el of lines){
-      await typeLine(el, el.dataset.typer);
-      await new Promise(r=>setTimeout(r,220));
+  function hideLater(p){ setTimeout(function(){ if(p.classList.contains('turned')) p.style.visibility = 'hidden'; }, 950); }
+  function goNext(){ if(cur >= N - 1) return; var p = pages[cur]; p.classList.remove('dragging'); p.style.transform = ''; p.classList.add('turned'); cur++; stack(); hideLater(p); shade(p, 0); }
+  function goPrev(){ if(cur <= 0) return; var p = pages[cur - 1]; p.style.visibility = 'visible'; p.classList.remove('dragging'); p.style.transform = ''; void p.offsetWidth; p.classList.remove('turned'); cur--; stack(); shade(p, 0); }
+  function goTo(k){ // sumário: folheia rapidinho até o capítulo
+    var step = function(){ if(cur < k){ goNext(); setTimeout(step, 260); } else if(cur > k){ goPrev(); setTimeout(step, 260); } };
+    step();
+  }
+  prevB.addEventListener('click', goPrev); nextB.addEventListener('click', goNext);
+  document.addEventListener('keydown', function(e){ if(!clipLayer.hidden || e.target.tagName === 'TEXTAREA') return; if(e.key === 'ArrowRight') goNext(); if(e.key === 'ArrowLeft') goPrev(); });
+  [].forEach.call(document.querySelectorAll('[data-go]'), function(b){ b.addEventListener('click', function(){ goTo(+b.dataset.go); }); });
+
+  // virar a página arrastando o dedo
+  function shade(p, k){ p.style.setProperty('--shade', (k*.35).toFixed(3)); }
+  var stage = document.getElementById('stage'), drag = null, justDragged = false;
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target.closest('button,textarea,.reason')) return;
+    drag = {x:e.clientX, y:e.clientY, w:stage.clientWidth, p:null, dir:0, a:0}; justDragged = false;
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!drag) return;
+    var dx = e.clientX - drag.x;
+    if(!drag.dir){
+      if(Math.abs(dx) < 8) return;
+      if(dx < 0 && cur < N - 1){ drag.dir = -1; drag.p = pages[cur]; }
+      else if(dx > 0 && cur > 0){ drag.dir = 1; drag.p = pages[cur - 1]; drag.p.style.visibility = 'visible'; }
+      else { drag = null; return; }
+      drag.p.classList.add('dragging'); justDragged = true;
     }
-    letter.classList.remove('writing');
-    meta.style.transition="opacity .5s"; meta.style.opacity=1;
-    fireworks();
-  }
-  function resetTypewriter(){
-    lines.forEach(p=>{ p.textContent=''; p.style.opacity=0; });
-    runTypewriter();
-  }
-  speedBtn.addEventListener('click',()=>{
-    cps = (cps>=16)?8:(cps+4);
-    speedBtn.textContent = (cps>8? '⏸ Desacelerar':'⏩ Acelerar texto');
+    var k = Math.min(1, Math.max(0, Math.abs(dx)/(drag.w*.9)));
+    drag.a = drag.dir < 0 ? -180*k : -180*(1 - k);
+    drag.p.style.transform = 'rotateY(' + drag.a + 'deg)';
+    shade(drag.p, Math.sin(Math.abs(drag.a)*Math.PI/180));
   });
-  restartBtn.addEventListener('click', resetTypewriter);
-
-  // ====== Player + Visual ======
-  let audioCtx, analyser, dataArray, peaks=[], smoothed=[];
-  const BARS=32, CHORUS_TIME=60, CHORUS_LEN=14;
-  function ensureAudioGraph(){
-    if(audioCtx) return;
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    const src=audioCtx.createMediaElementSource(audio);
-    analyser=audioCtx.createAnalyser();
-    analyser.fftSize=512; analyser.minDecibels=-90; analyser.maxDecibels=-10; analyser.smoothingTimeConstant=.65;
-    dataArray=new Uint8Array(analyser.frequencyBinCount);
-    peaks=Array(BARS).fill(0); smoothed=Array(BARS).fill(0);
-    src.connect(analyser); analyser.connect(audioCtx.destination);
+  function endDrag(){
+    if(!drag) return; var d = drag; drag = null; if(!d.p) return;
+    d.p.classList.remove('dragging');
+    if(d.dir < 0){ if(d.a < -60) goNext(); else { d.p.style.transform = ''; shade(d.p, 0); } }
+    else { if(d.a > -120) goPrev(); else { d.p.style.transform = ''; shade(d.p, 0); hideLater(d.p); } }
   }
-  function fmt(t){ if(!isFinite(t)) return "0:00"; const m=Math.floor(t/60), s=Math.floor(t%60); return m+":"+(s<10?"0":"")+s; }
-  audio.addEventListener('loadedmetadata',()=>{ dur.textContent=fmt(audio.duration); });
-  audio.addEventListener('timeupdate',()=>{
-    cur.textContent=fmt(audio.currentTime);
-    fill.style.width=((audio.currentTime/(audio.duration||1))*100)+"%";
-    const t=audio.currentTime;
-    hero.classList.toggle('glow', t>=CHORUS_TIME && t<=CHORUS_TIME+CHORUS_LEN);
-    const bass = getBandEnergy(0,4);
-    document.body.style.setProperty('--glowX', `${50 + Math.sin(t*.7)*20}%`);
-    document.body.style.setProperty('--glowY', `${40 + Math.cos(t*.6)*15}%`);
-    document.body.style.setProperty('--glowC', `rgba(34,197,94, ${.12 + .35*bass})`);
+  stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+  // toque simples: lado direito avança, lado esquerdo volta
+  stage.addEventListener('click', function(e){
+    if(e.target.closest('button,textarea,.reason') || justDragged){ justDragged = false; return; }
+    var r = stage.getBoundingClientRect(); if(e.clientX - r.left > r.width*.5) goNext(); else goPrev();
   });
-  btn.addEventListener('click', async ()=>{
-    try{
-      if(audio.paused){ ensureAudioGraph(); await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }
-      else{ audio.pause(); btn.textContent='▶ Tocar'; cd.classList.remove('spin'); abrir.classList.remove('beat'); hero.classList.remove('glow'); }
-    }catch(e){}
+
+  // flores desenhadas no código (as mesmas do clipe), usadas como enfeite
+  function flowerURL(kind){
+    var c = document.createElement('canvas'); c.width = c.height = 160; var g = c.getContext('2d'); g.translate(80,80);
+    function petals(n, rx, ry, dist, c1, c2, rot){ for(var i=0;i<n;i++){ g.save(); g.rotate(i/n*Math.PI*2 + (rot||0)); var gr = g.createLinearGradient(0,0,0,-dist-ry); gr.addColorStop(0,c2); gr.addColorStop(1,c1); g.fillStyle = gr; g.beginPath(); g.ellipse(0,-dist,rx,ry,0,0,Math.PI*2); g.fill(); g.restore(); } }
+    function center(r, c1, c2){ var cg = g.createRadialGradient(-r*.3,-r*.3,1,0,0,r); cg.addColorStop(0,c1); cg.addColorStop(1,c2); g.fillStyle = cg; g.beginPath(); g.arc(0,0,r,0,6.3); g.fill(); }
+    if(kind === 'rose'){ [[62,7,0],[50,6,.4],[38,5,.9],[27,5,1.5],[16,4,2.1]].forEach(function(rg, ri){ for(var i=0;i<rg[1];i++){ g.save(); g.rotate(i/rg[1]*Math.PI*2 + rg[2]); var gr = g.createRadialGradient(0,-rg[0]*.55,2,0,-rg[0]*.35,rg[0]*.75); gr.addColorStop(0, ri > 2 ? '#a3002c' : '#ff5a80'); gr.addColorStop(.6, ri > 2 ? '#7a0020' : '#e0244f'); gr.addColorStop(1, '#5c0018'); g.fillStyle = gr; g.beginPath(); g.ellipse(0,-rg[0]*.42,rg[0]*.5,rg[0]*.52,0,0,Math.PI*2); g.fill(); g.restore(); } }); }
+    if(kind === 'daisy'){ petals(20, 8, 32, 40, '#ffffff', '#e3eadf'); center(19, '#ffe36b', '#c98a0e'); }
+    if(kind === 'sunflower'){ petals(18, 10, 26, 46, '#ffd23f', '#f0a500'); petals(18, 8, 20, 40, '#ffe06b', '#e8a000', .17); center(28, '#7a4a1e', '#3b2210'); }
+    if(kind === 'tulip'){ g.fillStyle = '#c94f9a'; g.beginPath(); g.moveTo(-34,-10); g.quadraticCurveTo(-40,40,0,46); g.quadraticCurveTo(40,40,34,-10); g.lineTo(18,10); g.lineTo(0,-30); g.lineTo(-18,10); g.closePath(); g.fill(); g.fillStyle = '#e07bbd'; g.beginPath(); g.moveTo(-14,4); g.quadraticCurveTo(0,-48,14,4); g.quadraticCurveTo(0,40,-14,4); g.fill(); }
+    if(kind === 'lavender'){ g.strokeStyle = '#4f8f5f'; g.lineWidth = 3; g.beginPath(); g.moveTo(0,70); g.lineTo(0,-60); g.stroke(); for(var i=0;i<12;i++){ g.fillStyle = i%2 ? '#8a6bd1' : '#a58be0'; g.beginPath(); g.ellipse(-6 + (i%2)*12, -60 + i*9, 7, 5, 0, 0, 6.3); g.fill(); } }
+    if(kind === 'blue'){ petals(5, 18, 22, 22, '#6fa8ff', '#3b6fd1'); center(9, '#fff3a0', '#e0b020'); }
+    return c.toDataURL();
+  }
+  var FL = {}; ['rose','daisy','sunflower','tulip','lavender','blue'].forEach(function(k){ FL[k] = flowerURL(k); });
+  function deco(pageIdx, list){ var face = pages[pageIdx].querySelector('.face.front');
+    list.forEach(function(d){ var im = document.createElement('img'); im.className = 'flower'; im.alt = ''; im.src = FL[d[0]];
+      im.style.width = d[3] + '%'; im.style.left = d[1] + '%'; im.style.top = d[2] + '%'; im.style.transform = 'rotate(' + (d[4]||0) + 'deg)'; face.appendChild(im); }); }
+  deco(0, [['rose',6,74,18,-10],['daisy',20,80,13,0],['lavender',2,62,16,-20],['sunflower',76,6,16,10],['tulip',68,3,13,25],['blue',84,20,9,0]]);
+  deco(1, [['daisy',80,86,10,0],['rose',88,80,9,20]]);
+  deco(2, [['rose',82,84,11,0],['lavender',90,74,10,15]]);
+  deco(3, [['sunflower',82,84,11,0],['blue',90,78,8,0]]);
+  deco(5, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
+  deco(6, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
+
+  // Capítulo I: o clipe abre em tela cheia por cima do livro
+  var clipLayer = document.getElementById('clipLayer'), frame = null;
+  function openClip(){
+    clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
+    frame = document.createElement('iframe'); frame.title = 'Foi Deus quem escreveu'; frame.allow = 'autoplay';
+    frame.src = window.__CLIP_URL__ || 'clipe.html';
+    clipLayer.appendChild(frame);
+  }
+  function closeClip(){ clipLayer.classList.remove('show'); setTimeout(function(){ if(frame){ frame.remove(); frame = null; } clipLayer.hidden = true; }, 600); }
+  document.getElementById('openClip').addEventListener('click', openClip);
+  document.getElementById('closeClip').addEventListener('click', closeClip);
+  window.addEventListener('message', function(e){ if(e.data === 'fechar-clipe') closeClip(); });
+
+  // ===== Capítulo II: a vida dela em números (contadores ao vivo, a partir do nascimento) =====
+  var NASC = { d:new Date(1991, 9, 16), confirmada:true };   // 16 de outubro de 1991 (mês começa em 0: 9 = outubro)
+  function $id(i){ return document.getElementById(i); }
+  function fmtN(n){ return Math.floor(n).toLocaleString('pt-BR'); }
+  function diffYMD(a, b){ // anos, meses e dias completos entre duas datas
+    var y = b.getFullYear() - a.getFullYear(), m = b.getMonth() - a.getMonth(), d = b.getDate() - a.getDate();
+    if(d < 0){ m--; d += new Date(b.getFullYear(), b.getMonth(), 0).getDate(); }
+    if(m < 0){ y--; m += 12; }
+    return [y, m, d];
+  }
+  var numStart = 0;
+  function tickNumbers(){
+    var now = new Date(), k = numStart ? Math.min(1, (performance.now() - numStart)/1800) : 1, e = 1 - Math.pow(1 - k, 3);
+    var ymd = diffYMD(NASC.d, now), hoje = now.getMonth() === NASC.d.getMonth() && now.getDate() === NASC.d.getDate();
+    $id('nLbl').textContent = hoje ? 'Hoje você completa' : 'Você tem';
+    $id('nYears').textContent = Math.round(ymd[0]*e);
+    $id('nMD').textContent = hoje ? 'Feliz aniversário, meu amor!' : ymd[1] + (ymd[1] === 1 ? ' mês' : ' meses') + ' e ' + ymd[2] + (ymd[2] === 1 ? ' dia' : ' dias');
+    var sinceMid = (now - new Date(now.getFullYear(), now.getMonth(), now.getDate()))/1000;
+    $id('nHMS').textContent = Math.floor(sinceMid/3600) + 'h ' + String(Math.floor(sinceMid%3600/60)).padStart(2,'0') + 'min ' + String(Math.floor(sinceMid%60)).padStart(2,'0') + 's';
+    var ms = now - NASC.d, min = ms/6e4;
+    $id('nDays').textContent = fmtN(ms/864e5*e);
+    $id('nMoons').textContent = fmtN(ms/864e5/29.530589*e);
+    $id('nBeats').textContent = '≈ ' + fmtN(min*70*e);      // coração em repouso: cerca de 70 batidas por minuto
+    $id('nBreath').textContent = '≈ ' + fmtN(min*16*e);     // adulto em repouso: cerca de 16 respirações por minuto
+  }
+  if(!NASC.confirmada){ $id('nNote').hidden = false; $id('nNote').textContent = 'Prévia: falta confirmar a data de nascimento da Jéssica.'; }
+  var numSeen = false;
+  setInterval(function(){ if(cur === 3){ if(!numSeen){ numSeen = true; numStart = performance.now(); } tickNumbers(); } }, 50);
+  tickNumbers();
+
+  // ===== Capítulo III: 35 flores, 35 motivos =====
+  var MOTIVOS = [
+    'Porque foi você que Deus colocou no meu caminho naquele congresso em Brasília.',
+    'Porque o seu sorriso ainda me desarma como no primeiro dia.',
+    'Porque você ora por nós, mesmo quando ninguém está vendo.',
+    'Porque você é amiga de Deus, e isso transborda em tudo que você faz.',
+    'Porque você é a mãe que a Alê merece.',
+    'Porque você cuida da nossa família com um carinho que não cabe em palavras.',
+    'Porque você trata os amigos como família.',
+    'Porque você me ensinou que perdoar é escolher o amor de novo.',
+    'Porque com você eu aprendi a recomeçar.',
+    'Porque nos dias de luta você não soltou a minha mão.',
+    'Porque nos dias de glória é com você que eu quero comemorar.',
+    'Porque você é o meu porto seguro.',
+    'Porque você é a minha companheira em tudo.',
+    'Porque você ama livros, e me fez querer escrever o nosso.',
+    'Porque até o verde ficou mais bonito depois que virou a sua cor.',
+    'Porque você faz qualquer flor parecer mais bonita.',
+    'Porque a sua fé me fortalece.',
+    'Porque você é a mulher virtuosa de Provérbios 31, na vida real.',
+    'Porque você transforma a nossa casa num lar.',
+    'Porque você é sincera, mesmo quando é difícil.',
+    'Porque você sonha junto comigo.',
+    'Porque você me faz querer ser um homem melhor.',
+    'Porque o seu abraço é o meu lugar favorito.',
+    'Porque você acredita em mim.',
+    'Porque você é linda, por dentro e por fora.',
+    'Porque você me escolheu também.',
+    'Porque com você até os dias comuns viram lembranças bonitas.',
+    'Porque a sua risada enche a casa.',
+    'Porque você é forte e delicada ao mesmo tempo.',
+    'Porque você cuida de todo mundo, e eu quero passar a vida cuidando de você.',
+    'Porque eu ainda olho pra você do mesmo jeito que olhei naquele dia.',
+    'Porque eu quero ver os nossos cabelos mudarem de cor ao seu lado.',
+    'Porque cada página da nossa história ficou mais bonita com você.',
+    'Porque Deus caprichou quando escreveu você.',
+    'Porque, se eu pudesse escolher mil vezes, eu escolheria você.'
+  ];
+  var KINDS = ['rose','daisy','sunflower','tulip','lavender','blue'];
+  // botão de flor fechado (verde), desenhado no código
+  var BUD = (function(){ var c = document.createElement('canvas'); c.width = c.height = 120; var g = c.getContext('2d'); g.translate(60,64);
+    var gr = g.createLinearGradient(0,-40,0,30); gr.addColorStop(0,'#8fd08f'); gr.addColorStop(1,'#3f8a52'); g.fillStyle = gr;
+    g.beginPath(); g.moveTo(0,-44); g.bezierCurveTo(30,-20,26,22,0,30); g.bezierCurveTo(-26,22,-30,-20,0,-44); g.fill();
+    g.fillStyle = '#2f6b4a'; g.beginPath(); g.moveTo(-22,18); g.quadraticCurveTo(-8,0,0,30); g.quadraticCurveTo(8,0,22,18); g.quadraticCurveTo(10,34,0,36); g.quadraticCurveTo(-10,34,-22,18); g.fill();
+    g.fillStyle = 'rgba(255,90,128,.55)'; g.beginPath(); g.ellipse(0,-30,6,10,0,0,6.3); g.fill(); return c.toDataURL(); })();
+  var garden = $id('garden'), reason = $id('reason'), opened = {}, KEY = 'livro-jessica-flores';
+  try{ opened = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ opened = {}; }
+  function saveOpened(){ try{ localStorage.setItem(KEY, JSON.stringify(opened)); }catch(e){} }
+  function rnd(s){ var x = Math.sin(s*127.1)*43758.5453; return x - Math.floor(x); }
+  var buds = [];
+  MOTIVOS.forEach(function(m, i){
+    var r = Math.floor(i/5), c = i%5;
+    var b = document.createElement('button'); b.className = 'bud'; b.type = 'button'; b.setAttribute('aria-label', 'Flor ' + (i+1));
+    b.style.left = ((c + .5)/5*100 + (rnd(i+1) - .5)*9 + (r%2 ? 4 : -4)) + '%';
+    b.style.top = (5 + r*13.5 + (rnd(i+50) - .5)*4) + '%';
+    b.style.setProperty('--s', (.78 + r*.045).toFixed(3)); b.style.setProperty('--stem', (.06 + rnd(i+9)*.05).toFixed(3)); b.style.setProperty('--d', (-rnd(i+3)*3.6).toFixed(2) + 's');
+    b.innerHTML = '<img class="bd" alt="" src="' + BUD + '"><img class="fl" alt="" src="' + FL[KINDS[i % 6]] + '">';
+    if(opened[i]) b.classList.add('open');
+    b.addEventListener('click', function(){ openBud(i); });
+    garden.appendChild(b); buds.push(b);
   });
-  audio.addEventListener('ended', ()=>{ btn.textContent='▶ Tocar'; cd.classList.remove('spin'); abrir.classList.remove('beat'); hero.classList.remove('glow'); replay.style.display='inline-flex'; });
-  replay.addEventListener('click', async()=>{ replay.style.display='none'; try{ await audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){} });
-
-  function setFromClientX(x){ const r=seek.getBoundingClientRect(); const k=Math.min(1,Math.max(0,(x-r.left)/r.width)); audio.currentTime=k*(audio.duration||0); }
-  seek.addEventListener('click', e=>setFromClientX(e.clientX));
-  let dragging=false;
-  seek.addEventListener('pointerdown', e=>{ dragging=true; setFromClientX(e.clientX); seek.setPointerCapture(e.pointerId); });
-  seek.addEventListener('pointermove', e=>{ if(dragging) setFromClientX(e.clientX); });
-  seek.addEventListener('pointerup', ()=>{ dragging=false });
-
-  vol.addEventListener('input', ()=>{ audio.volume=+vol.value; });
-
-  const ctx=vizCanvas.getContext('2d',{alpha:true});
-  function binFor(i){ const f=i/(BARS-1); const e=Math.pow(f,1.8); return Math.min(dataArray.length-1, Math.floor(e*(dataArray.length-1))); }
-  function getBandEnergy(a,b){ if(!analyser) return 0; let m=0; for(let i=a;i<=b;i++){ m=Math.max(m,(dataArray[i]||0)/255);} return m; }
-  function drawViz(){
-    requestAnimationFrame(drawViz);
-    if(!analyser) return;
-    analyser.getByteFrequencyData(dataArray);
-    const w=vizCanvas.width=vizCanvas.clientWidth, h=vizCanvas.height=vizCanvas.clientHeight, bw=w/BARS-2;
-    ctx.clearRect(0,0,w,h);
-    for(let i=0;i<BARS;i++){
-      const idx=binFor(i), v=(dataArray[idx]||0)/255, vBoost=Math.pow(v,1.2), bh=Math.max(2,(h-8)*vBoost);
-      smoothed[i]=smoothed[i]*0.6 + bh*0.4; peaks[i]=Math.max(peaks[i]*0.98, smoothed[i]);
-      const x=i*(bw+2), y=h-smoothed[i]-4, r=4, hue=130+i*(220/BARS);
-      ctx.fillStyle=`hsla(${hue},85%,${40+v*35}%,.88)`;
-      ctx.beginPath();
-      ctx.moveTo(x+r,y); ctx.lineTo(x+bw-r,y); ctx.quadraticCurveTo(x+bw,y,x+bw,y+r);
-      ctx.lineTo(x+bw,y+smoothed[i]-r); ctx.quadraticCurveTo(x+bw,y+smoothed[i],x+bw-r,y+smoothed[i]);
-      ctx.lineTo(x+r,y+smoothed[i]); ctx.quadraticCurveTo(x,y+smoothed[i],x,y+smoothed[i]-r);
-      ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); ctx.fill();
-      const capY=h-peaks[i]-6; ctx.fillStyle=`hsla(${hue},95%,90%,.95)`; ctx.fillRect(x,capY,bw,3);
-    }
+  function countOpen(){ return Object.keys(opened).length; }
+  function updCount(){ var n = countOpen(); $id('gCount').textContent = n === 0 ? 'Toque em cada botão para ele florescer' : (n === 35 ? 'Todas as 35 flores abertas 💚' : n + ' de 35 flores abertas'); }
+  function openBud(i){
+    var wasAll = countOpen() === 35;
+    buds[i].classList.add('open'); opened[i] = 1; saveOpened(); updCount();
+    $id('rImg').src = FL[KINDS[i % 6]]; $id('rNum').textContent = 'Motivo nº ' + (i+1); $id('rText').textContent = MOTIVOS[i]; $id('rText').classList.remove('done');
+    reason.hidden = false; reason.style.animation = 'none'; void reason.offsetWidth; reason.style.animation = '';
+    reason.dataset.final = (!wasAll && countOpen() === 35) ? '1' : '';
   }
-  drawViz();
+  reason.addEventListener('click', function(){
+    if(reason.dataset.final === '1'){ reason.dataset.final = ''; $id('rNum').textContent = '35 de 35'; $id('rText').textContent = 'Feliz 35 anos, meu amor. E ainda tenho uma vida inteira para descobrir outros motivos.'; $id('rText').classList.add('done'); $id('rImg').src = FL.rose; return; }
+    reason.hidden = true;
+  });
+  updCount();
 
-  // Efeitos cenográficos
-  function heartBurst(q=3){ for(let i=0;i<q;i++){ const h=document.createElement('div'); h.className='heart'; h.textContent=['💚','💖','💘','❤️'][i%4]; h.style.left=(Math.random()*100)+'vw'; h.style.setProperty('--x',(Math.random()*140-70)+'vw'); h.style.animationDelay=(Math.random()*1.2)+'s'; document.body.appendChild(h); setTimeout(()=>h.remove(),6500);} }
-  function sparkles(q=3){ for(let i=0;i<q;i++){ const s=document.createElement('div'); s.className='sparkle'; s.style.left=(Math.random()*100)+'vw'; s.style.top=(Math.random()*40+10)+'vh'; s.style.setProperty('--h',(Math.random()*120-60)+'deg'); document.body.appendChild(s); setTimeout(()=>s.remove(),2200);} }
-  function petals(q=2){ for(let i=0;i<q;i++){ const p=document.createElement('div'); p.className='petal'; p.textContent=Math.random()>.5?'🌹':'🥀'; p.style.left=(Math.random()*100)+'vw'; p.style.setProperty('--tx',(Math.random()*60-30)+'vw'); p.style.setProperty('--d',(7+Math.random()*6)+'s'); document.body.appendChild(p); setTimeout(()=>p.remove(),13000);} }
-  setInterval(()=>heartBurst(2),2800);
-  setInterval(()=>sparkles(2),2200);
-  setInterval(()=>petals(2),2000);
+  // ===== Capítulo IV: a próxima página — ela escreve e envia para o WhatsApp do Felipe =====
+  var WHATS = '5531992727195';   // 55 (Brasil) + 31 (DDD) + número
+  var ta = $id('nextPage'), DRAFT = 'livro-jessica-proxima-pagina';
+  try{ ta.value = localStorage.getItem(DRAFT) || ''; }catch(e){}
+  ta.addEventListener('input', function(){ try{ localStorage.setItem(DRAFT, ta.value); }catch(e){} $id('waNote').hidden = true; });
+  $id('sendWA').addEventListener('click', function(){
+    var txt = ta.value.trim();
+    if(!txt){ $id('waNote').hidden = false; $id('waNote').textContent = 'Escreva alguma coisa antes de enviar 💚'; ta.focus(); return; }
+    var msg = '📖 A próxima página — do livro que você me deu:\n\n' + txt;
+    window.open('https://wa.me/' + WHATS + '?text=' + encodeURIComponent(msg), '_blank');
+  });
 
-  // Abrir carta
-  function fireworks(){ /* fogos rápidos */ }
-  function confettiOnce(){ /* confete — omitido pra brevidade visual */ }
-  function abrirCarta(){
-    flap.style.transform='rotateX(155deg)';
-    setTimeout(()=>{
-      capa.classList.add('hide');
-      carta.classList.add('show');
-      fallback.style.display='none';
-      resetTypewriter();
-      try{ ensureAudioGraph(); audio.play(); btn.textContent='⏸ Pausar'; cd.classList.add('spin'); abrir.classList.add('beat'); }catch(e){}
-    },600);
-  }
-  abrir.addEventListener('click', abrirCarta);
-  fallback.addEventListener('click', abrirCarta);
-
-  // Lightbox
-  const lightbox=$('#lightbox'), closeLb=$('#closeLb');
-  hero.addEventListener('click',()=>lightbox.classList.add('show'));
-  closeLb.addEventListener('click',()=>lightbox.classList.remove('show'));
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape') lightbox.classList.remove('show'); });
-  lightbox.addEventListener('click',e=>{ if(e.target===lightbox) lightbox.classList.remove('show'); });
+  stack();
+})();
 </script>
-
-<noscript>
-  <style>.capa{display:none}.carta{display:block}</style>
-  <div style="max-width:700px;margin:20px auto;background:#fff;padding:16px;border-radius:10px;color:#000">
-    Ative o JavaScript para ver a animação da carta e ouvir a música.
-  </div>
-</noscript>
 </body>
 </html>
