@@ -63,20 +63,32 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
 .toc .dots{flex:1; border-bottom:2px dotted rgba(58,42,28,.35); transform:translateY(-4px); min-width:12px}
 .toc .pg{font-style:italic}
 .chapter .inner{justify-content:center; gap:3.5%}
-.numbers .inner{justify-content:flex-start; gap:2%; padding-top:9%}
+.numbers .inner{justify-content:flex-start; gap:1.3%; padding-top:7%; padding-bottom:6%}
 .kicker{font-family:var(--serif); font-size:calc(var(--bw) * .045); letter-spacing:.3em; text-transform:uppercase; color:var(--ink2)}
 .ctitle{font-family:var(--title); font-size:calc(var(--bw) * .12); line-height:1.1; color:var(--green); margin:0}
 .ctext{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .05); color:var(--ink2); margin:0; max-width:90%}
 .cta{all:unset; cursor:pointer; margin-top:4%; display:inline-flex; align-items:center; gap:10px; padding:3.4% 7%; border-radius:999px; background:var(--green); color:#f6eedd; font-family:var(--sans); font-weight:600; font-size:calc(var(--bw) * .045); box-shadow:0 8px 18px rgba(47,107,74,.35)}
 .cta:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
 .ctitle.small{font-size:calc(var(--bw) * .085)}
-.big{width:100%; background:rgba(47,107,74,.08); border:1px solid rgba(47,107,74,.25); border-radius:12px; padding:3.5% 4%; margin-top:1%}
+.big{width:100%; background:rgba(47,107,74,.08); border:1px solid rgba(47,107,74,.25); border-radius:12px; padding:2.2% 4%; margin-top:0}
 .big .lbl{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .045); color:var(--ink2)}
-.big .yrs{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .13); line-height:1; color:var(--green); font-variant-numeric:tabular-nums}
+.big .yrs{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .1); line-height:1; color:var(--green); font-variant-numeric:tabular-nums}
 .big .md{font-family:var(--serif); font-size:calc(var(--bw) * .05); color:var(--ink)}
 .big .hms{font-family:var(--sans); font-size:calc(var(--bw) * .038); color:var(--rose); font-variant-numeric:tabular-nums; margin-top:1%}
-.stats{display:grid; grid-template-columns:1fr 1fr; gap:3%; width:100%; margin-top:3%}
-.stats div{background:rgba(255,255,255,.45); border:1px solid rgba(168,122,44,.3); border-radius:10px; padding:4% 3%; display:flex; flex-direction:column; gap:2px}
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:calc(var(--bw) * .022); width:100%; margin-top:1%}
+.card{all:unset; box-sizing:border-box; cursor:pointer; position:relative; display:block; perspective:600px; min-height:calc(var(--bw) * .175)}
+.card .fr,.card .bk{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:10px; transition:transform .6s cubic-bezier(.3,1.3,.5,1); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:3%}
+.card .fr{background:rgba(255,255,255,.55); border:1px solid rgba(168,122,44,.3)}
+.card .bk{background:#2f6b4a; color:#f6eedd; transform:rotateY(180deg); font-family:var(--script); font-size:calc(var(--bw) * .045); line-height:1.2; text-align:center; padding:6%}
+.card.flipped .fr{transform:rotateY(-180deg)} .card.flipped .bk{transform:rotateY(0)}
+.card:focus-visible{outline:2px solid var(--green); outline-offset:2px; border-radius:10px}
+.card .ic{width:calc(var(--bw) * .06); height:calc(var(--bw) * .06)}
+.stats .card span span, .card .fr > span{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .033); color:var(--ink2); line-height:1.1}
+.born{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .038); color:var(--ink2); margin-top:1%}
+.tapcards{font-family:var(--sans); font-size:calc(var(--bw) * .032); color:var(--green); margin:1% 0 0; animation:nudge 2.4s ease-in-out infinite}
+.countdown{width:100%; margin-top:1%; border-radius:12px; padding:2% 4%; background:linear-gradient(135deg, rgba(196,71,106,.12), rgba(227,184,101,.18)); border:1px dashed rgba(196,71,106,.45); display:grid; gap:2px}
+.cd-l{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .038); color:var(--ink2)}
+.cd-n{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .05); color:var(--rose); font-variant-numeric:tabular-nums}
 .stats b{white-space:nowrap; font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .048); color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.1}
 .stats span{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .035); color:var(--ink2); line-height:1.15}
 .note{font-family:var(--sans); font-size:calc(var(--bw) * .03); color:var(--rose); margin:2% 0 0}
@@ -217,12 +229,15 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
             <div class="md" id="nMD">0 meses e 0 dias</div>
             <div class="hms" id="nHMS">0h 00min 00s</div>
           </div>
+          <div class="born" id="nBorn">Você nasceu numa quarta-feira, 16 de outubro de 1991</div>
           <div class="stats">
-            <div><b id="nDays">0</b><span>dias de vida</span></div>
-            <div><b id="nMoons">0</b><span>luas cheias que você já viu</span></div>
-            <div><b id="nBeats">0</b><span>batidas do seu coração</span></div>
-            <div><b id="nBreath">0</b><span>respirações</span></div>
+            <button class="card" type="button" data-ic="sun"><span class="fr"><canvas class="ic"></canvas><b id="nDays">0</b><span>dias de vida</span></span><span class="bk">E cada um deles fez de você quem você é hoje.</span></button>
+            <button class="card" type="button" data-ic="moon"><span class="fr"><canvas class="ic"></canvas><b id="nMoons">0</b><span>luas cheias que você já viu</span></span><span class="bk">E nenhuma delas brilhou mais do que você.</span></button>
+            <button class="card" type="button" data-ic="heart"><span class="fr"><canvas class="ic"></canvas><b id="nBeats">0</b><span>batidas do seu coração</span></span><span class="bk">Um coração que bate por Deus, pela família e por quem você ama.</span></button>
+            <button class="card" type="button" data-ic="breath"><span class="fr"><canvas class="ic"></canvas><b id="nBreath">0</b><span>respirações</span></span><span class="bk">Que cada uma seja de paz, alegria e gratidão.</span></button>
           </div>
+          <p class="tapcards" id="tapCards">toque nos cartões 👆</p>
+          <div class="countdown" id="nCount"><span class="cd-l">Faltam para os seus 35 anos</span><span class="cd-n" id="nCD">—</span></div>
           <p class="note" id="nNote" hidden></p>
         </div><div class="num">— 4 —</div></div>
         <div class="face back"></div>
@@ -401,7 +416,6 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   deco(0, [['rose',6,74,18,-10],['daisy',20,80,13,0],['lavender',2,62,16,-20],['sunflower',76,6,16,10],['tulip',68,3,13,25],['blue',84,20,9,0]]);
   deco(1, [['daisy',80,86,10,0],['rose',88,80,9,20]]);
   deco(2, [['rose',82,84,11,0],['lavender',90,74,10,15]]);
-  deco(3, [['sunflower',82,84,11,0],['blue',90,78,8,0]]);
   deco(7, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
   deco(8, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
 
@@ -444,8 +458,38 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     $id('nBreath').textContent = '≈ ' + fmtN(min*16*e);     // adulto em repouso: cerca de 16 respirações por minuto
   }
   if(!NASC.confirmada){ $id('nNote').hidden = false; $id('nNote').textContent = 'Prévia: falta confirmar a data de nascimento da Jéssica.'; }
+  // dia da semana em que ela nasceu (calculado, não digitado)
+  var DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'], MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  var wd = NASC.d.getDay(); $id('nBorn').textContent = 'Você nasceu ' + (wd === 0 || wd === 6 ? 'num ' : 'numa ') + DIAS[wd] + ', ' + NASC.d.getDate() + ' de ' + MESES[NASC.d.getMonth()] + ' de ' + NASC.d.getFullYear();
+  // cartões que viram com um toque
+  [].forEach.call(document.querySelectorAll('.card'), function(c){ c.addEventListener('click', function(){ c.classList.toggle('flipped'); $id('tapCards').style.visibility = 'hidden'; }); });
+  // contagem regressiva para o próximo aniversário (ou festa, se for hoje)
+  function countdown(now){
+    var y = now.getFullYear(), next = new Date(y, NASC.d.getMonth(), NASC.d.getDate()), hoje = now.getMonth() === NASC.d.getMonth() && now.getDate() === NASC.d.getDate();
+    if(hoje && !window.__bdayParty){ window.__bdayParty = true; setTimeout(party, 1900); }   // no dia do aniversário, chove confete ao chegar na página
+    if(hoje){ $id('nCount').querySelector('.cd-l').textContent = 'Hoje é o seu dia!'; $id('nCD').textContent = '🎂 Feliz ' + (y - NASC.d.getFullYear()) + ' anos! 🎉'; return; }
+    if(next <= now) next = new Date(y + 1, NASC.d.getMonth(), NASC.d.getDate());
+    var s = Math.floor((next - now)/1000), d = Math.floor(s/86400), h = Math.floor(s%86400/3600), m = Math.floor(s%3600/60), ss = s%60;
+    $id('nCount').querySelector('.cd-l').textContent = 'Faltam para os seus ' + (next.getFullYear() - NASC.d.getFullYear()) + ' anos';
+    $id('nCD').textContent = d + (d === 1 ? ' dia, ' : ' dias, ') + h + 'h ' + String(m).padStart(2,'0') + 'min ' + String(ss).padStart(2,'0') + 's';
+  }
+  // ícones vivos: sol nascendo, a lua de hoje (fase real), coração batendo a 70 por minuto, respiração a 16 por minuto
+  function moonPhase(now){ var ref = Date.UTC(2000, 0, 6, 18, 14), syn = 29.530588853*864e5; return (((now - ref) % syn) + syn) % syn / syn; }
+  function drawIcons(now){
+    var tms = now.getTime(), minBorn = (now - NASC.d)/6e4;
+    [].forEach.call(document.querySelectorAll('.card .ic'), function(c){
+      var kind = c.closest('.card').dataset.ic, S = sizeCv(c), g = c.getContext('2d'), w = S.w, h = S.h, cx = w/2, cy = h/2, r = Math.min(w, h)*.36;
+      g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, w, h);
+      if(kind === 'sun'){ g.fillStyle = '#f0b31c'; g.beginPath(); g.arc(cx, cy, r*.55, 0, 6.3); g.fill(); g.strokeStyle = '#f0b31c'; g.lineWidth = 2; for(var i=0;i<8;i++){ var a = i/8*Math.PI*2 + tms/2000; g.beginPath(); g.moveTo(cx + Math.cos(a)*r*.75, cy + Math.sin(a)*r*.75); g.lineTo(cx + Math.cos(a)*r*1.05, cy + Math.sin(a)*r*1.05); g.stroke(); } }
+      if(kind === 'moon'){ var ph = moonPhase(now); g.fillStyle = '#3a3f5c'; g.beginPath(); g.arc(cx, cy, r, 0, 6.3); g.fill(); g.fillStyle = '#f6eedd';
+        var k = Math.cos(ph*Math.PI*2), right = ph < .5; g.beginPath(); g.arc(cx, cy, r, -Math.PI/2, Math.PI/2, !right); g.ellipse(cx, cy, Math.abs(k)*r, r, 0, Math.PI/2, -Math.PI/2, (k > 0) === right); g.fill(); }
+      if(kind === 'heart'){ var bp = (minBorn*70) % 1, beat = bp < .15 ? Math.sin(bp/.15*Math.PI)*.22 : 0; g.save(); g.translate(cx, cy + r*.1); g.scale(1 + beat, 1 + beat); g.fillStyle = '#c4476a'; g.beginPath();
+        for(var j=0;j<=30;j++){ var an = j/30*Math.PI*2, s = Math.sin(an); var x = 16*s*s*s/17*r, y = -(13*Math.cos(an) - 5*Math.cos(2*an) - 2*Math.cos(3*an) - Math.cos(4*an))/17*r; if(j) g.lineTo(x, y); else g.moveTo(x, y); } g.fill(); g.restore(); }
+      if(kind === 'breath'){ var br = (minBorn*16) % 1, inflate = .55 + .45*Math.sin(br*Math.PI*2 - Math.PI/2)*.5 + .225; g.fillStyle = 'rgba(111,168,255,.25)'; g.beginPath(); g.arc(cx, cy, r*inflate*1.25, 0, 6.3); g.fill(); g.fillStyle = '#6fa8ff'; g.beginPath(); g.arc(cx, cy, r*inflate*.8, 0, 6.3); g.fill(); }
+    });
+  }
   var numSeen = false;
-  setInterval(function(){ if(cur === 3){ if(!numSeen){ numSeen = true; numStart = performance.now(); } tickNumbers(); } }, 50);
+  setInterval(function(){ if(cur === 3){ if(!numSeen){ numSeen = true; numStart = performance.now(); } tickNumbers(); var nw = new Date(); countdown(nw); drawIcons(nw); } }, 50);
   tickNumbers();
 
   // ===== Capítulo III: 35 flores, 35 motivos =====
