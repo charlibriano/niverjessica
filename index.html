@@ -494,8 +494,9 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     g.fillStyle = '#2f6b4a'; g.beginPath(); g.moveTo(-22,18); g.quadraticCurveTo(-8,0,0,30); g.quadraticCurveTo(8,0,22,18); g.quadraticCurveTo(10,34,0,36); g.quadraticCurveTo(-10,34,-22,18); g.fill();
     g.fillStyle = 'rgba(255,90,128,.55)'; g.beginPath(); g.ellipse(0,-30,6,10,0,0,6.3); g.fill(); return c.toDataURL(); })();
   var garden = $id('garden'), reason = $id('reason'), opened = {}, KEY = 'livro-jessica-flores';
-  try{ opened = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ opened = {}; }
-  function saveOpened(){ try{ localStorage.setItem(KEY, JSON.stringify(opened)); }catch(e){} }
+  // o jardim sempre começa fechado a cada vez que o livro é aberto (e apaga o que ficou guardado de testes antigos)
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  function saveOpened(){}
   function rnd(s){ var x = Math.sin(s*127.1)*43758.5453; return x - Math.floor(x); }
   var buds = [];
   MOTIVOS.forEach(function(m, i){
