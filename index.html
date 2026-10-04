@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#123224">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@500;700&family=Gochi+Hand&family=Great+Vibes&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
 <style>
 
 :root{
@@ -121,6 +121,16 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
 .lined::placeholder{color:rgba(58,42,28,.45); font-style:italic}
 .lined:focus-visible{box-shadow:0 0 0 2px rgba(47,107,74,.35); border-radius:6px}
 .write .cta{margin-top:2%}
+.ale .inner{justify-content:flex-start; gap:2%; padding-top:9%}
+.crayon{width:100%; height:calc(var(--bw) * .5); display:block}
+.notes{display:grid; gap:3%; width:100%}
+.vnote{all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; gap:3%; width:100%; padding:2.6% 3.5%; border-radius:999px; background:#fffdf7; border:2px dashed rgba(196,71,106,.55); box-shadow:0 4px 10px rgba(0,0,0,.08)}
+.vnote:focus-visible{outline:2px solid var(--green); outline-offset:3px}
+.vnote .pbtn{flex:none; width:calc(var(--bw) * .1); height:calc(var(--bw) * .1); border-radius:50%; display:grid; place-items:center; background:var(--rose); color:#fff; font-size:calc(var(--bw) * .04)}
+.vnote.first .pbtn{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(196,71,106,.55)}50%{box-shadow:0 0 0 10px rgba(196,71,106,0)}}
+.vnote .wave{flex:1; height:calc(var(--bw) * .08); min-width:0}
+.vnote .dur{flex:none; font-family:"Gochi Hand", var(--script); font-size:calc(var(--bw) * .045); color:var(--ink2)}
 .soon{font-family:var(--script); font-size:calc(var(--bw) * .06); color:var(--rose)}
 .quill{width:24%; height:auto}
 .backcover .inner{justify-content:center; gap:5%}
@@ -171,7 +181,8 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
             <li><button data-go="2"><span class="cap">I</span> Foi Deus quem escreveu <span class="dots"></span><span class="pg">3</span></button></li>
             <li><button data-go="3"><span class="cap">II</span> A sua vida em números <span class="dots"></span><span class="pg">4</span></button></li>
             <li><button data-go="4"><span class="cap">III</span> 35 flores, 35 motivos <span class="dots"></span><span class="pg">5</span></button></li>
-            <li><button data-go="5"><span class="cap">IV</span> A próxima página <span class="dots"></span><span class="pg">6</span></button></li>
+            <li><button data-go="5"><span class="cap">IV</span> Um recado da Alê <span class="dots"></span><span class="pg">6</span></button></li>
+            <li><button data-go="6"><span class="cap">V</span> A próxima página <span class="dots"></span><span class="pg">7</span></button></li>
           </ul>
         </div><div class="num">— 2 —</div></div>
         <div class="face back"></div>
@@ -226,16 +237,30 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
         </div><div class="num">— 5 —</div></div>
         <div class="face back"></div>
       </section>
-      <!-- 5: capítulo 4 -->
-      <section class="page chapter write" aria-label="Capítulo 4">
+      <!-- capítulo 4: recado da Alê -->
+      <section class="page chapter ale" aria-label="Capítulo 4">
         <div class="face front paper"><div class="inner">
           <div class="kicker">Capítulo IV</div>
+          <h3 class="ctitle small">Um recado da Alê</h3>
+          <canvas id="aleCv" class="crayon" aria-hidden="true"></canvas>
+          <div class="notes">
+            <button class="vnote" type="button" data-k="1" aria-label="Ouvir o primeiro recado da Alê"><span class="pbtn">▶</span><canvas class="wave"></canvas><span class="dur">0:12</span></button>
+            <button class="vnote" type="button" data-k="2" aria-label="Ouvir o segundo recado da Alê"><span class="pbtn">▶</span><canvas class="wave"></canvas><span class="dur">0:23</span></button>
+          </div>
+          <p class="gsub call" id="aleHint">Toque no ▶ para ouvir 💚</p>
+        </div><div class="num">— 6 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 5: capítulo 4 -->
+      <section class="page chapter write" aria-label="Capítulo 5">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo V</div>
           <h3 class="ctitle small">A próxima página</h3>
           <p class="gsub">Esta página é sua. Escreva o que quiser — eu vou ler.</p>
           <textarea id="nextPage" class="lined" maxlength="1200" aria-label="Escreva a próxima página" placeholder="continua…"></textarea>
           <button class="cta" id="sendWA" type="button">Enviar para o Felipe 💚</button>
           <p class="note" id="waNote" hidden></p>
-        </div><div class="num">— 6 —</div></div>
+        </div><div class="num">— 7 —</div></div>
         <div class="face back"></div>
       </section>
       <!-- 6: contracapa -->
@@ -263,9 +288,10 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   function showError(m){ errBox.textContent = m; errBox.hidden = false; }
   window.addEventListener('error', function(e){ showError('Erro na página: ' + (e.message || e)); });
 
+  var PAGE_HOOKS = [];
   var pages = [].slice.call(document.querySelectorAll('.page'));
   var N = pages.length, cur = 0; // cur = página que está à vista
-  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Contracapa'];
+  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Contracapa'];
   var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), label = document.getElementById('pgLabel');
 
   // empilhamento: a página da frente fica por cima; as já viradas somem depois de virar
@@ -276,6 +302,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     prevB.disabled = cur === 0; nextB.disabled = cur === N - 1;
     label.textContent = LABELS[cur] || '';
     pages.forEach(function(p, i){ p.setAttribute('aria-hidden', i === cur ? 'false' : 'true'); p.inert = i !== cur; });
+    PAGE_HOOKS.forEach(function(f){ f(cur); });
   }
   function hideLater(p){ setTimeout(function(){ if(p.classList.contains('turned')) p.style.visibility = 'hidden'; }, 950); }
   function goNext(){ if(cur >= N - 1) return; var p = pages[cur]; p.classList.remove('dragging'); p.style.transform = ''; p.classList.add('turned'); cur++; stack(); hideLater(p); shade(p, 0); }
@@ -345,8 +372,8 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   deco(1, [['daisy',80,86,10,0],['rose',88,80,9,20]]);
   deco(2, [['rose',82,84,11,0],['lavender',90,74,10,15]]);
   deco(3, [['sunflower',82,84,11,0],['blue',90,78,8,0]]);
-  deco(5, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
-  deco(6, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
+  deco(6, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
+  deco(7, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
 
   // Capítulo I: o clipe abre em tela cheia por cima do livro
   var clipLayer = document.getElementById('clipLayer'), frame = null;
@@ -493,6 +520,83 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     var msg = '📖 A próxima página — do livro que você me deu:\n\n' + txt;
     window.open('https://wa.me/' + WHATS + '?text=' + encodeURIComponent(msg), '_blank');
   });
+
+  // ===== Capítulo IV: um recado da Alê (desenho de giz de cera que se mexe com a voz dela) =====
+  var ALE = {"1": {"bars": [0.02, 0.09, 0.06, 0.06, 0.05, 1.0, 0.87, 0.31, 0.01, 0.0, 0.28, 0.23, 0.3, 0.16, 0.11, 0.03, 0.28, 0.61, 0.42, 0.03, 0.24, 0.45, 0.04, 0.02, 0.01, 0.02, 0.03, 0.02, 0.01, 0.07, 0.01, 0.01, 0.32, 0.25, 0.19, 0.05, 0.03, 0.02, 0.24, 0.19, 0.02, 0.02, 0.02, 0.01], "env": [0.0, 0.0, 0.01, 0.02, 0.03, 0.03, 0.03, 0.03, 0.04, 0.13, 0.05, 0.05, 0.04, 0.04, 0.05, 0.04, 0.07, 0.05, 0.04, 0.03, 0.03, 0.03, 0.02, 0.02, 0.03, 0.04, 0.05, 0.22, 0.89, 1.0, 0.75, 0.63, 0.54, 0.53, 0.76, 0.78, 0.63, 0.54, 0.5, 0.32, 0.16, 0.06, 0.03, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.08, 0.26, 0.26, 0.24, 0.18, 0.14, 0.16, 0.24, 0.18, 0.12, 0.19, 0.21, 0.16, 0.27, 0.28, 0.2, 0.02, 0.01, 0.02, 0.17, 0.18, 0.14, 0.15, 0.04, 0.01, 0.03, 0.05, 0.02, 0.03, 0.01, 0.02, 0.04, 0.03, 0.03, 0.01, 0.01, 0.04, 0.48, 0.54, 0.48, 0.46, 0.41, 0.39, 0.32, 0.08, 0.28, 0.53, 0.3, 0.16, 0.05, 0.02, 0.01, 0.02, 0.01, 0.01, 0.0, 0.01, 0.04, 0.26, 0.35, 0.36, 0.49, 0.38, 0.25, 0.14, 0.09, 0.02, 0.03, 0.03, 0.01, 0.01, 0.01, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.02, 0.03, 0.04, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.02, 0.02, 0.0, 0.0, 0.0, 0.01, 0.02, 0.08, 0.06, 0.03, 0.04, 0.02, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.41, 0.08, 0.25, 0.2, 0.15, 0.08, 0.03, 0.02, 0.11, 0.38, 0.17, 0.2, 0.12, 0.16, 0.13, 0.09, 0.02, 0.02, 0.06, 0.04, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.03, 0.0, 0.0, 0.0, 0.0, 0.02, 0.02, 0.03, 0.05, 0.05, 0.04, 0.33, 0.37, 0.18, 0.05, 0.03, 0.03, 0.02, 0.01, 0.01, 0.01, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.02, 0.01, 0.01, 0.02, 0.02, 0.01, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0], "dur": 12.03}, "2": {"bars": [0.54, 0.43, 0.11, 0.87, 0.64, 0.55, 0.02, 0.1, 0.07, 0.03, 0.21, 1.0, 0.53, 0.37, 0.65, 0.63, 0.09, 0.71, 0.66, 0.33, 0.03, 0.46, 0.57, 0.42, 0.78, 0.54, 0.23, 0.62, 0.28, 0.84, 0.55, 0.67, 0.88, 0.43, 0.55, 0.13, 0.68, 0.71, 0.54, 0.18, 0.04, 0.55, 0.02, 0.01], "env": [0.0, 0.03, 0.05, 0.06, 0.1, 0.1, 0.18, 0.4, 0.46, 0.48, 0.65, 0.45, 0.14, 0.03, 0.03, 0.03, 0.02, 0.01, 0.01, 0.02, 0.05, 0.08, 0.06, 0.02, 0.03, 0.04, 0.06, 0.07, 0.09, 0.04, 0.01, 0.01, 0.01, 0.49, 0.61, 0.53, 0.51, 0.57, 0.48, 0.52, 0.37, 0.13, 0.34, 0.63, 0.45, 0.39, 0.28, 0.13, 0.02, 0.08, 0.21, 0.32, 0.32, 0.26, 0.22, 0.38, 0.43, 0.37, 0.32, 0.26, 0.1, 0.03, 0.03, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.07, 0.06, 0.03, 0.04, 0.04, 0.06, 0.06, 0.06, 0.06, 0.05, 0.06, 0.04, 0.04, 0.02, 0.02, 0.04, 0.03, 0.06, 0.02, 0.02, 0.03, 0.03, 0.02, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.02, 0.02, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.02, 0.03, 0.68, 0.62, 0.54, 0.54, 0.56, 0.58, 0.58, 0.2, 0.51, 0.31, 0.28, 0.15, 0.05, 0.02, 0.14, 0.22, 0.21, 0.11, 0.27, 0.61, 0.4, 0.26, 0.15, 0.02, 0.0, 0.0, 0.02, 0.01, 0.01, 0.01, 0.43, 0.41, 0.39, 0.36, 0.4, 0.38, 0.34, 0.24, 0.07, 0.23, 0.39, 0.38, 0.34, 0.45, 0.45, 0.53, 0.42, 0.24, 0.25, 0.19, 0.04, 0.01, 0.01, 0.04, 0.03, 0.0, 0.0, 0.02, 0.02, 0.04, 0.06, 0.07, 0.1, 0.09, 0.07, 0.02, 0.01, 0.1, 0.76, 0.44, 0.04, 0.22, 0.68, 0.36, 0.37, 0.52, 0.61, 0.19, 0.01, 0.03, 0.35, 0.3, 0.3, 0.26, 0.28, 0.26, 0.27, 0.23, 0.05, 0.01, 0.06, 0.13, 0.08, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.03, 0.01, 0.01, 0.02, 0.11, 0.53, 0.53, 0.15, 0.02, 0.11, 0.43, 0.05, 0.09, 0.27, 0.63, 0.45, 0.04, 0.2, 0.54, 0.33, 0.08, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.07, 0.03, 0.0, 0.04, 0.84, 0.89, 0.21, 0.02, 0.0, 0.21, 0.26, 0.34, 0.27, 0.26, 0.28, 0.26, 0.23, 0.26, 0.18, 0.27, 0.4, 0.3, 0.12, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02, 0.25, 0.65, 0.46, 0.14, 0.16, 0.19, 0.34, 0.33, 0.19, 0.23, 0.25, 0.24, 0.19, 0.16, 0.12, 0.04, 0.09, 0.13, 0.11, 0.15, 0.16, 0.14, 0.06, 0.01, 0.01, 0.14, 0.79, 0.75, 0.69, 0.17, 0.18, 0.38, 0.4, 0.43, 0.34, 0.36, 0.35, 0.34, 0.25, 0.05, 0.0, 0.01, 0.04, 0.37, 0.48, 0.4, 0.16, 0.02, 0.01, 0.01, 0.11, 0.27, 0.6, 1.0, 0.6, 0.02, 0.37, 0.68, 0.44, 0.06, 0.33, 0.38, 0.12, 0.04, 0.38, 0.23, 0.2, 0.17, 0.09, 0.03, 0.16, 0.18, 0.25, 0.32, 0.33, 0.27, 0.22, 0.48, 0.47, 0.34, 0.22, 0.12, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01, 0.03, 0.06, 0.06, 0.06, 0.07, 0.09, 0.15, 0.25, 0.09, 0.04, 0.02, 0.02, 0.19, 0.74, 0.66, 0.06, 0.29, 0.5, 0.38, 0.03, 0.01, 0.18, 0.32, 0.17, 0.21, 0.51, 0.68, 0.42, 0.02, 0.03, 0.41, 0.03, 0.03, 0.37, 0.17, 0.12, 0.5, 0.42, 0.24, 0.02, 0.0, 0.02, 0.2, 0.12, 0.05, 0.01, 0.01, 0.01, 0.01, 0.01, 0.03, 0.02, 0.01, 0.01, 0.02, 0.03, 0.05, 0.02, 0.01, 0.21, 0.47, 0.46, 0.31, 0.33, 0.37, 0.12, 0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.01, 0.0, 0.0], "dur": 22.91}};
+  var aleCv = $id('aleCv'), acx = aleCv.getContext('2d'), playing = null, aleAudio = {}, firstNote = document.querySelector('.vnote[data-k="1"]');
+  firstNote.classList.add('first');
+  [1, 2].forEach(function(k){ var a = new Audio(); a.preload = 'auto'; a.src = (window.__ALE_SRC__ && window.__ALE_SRC__[k]) || ('assets/ale-' + k + '.mp3'); aleAudio[k] = a;
+    a.addEventListener('ended', function(){ if(playing === k){ playing = null; setBtns(); } });
+    a.addEventListener('error', function(){ showError('Não consegui carregar o recado ' + k + ' da Alê (assets/ale-' + k + '.mp3).'); }); });
+  function setBtns(){ [].forEach.call(document.querySelectorAll('.vnote'), function(b){ b.querySelector('.pbtn').textContent = (+b.dataset.k === playing) ? '❚❚' : '▶'; }); }
+  [].forEach.call(document.querySelectorAll('.vnote'), function(b){
+    b.addEventListener('click', function(){
+      var k = +b.dataset.k; firstNote.classList.remove('first'); $id('aleHint').hidden = true;
+      if(playing === k){ aleAudio[k].pause(); playing = null; setBtns(); return; }
+      if(playing){ aleAudio[playing].pause(); }
+      aleAudio[k].currentTime = aleAudio[k].ended ? 0 : aleAudio[k].currentTime; var p = aleAudio[k].play(); if(p && p.catch) p.catch(function(e){ showError('Não deu para tocar o recado: ' + e.message); });
+      playing = k; setBtns();
+    });
+  });
+  PAGE_HOOKS.push(function(c){ if(c !== 5 && playing){ aleAudio[playing].pause(); playing = null; setBtns(); } });
+  function amp(){ if(!playing) return 0; var e = ALE[playing].env, i = Math.floor(aleAudio[playing].currentTime*20); return e[Math.min(e.length-1, i)] || 0; }
+  function sizeCv(c){ var r = c.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); if(c.width !== Math.round(r.width*d)){ c.width = Math.round(r.width*d); c.height = Math.round(r.height*d); } return {w:r.width, h:r.height, d:d}; }
+  // traço de giz de cera: um pouco tremido, e redesenhado várias vezes por segundo para "ferver" como desenho animado
+  var seed = 1; function jit(){ seed = (seed*9301 + 49297) % 233280; return seed/233280 - .5; }
+  function crayon(g, pts, col, w, J){ for(var pass=0; pass<2; pass++){ g.strokeStyle = col; g.globalAlpha = pass ? .35 : .9; g.lineWidth = pass ? w*.5 : w; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
+      pts.forEach(function(p, i){ var x = p[0] + jit()*J, y = p[1] + jit()*J; if(i) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); } g.globalAlpha = 1; }
+  function circ(cx, cy, r, n){ var p = []; for(var i=0;i<=n;i++){ var a = i/n*Math.PI*2; p.push([cx + Math.cos(a)*r, cy + Math.sin(a)*r]); } return p; }
+  function heartPts(cx, cy, r){ var p = []; for(var i=0;i<=28;i++){ var a = i/28*Math.PI*2, s = Math.sin(a); p.push([cx + 16*s*s*s/17*r, cy - (13*Math.cos(a) - 5*Math.cos(2*a) - 2*Math.cos(3*a) - Math.cos(4*a))/17*r]); } return p; }
+  function kid(g, x, y, h, col, o, J){ // bonequinho de criança
+    var hr = h*.16; crayon(g, circ(x, y - h + hr, hr, 14), col, 3, J);
+    if(o.dress){ crayon(g, [[x, y - h + hr*2],[x - h*.2, y - h*.32],[x + h*.2, y - h*.32],[x, y - h + hr*2]], col, 3, J); crayon(g, [[x - h*.07, y - h*.32],[x - h*.08, y]], col, 3, J); crayon(g, [[x + h*.07, y - h*.32],[x + h*.08, y]], col, 3, J); }
+    else { crayon(g, [[x, y - h + hr*2],[x, y - h*.32]], col, 3, J); crayon(g, [[x - h*.13, y],[x, y - h*.32],[x + h*.13, y]], col, 3, J); }
+    crayon(g, [[x - h*.26, y - h*.5],[x, y - h + hr*2.4],[x + h*.26, y - h*.5]], col, 3, J);
+    if(o.hair){ g.fillStyle = o.hair; g.beginPath(); g.arc(x, y - h + hr, hr*1.05, Math.PI, Math.PI*2); g.fill(); if(o.pig){ g.beginPath(); g.arc(x - hr*1.3, y - h + hr*.8, hr*.45, 0, 6.3); g.arc(x + hr*1.3, y - h + hr*.8, hr*.45, 0, 6.3); g.fill(); } if(o.long){ g.fillRect(x - hr*1.1, y - h + hr, hr*.4, hr*1.6); g.fillRect(x + hr*.7, y - h + hr, hr*.4, hr*1.6); } }
+    g.fillStyle = col; g.beginPath(); g.arc(x - hr*.35, y - h + hr*.95, 1.6, 0, 6.3); g.arc(x + hr*.35, y - h + hr*.95, 1.6, 0, 6.3); g.fill();
+    g.strokeStyle = col; g.lineWidth = 1.6; g.beginPath(); g.arc(x, y - h + hr*1.15, hr*.4, .2, Math.PI - .2); g.stroke();
+  }
+  var lastBoil = 0;
+  function drawAle(now){
+    if(cur !== 5) return;
+    var S = sizeCv(aleCv), g = acx, a = amp(), w = S.w, h = S.h;
+    if(now - lastBoil > 110){ lastBoil = now; seed = Math.floor(now/110) % 997 + 1; }
+    else seed = Math.floor(lastBoil/110) % 997 + 1;
+    g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, w, h);
+    var J = 2.2, base = h*.93;
+    crayon(g, [[w*.02, base],[w*.3, base - 3],[w*.6, base + 2],[w*.98, base - 2]], '#4f8f5f', 4, J);
+    // sol
+    crayon(g, circ(w*.86, h*.2, h*.09, 16), '#f0b31c', 4, J); for(var r=0;r<8;r++){ var an = r/8*Math.PI*2 + now/2500; crayon(g, [[w*.86 + Math.cos(an)*h*.13, h*.2 + Math.sin(an)*h*.13],[w*.86 + Math.cos(an)*h*.19, h*.2 + Math.sin(an)*h*.19]], '#f0b31c', 3, J); }
+    // florzinhas
+    [[.08,'#c4476a'],[.18,'#6fa8ff'],[.9,'#c94f9a']].forEach(function(f){ crayon(g, [[w*f[0], base],[w*f[0], base - h*.14]], '#4f8f5f', 3, J); crayon(g, circ(w*f[0], base - h*.17, h*.04, 10), f[1], 4, J); });
+    // texto em letra de criança, cada letra de uma cor
+    var txt = 'Feliz aniversário, mamãe!', cols = ['#c4476a','#2f6b4a','#3b6fd1','#f0a500'], x = w*.03, fsz = h*.13;
+    g.font = fsz + 'px "Gochi Hand", cursive'; var tw = g.measureText(txt).width; if(tw > w*.7){ fsz *= w*.7/tw; g.font = fsz + 'px "Gochi Hand", cursive'; }
+    for(var i=0;i<txt.length;i++){ g.fillStyle = cols[i % 4]; g.save(); g.translate(x, h*.17 + Math.sin(now/300 + i)*1.5); g.rotate(jit()*.12); g.fillText(txt[i], 0, 0); g.restore(); x += g.measureText(txt[i]).width; }
+    // papai, mamãe e a Alê de mãos dadas; a Alê pula e o coração bate com a voz dela
+    var fh = h*.52, cx = w*.47, jump = a*h*.12;
+    kid(g, cx - w*.2, base, fh, '#3b6fd1', {hair:'#3a2a1c'}, J);
+    kid(g, cx + w*.2, base, fh*.95, '#2f6b4a', {dress:true, hair:'#5a3a22', long:true}, J);
+    kid(g, cx, base - jump, fh*.62, '#c4476a', {dress:true, hair:'#5a3a22', pig:true}, J);
+    crayon(g, [[cx - w*.2 + fh*.26, base - fh*.5],[cx - fh*.62*.26, base - jump - fh*.62*.5]], '#888', 2, J*.5);
+    crayon(g, [[cx + fh*.62*.26, base - jump - fh*.62*.5],[cx + w*.2 - fh*.95*.26, base - fh*.95*.5]], '#888', 2, J*.5);
+    var hs = h*(.1 + a*.07) * (1 + Math.sin(now/220)*.04*(playing ? 1 : .3));
+    var hy = base - jump - fh*.62 - h*.13;
+    g.fillStyle = 'rgba(196,71,106,.35)'; g.beginPath(); heartPts(cx, hy, hs).forEach(function(p, i){ if(i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.fill();
+    crayon(g, heartPts(cx, hy, hs), '#c4476a', 4, J);
+  }
+  function drawWaves(){
+    [].forEach.call(document.querySelectorAll('.vnote'), function(b){
+      var k = +b.dataset.k, c = b.querySelector('.wave'), S = sizeCv(c), g = c.getContext('2d'), bars = ALE[k].bars, n = bars.length;
+      var prog = aleAudio[k].duration ? aleAudio[k].currentTime/aleAudio[k].duration : 0;
+      g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, S.w, S.h);
+      var bw = S.w/n;
+      for(var i=0;i<n;i++){ var bh = Math.max(3, bars[i]*S.h*.9); g.fillStyle = (i/n < prog) ? '#c4476a' : 'rgba(47,107,74,.35)'; g.beginPath(); g.roundRect ? g.roundRect(i*bw + bw*.2, (S.h - bh)/2, bw*.6, bh, 2) : g.rect(i*bw + bw*.2, (S.h - bh)/2, bw*.6, bh); g.fill(); }
+      var d = playing === k ? aleAudio[k].currentTime : ALE[k].dur, s = Math.round(d);
+      b.querySelector('.dur').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+    });
+  }
+  (function loop(now){ requestAnimationFrame(loop); if(cur === 5){ drawAle(now); drawWaves(); } })(0);
 
   stack();
 })();
