@@ -131,6 +131,13 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(196,71,106,.55)}50%{box-shadow:0 0 0 10px rgba(196,71,106,0)}}
 .vnote .wave{flex:1; height:calc(var(--bw) * .08); min-width:0}
 .vnote .dur{flex:none; font-family:"Gochi Hand", var(--script); font-size:calc(var(--bw) * .045); color:var(--ink2)}
+.wish .inner{justify-content:flex-start; gap:2%; padding-top:9%}
+.cake{width:100%; height:calc(var(--bw) * .72); display:block; touch-action:none}
+.note2{font-family:var(--serif); font-style:italic; font-size:calc(var(--bw) * .036); color:var(--ink2); margin:0}
+.wishDone{position:absolute; inset:0; z-index:6; display:grid; place-items:center; padding:10%; background:rgba(245,237,220,.55); animation:pop .5s ease}
+.wishDone .wd{background:#fffdf7; border-radius:14px; box-shadow:0 14px 34px rgba(0,0,0,.25); padding:9% 7%; text-align:center; display:grid; gap:4%}
+.wishDone .ctitle{font-size:calc(var(--bw) * .1)}
+#confetti{position:fixed; inset:0; z-index:15; pointer-events:none}
 .soon{font-family:var(--script); font-size:calc(var(--bw) * .06); color:var(--rose)}
 .quill{width:24%; height:auto}
 .backcover .inner{justify-content:center; gap:5%}
@@ -182,7 +189,8 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
             <li><button data-go="3"><span class="cap">II</span> A sua vida em números <span class="dots"></span><span class="pg">4</span></button></li>
             <li><button data-go="4"><span class="cap">III</span> 35 flores, 35 motivos <span class="dots"></span><span class="pg">5</span></button></li>
             <li><button data-go="5"><span class="cap">IV</span> Um recado da Alê <span class="dots"></span><span class="pg">6</span></button></li>
-            <li><button data-go="6"><span class="cap">V</span> A próxima página <span class="dots"></span><span class="pg">7</span></button></li>
+            <li><button data-go="6"><span class="cap">V</span> Faça um pedido <span class="dots"></span><span class="pg">7</span></button></li>
+            <li><button data-go="7"><span class="cap">VI</span> A próxima página <span class="dots"></span><span class="pg">8</span></button></li>
           </ul>
         </div><div class="num">— 2 —</div></div>
         <div class="face back"></div>
@@ -251,16 +259,37 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
         </div><div class="num">— 6 —</div></div>
         <div class="face back"></div>
       </section>
-      <!-- 5: capítulo 4 -->
-      <section class="page chapter write" aria-label="Capítulo 5">
+      <!-- capítulo 5: as velas -->
+      <section class="page chapter wish" aria-label="Capítulo 5">
         <div class="face front paper"><div class="inner">
           <div class="kicker">Capítulo V</div>
+          <h3 class="ctitle small">Faça um pedido</h3>
+          <p class="gsub" id="wishTxt">Feche os olhos, faça um pedido… e sopre as 35 velas!</p>
+          <canvas id="cake" class="cake" aria-label="Bolo com 35 velas acesas"></canvas>
+          <button class="cta" id="micBtn" type="button">🎤 Soprar as velas</button>
+          <p class="note2" id="micNote">ou passe o dedo sobre as velas</p>
+        </div>
+        <div class="wishDone" id="wishDone" hidden>
+          <div class="wd">
+            <div class="kicker">35 velas apagadas</div>
+            <p class="ctitle">Feliz aniversário, Jéssica!</p>
+            <p class="ctext">Que Deus realize cada pedido do seu coração 💚</p>
+            <button class="cta" id="relight" type="button">Acender de novo</button>
+          </div>
+        </div>
+        <div class="num">— 7 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <!-- 5: capítulo 4 -->
+      <section class="page chapter write" aria-label="Capítulo 6">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo VI</div>
           <h3 class="ctitle small">A próxima página</h3>
           <p class="gsub">Esta página é sua. Escreva o que quiser — eu vou ler.</p>
           <textarea id="nextPage" class="lined" maxlength="1200" aria-label="Escreva a próxima página" placeholder="continua…"></textarea>
           <button class="cta" id="sendWA" type="button">Enviar para o Felipe 💚</button>
           <p class="note" id="waNote" hidden></p>
-        </div><div class="num">— 7 —</div></div>
+        </div><div class="num">— 8 —</div></div>
         <div class="face back"></div>
       </section>
       <!-- 6: contracapa -->
@@ -278,6 +307,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     <button id="next" aria-label="Próxima página">›</button>
   </nav>
 </div>
+<canvas id="confetti" aria-hidden="true"></canvas>
 <div id="clipLayer" hidden>
   <button id="closeClip" type="button">✕ Fechar</button>
 </div>
@@ -291,7 +321,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   var PAGE_HOOKS = [];
   var pages = [].slice.call(document.querySelectorAll('.page'));
   var N = pages.length, cur = 0; // cur = página que está à vista
-  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Contracapa'];
+  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Capítulo VI','Contracapa'];
   var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), label = document.getElementById('pgLabel');
 
   // empilhamento: a página da frente fica por cima; as já viradas somem depois de virar
@@ -319,7 +349,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   function shade(p, k){ p.style.setProperty('--shade', (k*.35).toFixed(3)); }
   var stage = document.getElementById('stage'), drag = null, justDragged = false;
   stage.addEventListener('pointerdown', function(e){
-    if(e.target.closest('button,textarea,.reason')) return;
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone')) return;
     drag = {x:e.clientX, y:e.clientY, w:stage.clientWidth, p:null, dir:0, a:0}; justDragged = false;
     stage.setPointerCapture(e.pointerId);
   });
@@ -347,7 +377,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
   // toque simples: lado direito avança, lado esquerdo volta
   stage.addEventListener('click', function(e){
-    if(e.target.closest('button,textarea,.reason') || justDragged){ justDragged = false; return; }
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone') || justDragged){ justDragged = false; return; }
     var r = stage.getBoundingClientRect(); if(e.clientX - r.left > r.width*.5) goNext(); else goPrev();
   });
 
@@ -372,8 +402,8 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   deco(1, [['daisy',80,86,10,0],['rose',88,80,9,20]]);
   deco(2, [['rose',82,84,11,0],['lavender',90,74,10,15]]);
   deco(3, [['sunflower',82,84,11,0],['blue',90,78,8,0]]);
-  deco(6, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
-  deco(7, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
+  deco(7, [['lavender',84,80,11,10],['rose',90,86,9,0]]);
+  deco(8, [['daisy',40,70,10,0],['rose',50,72,11,0]]);
 
   // Capítulo I: o clipe abre em tela cheia por cima do livro
   var clipLayer = document.getElementById('clipLayer'), frame = null;
@@ -597,6 +627,86 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     });
   }
   (function loop(now){ requestAnimationFrame(loop); if(cur === 5){ drawAle(now); drawWaves(); } })(0);
+
+  // ===== Capítulo V: faça um pedido — 35 velas que se apagam com um sopro (microfone) ou com o dedo =====
+  var cakeCv = $id('cake'), kx = cakeCv.getContext('2d'), CANDLES = [], smoke = [], micStream = null, micAn = null, micBuf = null, blow = 0, wishDone = false;
+  (function(){ var rows = [12, 12, 11]; rows.forEach(function(n, r){ for(var i=0;i<n;i++){ CANDLES.push({u:(i + .5 + (r === 2 ? .5 : 0))/12, row:r, lit:true, ph:Math.random()*6, col:['#c4476a','#2f6b4a','#f0b31c','#6fa8ff'][(i + r) % 4], out:0}); } }); })();
+  function cakeGeom(w, h){ var cx = w/2, topY = h*.5, rx = w*.4, ry = h*.1; return {cx:cx, topY:topY, rx:rx, ry:ry, base:h*.95}; }
+  function candlePos(c, G){ var depth = [-.55, 0, .55][c.row], a = (c.u - .5)*2; var x = G.cx + a*G.rx*(1 - Math.abs(depth)*.15)*.9, y = G.topY + depth*G.ry*.8; return {x:x, y:y, s:1 + depth*.12}; }
+  function drawCake(now, dt){
+    var S = sizeCv(cakeCv), g = kx, w = S.w, h = S.h, G = cakeGeom(w, h);
+    g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, w, h);
+    // prato
+    g.fillStyle = 'rgba(58,42,28,.12)'; g.beginPath(); g.ellipse(G.cx, G.base, G.rx*1.25, G.ry*.9, 0, 0, 6.3); g.fill();
+    // corpo do bolo
+    var bodyTop = G.topY, bodyBot = G.base - G.ry*.3;
+    var lg = g.createLinearGradient(0, bodyTop, 0, bodyBot); lg.addColorStop(0, '#f7e3cf'); lg.addColorStop(1, '#e9cdb0');
+    g.fillStyle = lg; g.beginPath(); g.moveTo(G.cx - G.rx, bodyTop); g.lineTo(G.cx - G.rx, bodyBot); g.ellipse(G.cx, bodyBot, G.rx, G.ry, 0, Math.PI, 0, true); g.lineTo(G.cx + G.rx, bodyTop); g.closePath(); g.fill();
+    // faixa de rosa no meio e cobertura verde escorrendo
+    g.fillStyle = 'rgba(196,71,106,.85)'; var midY = (bodyTop + bodyBot)/2 + G.ry*.4; g.beginPath(); g.moveTo(G.cx - G.rx, midY); g.ellipse(G.cx, midY, G.rx, G.ry, 0, Math.PI, 0, true); g.lineTo(G.cx + G.rx, midY + 8); g.ellipse(G.cx, midY + 8, G.rx, G.ry, 0, 0, Math.PI); g.closePath(); g.fill();
+    g.fillStyle = '#4f8f5f'; g.beginPath(); g.ellipse(G.cx, bodyTop, G.rx, G.ry, 0, 0, 6.3); g.fill();
+    g.beginPath(); for(var i=0;i<=16;i++){ var a = Math.PI*i/16, x = G.cx - Math.cos(a)*G.rx, y = bodyTop + Math.sin(a)*G.ry, drip = (i % 2) ? G.ry*.9 : G.ry*.35; if(i === 0) g.moveTo(x, y); g.quadraticCurveTo(x, y + drip, x + G.rx/16, y + Math.sin(Math.PI*(i+.5)/16)*G.ry); } g.lineTo(G.cx + G.rx, bodyTop); g.closePath(); g.fill();
+    g.fillStyle = '#6aaa78'; g.beginPath(); g.ellipse(G.cx, bodyTop - 2, G.rx*.96, G.ry*.88, 0, 0, 6.3); g.fill();
+    // florzinhas na lateral
+    [.15,.35,.65,.85].forEach(function(f, k){ var fx = G.cx - G.rx + f*G.rx*2, fy = midY + G.ry*.9 + Math.sin(f*Math.PI)*G.ry*.4; var sp = FL_IMG[['rose','daisy','sunflower','tulip'][k]]; if(sp && sp.complete) g.drawImage(sp, fx - w*.035, fy - w*.035, w*.07, w*.07); });
+    // velas (de trás para a frente)
+    var ord = CANDLES.slice().sort(function(a, b){ return a.row - b.row; }), lit = 0;
+    ord.forEach(function(c){
+      var P = candlePos(c, G), ch = h*.16*P.s, cw = Math.max(3.5, w*.015*P.s);
+      g.fillStyle = c.col; g.fillRect(P.x - cw/2, P.y - ch, cw, ch);
+      g.fillStyle = 'rgba(255,255,255,.5)'; for(var s=0;s<3;s++) g.fillRect(P.x - cw/2, P.y - ch + ch*(s*.33 + .1), cw, 1.5);
+      g.strokeStyle = '#3a2a1c'; g.lineWidth = 1; g.beginPath(); g.moveTo(P.x, P.y - ch); g.lineTo(P.x, P.y - ch - 4); g.stroke();
+      if(c.lit){ lit++;
+        var fl = (1.25 + Math.sin(now/90 + c.ph)*.12 + Math.sin(now/37 + c.ph*2)*.06), lean = blow*10 + Math.sin(now/300 + c.ph)*1.2, fx = P.x + lean*.5, fy = P.y - ch - 6;
+        var gg = g.createRadialGradient(fx, fy - 4, 0, fx, fy - 4, 16*P.s*fl); gg.addColorStop(0, 'rgba(255,210,120,.55)'); gg.addColorStop(1, 'rgba(255,210,120,0)'); g.fillStyle = gg; g.beginPath(); g.arc(fx, fy - 4, 16*P.s*fl, 0, 6.3); g.fill();
+        g.fillStyle = '#ffb02e'; g.beginPath(); g.moveTo(P.x, fy + 3); g.quadraticCurveTo(fx - 4*P.s*fl, fy - 2, fx + lean*.3, fy - 11*P.s*fl); g.quadraticCurveTo(fx + 4*P.s*fl, fy - 2, P.x, fy + 3); g.fill();
+        g.fillStyle = '#fff3c4'; g.beginPath(); g.ellipse(fx, fy - 2, 1.6*P.s, 3.2*P.s*fl, 0, 0, 6.3); g.fill();
+      }
+      c._x = P.x; c._y = P.y - ch - 8;
+    });
+    // fumacinha
+    for(var k=smoke.length-1;k>=0;k--){ var sm = smoke[k]; sm.t += dt; if(sm.t > 2.2){ smoke.splice(k,1); continue; } var y = sm.y - sm.t*28, x = sm.x + Math.sin(sm.t*3 + sm.ph)*5*sm.t;
+      g.fillStyle = 'rgba(120,120,120,' + (.45*(1 - sm.t/2.2)) + ')'; g.beginPath(); g.arc(x, y, 2 + sm.t*4, 0, 6.3); g.fill(); }
+    return lit;
+  }
+  var FL_IMG = {}; ['rose','daisy','sunflower','tulip'].forEach(function(k){ var im = new Image(); im.src = FL[k]; FL_IMG[k] = im; });
+  function putOut(c){ if(!c.lit) return; c.lit = false; smoke.push({x:c._x, y:c._y, t:0, ph:Math.random()*6}); smoke.push({x:c._x, y:c._y - 3, t:-.15, ph:Math.random()*6}); }
+  // apagar passando o dedo
+  function fingerAt(e){ var r = cakeCv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; CANDLES.forEach(function(c){ if(c.lit && c._x != null && Math.hypot(c._x - x, c._y - y) < r.width*.06) putOut(c); }); }
+  cakeCv.addEventListener('pointerdown', function(e){ cakeCv.setPointerCapture(e.pointerId); fingerAt(e); });
+  cakeCv.addEventListener('pointermove', function(e){ if(e.buttons || e.pointerType === 'touch') fingerAt(e); });
+  // apagar soprando no microfone (precisa de HTTPS, como no GitHub Pages)
+  $id('micBtn').addEventListener('click', function(){
+    if(micStream) return;
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $id('micNote').textContent = 'Este navegador não deixa usar o microfone aqui — passe o dedo sobre as velas 💚'; return; }
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}).then(function(st){
+      micStream = st; var AC = window.AudioContext || window.webkitAudioContext, ac = new AC(); var src = ac.createMediaStreamSource(st);
+      micAn = ac.createAnalyser(); micAn.fftSize = 1024; micBuf = new Float32Array(micAn.fftSize); src.connect(micAn);
+      $id('micBtn').textContent = '🌬️ Pode soprar!'; $id('micNote').textContent = 'sopre forte perto do celular';
+    }).catch(function(){ $id('micNote').textContent = 'Sem o microfone tudo bem — passe o dedo sobre as velas 💚'; });
+  });
+  function stopMic(){ if(micStream){ micStream.getTracks().forEach(function(tr){ tr.stop(); }); micStream = null; micAn = null; $id('micBtn').textContent = '🎤 Soprar as velas'; } }
+  PAGE_HOOKS.push(function(c){ if(c !== 6) stopMic(); });
+  // confete e pétalas quando a última vela apaga
+  var cf = $id('confetti'), cfx = cf.getContext('2d'), bits = [];
+  function party(){ var W = innerWidth, H = innerHeight; cf.width = W; cf.height = H; bits = [];
+    for(var i=0;i<160;i++) bits.push({x:Math.random()*W, y:-20 - Math.random()*H*.6, vx:(Math.random() - .5)*60, vy:80 + Math.random()*140, r:Math.random()*6, vr:(Math.random() - .5)*6, c:['#c4476a','#2f6b4a','#f0b31c','#6fa8ff','#e07bbd','#ffffff'][i % 6], fl: i % 5 === 0 ? ['rose','daisy','sunflower','tulip'][i % 4] : null}); }
+  function drawParty(dt){ if(!bits.length) return; var H = innerHeight; cfx.clearRect(0, 0, cf.width, cf.height);
+    bits.forEach(function(b){ b.x += b.vx*dt; b.y += b.vy*dt; b.r += b.vr*dt; cfx.save(); cfx.translate(b.x, b.y); cfx.rotate(b.r);
+      if(b.fl && FL_IMG[b.fl].complete) cfx.drawImage(FL_IMG[b.fl], -12, -12, 24, 24); else { cfx.fillStyle = b.c; cfx.fillRect(-4, -2, 8, 4); } cfx.restore(); });
+    bits = bits.filter(function(b){ return b.y < H + 30; }); if(!bits.length) cfx.clearRect(0, 0, cf.width, cf.height); }
+  $id('relight').addEventListener('click', function(){ CANDLES.forEach(function(c){ c.lit = true; }); wishDone = false; $id('wishDone').hidden = true; });
+  var lastT = 0;
+  (function loop(now){ requestAnimationFrame(loop); var dt = Math.min(.05, (now - lastT)/1000 || 0); lastT = now;
+    if(cur === 6){
+      if(micAn){ micAn.getFloatTimeDomainData(micBuf); var s = 0; for(var i=0;i<micBuf.length;i++) s += micBuf[i]*micBuf[i]; var rms = Math.sqrt(s/micBuf.length); blow += (Math.max(0, Math.min(1, (rms - .05)/.2)) - blow)*.3; }
+      else blow *= .9;
+      if(blow > .15) CANDLES.forEach(function(c){ if(c.lit && Math.random() < blow*dt*3) putOut(c); });
+      var lit = drawCake(now, dt);
+      if(lit === 0 && !wishDone){ wishDone = true; stopMic(); setTimeout(function(){ $id('wishDone').hidden = false; party(); }, 700); }
+    }
+    drawParty(dt);
+  })(0);
 
   stack();
 })();
