@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Foi Deus quem escreveu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0d1020; --ink:#f6eedd; --muted:rgba(246,238,221,.62); --track:rgba(246,238,221,.22);
+  --fill:#e3b865; --btn-bg:#e3b865; --btn-ink:#1c1408; --err-bg:#7a1f2b; --err-ink:#fff;
+  --sans:"Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0d1020; } }
+:root[data-theme="dark"]{ --bg:#0d1020; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased}
+#cv{position:fixed; inset:0; width:100%; height:100%; display:block; z-index:0}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.app{position:relative; z-index:1; height:100%; display:grid; grid-template-rows:auto 1fr auto; max-width:900px; margin:0 auto; padding:18px 22px 18px; pointer-events:none}
+.app > header, .app > .controls{pointer-events:auto}
+header{display:flex; justify-content:space-between; align-items:baseline; gap:12px; min-height:28px; transition:opacity .8s}
+.song{font-family:"Cormorant Garamond", Georgia, serif; font-style:italic; font-size:1.25rem}
+.section{font-size:.85rem; color:var(--muted)}
+.controls{display:grid; grid-template-columns:auto 1fr; align-items:center; gap:16px; padding-top:8px; transition:opacity .8s}
+body.playing.idle .controls, body.playing.idle header{opacity:0}
+body.playing.idle{cursor:none}
+.play{width:56px; height:56px; border-radius:50%; border:0; cursor:pointer; background:var(--btn-bg); color:var(--btn-ink); display:grid; place-items:center}
+.play svg{width:22px; height:22px}
+.bar{display:grid; gap:6px}
+.track{position:relative; height:22px; cursor:pointer; touch-action:none}
+.track::before,.track .fill{content:""; position:absolute; left:0; top:50%; height:3px; margin-top:-1.5px; border-radius:3px}
+.track::before{right:0; background:var(--track)}
+.track .fill{background:var(--fill); width:0}
+.times{display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums}
+button{font-family:var(--sans)}
+button:focus-visible,.track:focus-visible{outline:2px solid var(--fill); outline-offset:3px}
+body.paper{--ink:#3a2a1c; --muted:rgba(58,42,28,.65); --track:rgba(58,42,28,.2); --fill:#2f6b4a; --btn-bg:#2f6b4a; --btn-ink:#f6eedd}
+.cover{position:fixed; inset:0; z-index:5; display:grid; place-items:center; text-align:center; padding:24px; transition:opacity .9s; background:var(--bg)}
+.cover.gone{opacity:0; pointer-events:none}
+.cover.end{background:transparent; place-items:end center; padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
+.cover.end h1,.cover.end p{display:none}
+.cover h1{font-family:"Great Vibes", cursive; font-weight:400; font-size:clamp(3.4rem,15vw,7.5rem); line-height:1; margin:0 0 30px; color:#f3d48f; text-shadow:0 0 36px rgba(227,184,101,.45)}
+.start{display:inline-flex; align-items:center; gap:12px; border:0; cursor:pointer; border-radius:999px; padding:14px 26px 14px 18px; background:var(--btn-bg); color:var(--btn-ink); font-size:1.05rem; font-weight:600}
+.start span.ic{width:34px; height:34px; border-radius:50%; background:var(--btn-ink); color:var(--btn-bg); display:grid; place-items:center}
+.start svg{width:14px; height:14px; margin-left:2px}
+.start[disabled]{opacity:.6; cursor:wait}
+.cover p{color:var(--muted); font-size:.9rem; margin:18px 0 0}
+body.covered #player{opacity:0; pointer-events:none}
+#player{transition:opacity .9s}
+.draft{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(92px + env(safe-area-inset-bottom,0px)); z-index:2; font-size:.8rem; color:var(--muted); background:rgba(0,0,0,.5); padding:6px 12px; border-radius:999px; white-space:nowrap}
+.back{color:inherit; text-decoration:none; font-size:.95rem; font-weight:600; opacity:.85}
+.cover .back{color:var(--muted)}
+[hidden]{display:none !important}
+.err{position:fixed; left:12px; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:9; background:var(--err-bg); color:var(--err-ink); padding:12px 14px; border-radius:12px; font-size:.9rem; line-height:1.4}
+</style>
+</head>
+<body>
+<canvas id="cv" aria-hidden="true"></canvas>
+<div class="err" id="err" role="alert" hidden></div>
+<div class="cover" id="cover" hidden>
+  <div>
+    <h1>Foi Deus quem escreveu</h1>
+    <button class="start" id="startBtn" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></span><span id="startLabel">Preparando…</span></button>
+    <p>Melhor com som ligado</p>
+  </div>
+</div>
+<main class="app" id="player" hidden>
+  <header><span class="song"></span><span class="section" id="section"></span></header>
+  <section class="stage"><span class="sr" id="liveLine" aria-live="polite"></span></section>
+  <div class="controls">
+    <button class="play" id="play" aria-label="Tocar">
+      <svg id="icoPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>
+      <svg id="icoPause" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>
+    </button>
+    <div class="bar">
+      <div class="track" id="track" role="slider" tabindex="0" aria-label="Posição da música" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+      <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+    </div>
+  </div>
+</main>
+<audio id="audio" preload="auto"></audio>
+<script>
+(function(){
+  var errBox = document.getElementById('err');
+  function showError(msg){ errBox.textContent = msg; errBox.hidden = false; }
+  window.addEventListener('error', function(e){ showError('Erro na página: ' + (e.message || e)); });
+  window.addEventListener('unhandledrejection', function(e){ showError('Erro na página: ' + (e.reason && e.reason.message || e.reason)); });
+
+  // Letra original, com o tempo de cada palavra (início das frases vem do Lacuna; dentro da frase é estimado)
+  var LINES = [{"sec": "Verso 1", "text": "Foi lá em Brasília que tudo começou", "w": [["Foi", 13.2, 13.43], ["lá", 13.43, 13.59], ["em", 13.59, 13.75], ["Brasília", 13.75, 14.37], ["que", 14.37, 14.61], ["tudo", 14.61, 14.92], ["começou", 14.92, 15.47]]}, {"sec": "Verso 1", "text": "Num congresso, sem saber, Deus nos apresentou", "w": [["Num", 19.8, 20.03], ["congresso,", 20.03, 20.74], ["sem", 20.74, 20.97], ["saber,", 20.97, 21.36], ["Deus", 21.36, 21.68], ["nos", 21.68, 21.91], ["apresentou", 21.91, 22.69]]}, {"sec": "Verso 1", "text": "Eu olhei pra você e alguma coisa aconteceu", "w": [["Eu", 26.7, 26.86], ["olhei", 26.86, 27.25], ["pra", 27.25, 27.48], ["você", 27.48, 27.79], ["e", 27.79, 27.87], ["alguma", 27.87, 28.34], ["coisa", 28.34, 28.73], ["aconteceu", 28.73, 29.44]]}, {"sec": "Verso 1", "text": "Naquele instante eu não sabia", "w": [["Naquele", 32.78, 33.33], ["instante", 33.33, 33.95], ["eu", 33.95, 34.11], ["não", 34.11, 34.34], ["sabia", 34.34, 34.73]]}, {"sec": "Verso 1", "text": "Mas meu futuro apareceu", "w": [["Mas", 34.73, 34.97], ["meu", 34.97, 35.2], ["futuro", 35.2, 35.67], ["apareceu", 35.67, 36.3]]}, {"sec": "Verso 1", "text": "E o tempo foi passando", "w": [["E", 40.24, 40.32], ["o", 40.32, 40.4], ["tempo", 40.4, 40.79], ["foi", 40.79, 41.02], ["passando", 41.02, 41.65]]}, {"sec": "Verso 1", "text": "E o nosso amor cresceu", "w": [["E", 41.65, 41.73], ["o", 41.73, 41.8], ["nosso", 41.8, 42.2], ["amor", 42.2, 42.51], ["cresceu", 42.51, 43.06]]}, {"sec": "Verso 1", "text": "Foram meses esperando", "w": [["Foram", 46.92, 47.31], ["meses", 47.31, 47.7], ["esperando", 47.7, 48.41]]}, {"sec": "Verso 1", "text": "Até chegar o nosso dia", "w": [["Até", 48.41, 48.64], ["chegar", 48.64, 49.11], ["o", 49.11, 49.19], ["nosso", 49.19, 49.58], ["dia", 49.58, 49.81]]}, {"sec": "Verso 1", "text": "Vinte e cinco de abril", "w": [["Vinte", 54.38, 54.77], ["e", 54.77, 54.85], ["cinco", 54.85, 55.24], ["de", 55.24, 55.4], ["abril", 55.4, 55.79]]}, {"sec": "Verso 1", "text": "Você e eu, finalmente", "w": [["Você", 55.79, 56.1], ["e", 56.1, 56.18], ["eu,", 56.18, 56.34], ["finalmente", 56.34, 57.12]]}, {"sec": "Verso 1", "text": "E dois anos depois", "w": [["E", 57.12, 57.2], ["dois", 57.2, 57.51], ["anos", 57.51, 57.82], ["depois", 57.82, 58.29]]}, {"sec": "Verso 1", "text": "Diante de Deus", "w": [["Diante", 60.22, 60.69], ["de", 60.69, 60.85], ["Deus", 60.85, 61.16]]}, {"sec": "Verso 1", "text": "Eu prometi minha vida", "w": [["Eu", 61.16, 61.31], ["prometi", 61.31, 61.86], ["minha", 61.86, 62.25], ["vida", 62.25, 62.57]]}, {"sec": "Verso 1", "text": "E você prometeu a sua também", "w": [["E", 62.57, 62.64], ["você", 62.64, 62.96], ["prometeu", 62.96, 63.58], ["a", 65.2, 65.31], ["sua", 65.31, 65.64], ["também", 65.64, 66.3]]}, {"sec": "Pré-Refrão", "text": "E se alguém me perguntasse", "w": [["E", 69.28, 69.35], ["se", 69.35, 69.5], ["alguém", 69.5, 69.95], ["me", 69.95, 70.1], ["perguntasse", 70.1, 70.92]]}, {"sec": "Pré-Refrão", "text": "Onde eu estaria hoje", "w": [["Onde", 70.92, 71.22], ["eu", 71.22, 71.37], ["estaria", 71.7, 72.25], ["hoje", 72.25, 72.56]]}, {"sec": "Pré-Refrão", "text": "Eu não saberia responder", "w": [["Eu", 72.56, 72.72], ["não", 72.72, 72.95], ["saberia", 72.95, 73.5], ["responder", 73.5, 74.2]]}, {"sec": "Pré-Refrão", "text": "Mas sei que entre tantos caminhos", "w": [["Mas", 76.2, 76.43], ["sei", 76.43, 76.67], ["que", 76.67, 76.9], ["entre", 76.9, 77.29], ["tantos", 77.29, 77.76], ["caminhos", 77.76, 78.39]]}, {"sec": "Pré-Refrão", "text": "Deus escolheu o meu", "w": [["Deus", 78.39, 78.7], ["escolheu", 78.7, 79.33], ["o", 79.33, 79.41], ["meu", 79.41, 79.64]]}, {"sec": "Pré-Refrão", "text": "Pra encontrar você", "w": [["Pra", 79.64, 79.88], ["encontrar", 79.88, 80.58], ["você", 80.58, 80.89]]}, {"sec": "Refrão", "text": "Foi Deus quem escreveu", "w": [["Foi", 83.34, 83.57], ["Deus", 83.57, 83.89], ["quem", 83.89, 84.2], ["escreveu", 84.2, 84.83]]}, {"sec": "Refrão", "text": "Cada página da nossa história", "w": [["Cada", 84.83, 85.14], ["página", 85.14, 85.61], ["da", 85.61, 85.76], ["nossa", 85.76, 86.16], ["história", 86.16, 86.78]]}, {"sec": "Refrão", "text": "Foi Ele quem nos sustentou", "w": [["Foi", 89.63, 89.86], ["Ele", 89.86, 90.1], ["quem", 90.1, 90.41], ["nos", 90.41, 90.65], ["sustentou", 90.65, 91.35]]}, {"sec": "Refrão", "text": "Nos dias de luta e nos dias de glória", "w": [["Nos", 91.35, 91.58], ["dias", 91.58, 91.9], ["de", 93.69, 93.85], ["luta", 93.85, 94.16], ["e", 94.16, 94.24], ["nos", 94.24, 94.47], ["dias", 94.47, 94.78], ["de", 94.78, 94.94], ["glória", 94.94, 95.41]]}, {"sec": "Refrão", "text": "E se eu pudesse escolher", "w": [["E", 96.81, 96.89], ["se", 96.89, 97.04], ["eu", 97.04, 97.2], ["pudesse", 97.2, 97.75], ["escolher", 97.75, 98.37]]}, {"sec": "Refrão", "text": "Mil vezes eu escolheria você", "w": [["Mil", 98.37, 98.61], ["vezes", 98.61, 99.0], ["eu", 99.0, 99.16], ["escolheria", 99.16, 99.94], ["você", 99.94, 100.25]]}, {"sec": "Refrão", "text": "Minha esposa, minha companheira", "w": [["Minha", 103.19, 103.58], ["esposa,", 103.58, 104.05], ["minha", 104.05, 104.44], ["companheira", 104.44, 105.3]]}, {"sec": "Refrão", "text": "Meu amor, meu porto seguro", "w": [["Meu", 105.3, 105.54], ["amor,", 105.54, 105.85], ["meu", 105.85, 106.08], ["porto", 106.08, 106.47], ["seguro", 106.47, 106.94]]}, {"sec": "Refrão", "text": "A mulher que eu quero amar", "w": [["A", 108.49, 108.57], ["mulher", 108.57, 109.04], ["que", 109.04, 109.27], ["eu", 109.27, 109.43], ["quero", 109.43, 109.82], ["amar", 109.82, 110.13]]}, {"sec": "Refrão", "text": "Até o fim desse mundo", "w": [["Até", 112.57, 112.8], ["o", 112.8, 112.88], ["fim", 112.88, 113.12], ["desse", 113.12, 113.51], ["mundo", 113.51, 113.9]]}, {"sec": "Verso 2", "text": "Vieram sonhos, vieram planos", "w": [["Vieram", 121.25, 121.72], ["sonhos,", 121.72, 122.19], ["vieram", 122.19, 122.66], ["planos", 122.66, 123.13]]}, {"sec": "Verso 2", "text": "Vieram dias que fizeram a gente crescer", "w": [["Vieram", 123.13, 123.6], ["dias", 123.6, 123.91], ["que", 123.91, 124.14], ["fizeram", 124.14, 124.69], ["a", 124.69, 124.77], ["gente", 124.77, 125.16], ["crescer", 125.16, 125.71]]}, {"sec": "Verso 2", "text": "E no meio dessa história tão bonita", "w": [["E", 127.91, 127.99], ["no", 127.99, 128.14], ["meio", 128.14, 128.46], ["dessa", 128.46, 128.85], ["história", 128.85, 129.47], ["tão", 129.47, 129.71], ["bonita", 129.71, 130.18]]}, {"sec": "Verso 2", "text": "Deus ainda nos deu um presente", "w": [["Deus", 130.18, 130.49], ["ainda", 130.49, 130.88], ["nos", 131.69, 131.92], ["deu", 131.92, 132.16], ["um", 132.16, 132.32], ["presente", 132.32, 132.94]]}, {"sec": "Verso 2", "text": "Que fez nosso amor florescer", "w": [["Que", 132.94, 133.18], ["fez", 133.18, 133.41], ["nosso", 133.41, 133.8], ["amor", 133.8, 134.11], ["florescer", 134.11, 134.82]]}, {"sec": "Verso 2", "text": "A nossa Alê chegou", "w": [["A", 135.91, 135.99], ["nossa", 135.99, 136.38], ["Alê", 136.38, 136.61], ["chegou", 136.61, 137.08]]}, {"sec": "Verso 2", "text": "E trouxe mais amor pra nossa casa", "w": [["E", 137.08, 137.16], ["trouxe", 137.16, 137.63], ["mais", 137.63, 137.94], ["amor", 137.94, 138.26], ["pra", 139.27, 139.5], ["nossa", 139.5, 139.9], ["casa", 139.9, 140.21]]}, {"sec": "Verso 2", "text": "Mais motivos pra agradecer", "w": [["Mais", 140.21, 140.52], ["motivos", 140.52, 141.07], ["pra", 141.07, 141.3], ["agradecer", 141.3, 142.01]]}, {"sec": "Verso 2", "text": "E quando eu olho pra vocês duas", "w": [["E", 142.79, 142.87], ["quando", 142.87, 143.34], ["eu", 143.34, 143.49], ["olho", 143.49, 143.81], ["pra", 143.81, 144.04], ["vocês", 144.04, 144.43], ["duas", 144.43, 144.75]]}, {"sec": "Verso 2", "text": "Eu vejo tudo aquilo", "w": [["Eu", 144.75, 144.9], ["vejo", 145.55, 145.86], ["tudo", 145.86, 146.18], ["aquilo", 146.18, 146.64]]}, {"sec": "Verso 2", "text": "Que eu sempre quis viver", "w": [["Que", 146.64, 146.88], ["eu", 146.88, 147.04], ["sempre", 147.04, 147.51], ["quis", 147.51, 147.82], ["viver", 147.82, 148.21]]}, {"sec": "Pré-Refrão 2", "text": "Não foi perfeito, eu sei", "w": [["Não", 148.77, 149.0], ["foi", 149.0, 149.24], ["perfeito,", 149.24, 149.86], ["eu", 149.86, 150.02], ["sei", 150.02, 150.26]]}, {"sec": "Pré-Refrão 2", "text": "A gente teve que aprender", "w": [["A", 150.59, 150.67], ["gente", 150.67, 151.06], ["teve", 151.06, 151.37], ["que", 151.37, 151.61], ["aprender", 151.61, 152.23]]}, {"sec": "Pré-Refrão 2", "text": "A ceder, perdoar, recomeçar", "w": [["A", 152.23, 152.31], ["ceder,", 152.31, 152.7], ["perdoar,", 152.7, 153.25], ["recomeçar", 153.25, 153.95]]}, {"sec": "Pré-Refrão 2", "text": "Mas cada dificuldade", "w": [["Mas", 155.23, 155.46], ["cada", 155.46, 155.78], ["dificuldade", 155.78, 156.64]]}, {"sec": "Pré-Refrão 2", "text": "Só fez meu coração ter mais certeza", "w": [["Só", 156.64, 156.79], ["fez", 156.79, 157.03], ["meu", 157.03, 157.26], ["coração", 157.26, 157.81], ["ter", 157.81, 158.05], ["mais", 158.05, 158.36], ["certeza", 158.36, 158.91]]}, {"sec": "Pré-Refrão 2", "text": "De que é com você que eu quero estar", "w": [["De", 158.91, 159.06], ["que", 160.23, 160.46], ["é", 160.46, 160.54], ["com", 160.54, 160.78], ["você", 160.78, 161.09], ["que", 161.09, 161.32], ["eu", 161.32, 161.48], ["quero", 161.48, 161.87], ["estar", 161.87, 162.26]]}, {"sec": "Refrão 2", "text": "Foi Deus quem escreveu", "w": [["Foi", 162.79, 163.02], ["Deus", 163.02, 163.34], ["quem", 163.34, 163.65], ["escreveu", 163.65, 164.28]]}, {"sec": "Refrão 2", "text": "Cada página da nossa história", "w": [["Cada", 164.28, 164.59], ["página", 164.59, 165.06], ["da", 165.06, 165.21], ["nossa", 165.21, 165.61], ["história", 165.61, 166.23]]}, {"sec": "Refrão 2", "text": "Foi Ele quem nos sustentou", "w": [["Foi", 169.09, 169.32], ["Ele", 169.32, 169.56], ["quem", 169.56, 169.87], ["nos", 169.87, 170.11], ["sustentou", 170.11, 170.81]]}, {"sec": "Refrão 2", "text": "Nos dias de luta e nos dias de glória", "w": [["Nos", 170.81, 171.05], ["dias", 171.05, 171.36], ["de", 171.36, 171.51], ["luta", 173.49, 173.8], ["e", 173.8, 173.88], ["nos", 173.88, 174.12], ["dias", 174.12, 174.43], ["de", 174.43, 174.58], ["glória", 174.58, 175.05]]}, {"sec": "Refrão 2", "text": "E se eu pudesse escolher", "w": [["E", 176.11, 176.19], ["se", 176.19, 176.34], ["eu", 176.34, 176.5], ["pudesse", 176.5, 177.05], ["escolher", 177.05, 177.67]]}, {"sec": "Refrão 2", "text": "Mil vezes eu escolheria você", "w": [["Mil", 177.67, 177.91], ["vezes", 177.91, 178.3], ["eu", 178.3, 178.46], ["escolheria", 178.46, 179.24], ["você", 179.24, 179.55]]}, {"sec": "Refrão 2", "text": "Minha esposa, minha companheira", "w": [["Minha", 182.63, 183.02], ["esposa,", 183.02, 183.49], ["minha", 183.49, 183.88], ["companheira", 183.88, 184.74]]}, {"sec": "Refrão 2", "text": "Meu amor, meu porto seguro", "w": [["Meu", 184.74, 184.98], ["amor,", 184.98, 185.29], ["meu", 185.29, 185.52], ["porto", 185.52, 185.91], ["seguro", 185.91, 186.38]]}, {"sec": "Refrão 2", "text": "A mulher que eu quero amar", "w": [["A", 187.91, 187.99], ["mulher", 187.99, 188.46], ["que", 188.46, 188.69], ["eu", 188.69, 188.85], ["quero", 188.85, 189.24], ["amar", 189.24, 189.55]]}, {"sec": "Refrão 2", "text": "Até o fim desse mundo", "w": [["Até", 189.55, 189.79], ["o", 189.79, 189.87], ["fim", 189.87, 190.1], ["desse", 193.23, 193.78], ["mundo", 193.78, 194.33]]}, {"sec": "Ponte", "text": "Jéssica, hoje é seu dia", "w": [["Jéssica,", 197.67, 198.22], ["hoje", 198.22, 198.53], ["é", 198.53, 198.61], ["seu", 198.61, 198.84], ["dia", 198.84, 199.08]]}, {"sec": "Ponte", "text": "Mas quem ganhou o presente fui eu", "w": [["Mas", 199.08, 199.31], ["quem", 200.59, 200.9], ["ganhou", 200.9, 201.37], ["o", 201.37, 201.45], ["presente", 201.45, 202.08], ["fui", 202.08, 202.31], ["eu", 202.31, 202.47]]}, {"sec": "Ponte", "text": "Porque entre milhões de pessoas", "w": [["Porque", 203.97, 204.44], ["entre", 204.44, 204.83], ["milhões", 204.83, 205.38], ["de", 205.38, 205.53], ["pessoas", 205.53, 206.08]]}, {"sec": "Ponte", "text": "Foi você quem Deus me deu", "w": [["Foi", 206.08, 206.32], ["você", 206.32, 206.63], ["quem", 206.63, 206.94], ["Deus", 206.94, 207.25], ["me", 207.25, 207.41], ["deu", 207.41, 207.65]]}, {"sec": "Ponte", "text": "E talvez eu nem consiga", "w": [["E", 210.93, 211.01], ["talvez", 211.01, 211.48], ["eu", 211.48, 211.63], ["nem", 211.63, 211.87], ["consiga", 211.87, 212.42]]}, {"sec": "Ponte", "text": "Explicar tudo que você é", "w": [["Explicar", 212.42, 213.04], ["tudo", 213.04, 213.35], ["que", 213.35, 213.59], ["você", 213.59, 213.9], ["é", 213.9, 213.98]]}, {"sec": "Ponte", "text": "Mas se existe uma palavra", "w": [["Mas", 213.98, 214.21], ["se", 214.21, 214.37], ["existe", 217.99, 218.46], ["uma", 218.46, 218.69], ["palavra", 218.69, 219.24]]}, {"sec": "Ponte", "text": "É amor...", "w": [["É", 219.24, 219.32], ["amor...", 219.32, 219.63]]}, {"sec": "Ponte", "text": "E se existe uma certeza", "w": [["E", 219.63, 219.71], ["se", 219.71, 219.87], ["existe", 219.87, 220.34], ["uma", 220.34, 220.57], ["certeza", 220.57, 221.12]]}, {"sec": "Ponte", "text": "É você", "w": [["É", 224.43, 224.65], ["você", 224.65, 225.53]]}, {"sec": "Refrão Final", "text": "Foi Deus quem escreveu", "w": [["Foi", 228.19, 228.42], ["Deus", 228.42, 228.74], ["quem", 228.74, 229.05], ["escreveu", 229.05, 229.68]]}, {"sec": "Refrão Final", "text": "E eu quero continuar essa história", "w": [["E", 229.68, 229.75], ["eu", 229.75, 229.91], ["quero", 229.91, 230.3], ["continuar", 230.3, 231.01], ["essa", 231.01, 231.32], ["história", 231.32, 231.94]]}, {"sec": "Refrão Final", "text": "Segurando a sua mão", "w": [["Segurando", 231.94, 232.65], ["a", 236.09, 236.17], ["sua", 236.17, 236.4], ["mão", 236.4, 236.64]]}, {"sec": "Refrão Final", "text": "Até a última página da nossa vida", "w": [["Até", 236.64, 236.87], ["a", 236.87, 236.95], ["última", 236.95, 237.42], ["página", 237.42, 237.89], ["da", 237.89, 238.05], ["nossa", 238.05, 238.44], ["vida", 238.44, 238.75]]}, {"sec": "Refrão Final", "text": "E quando o tempo passar", "w": [["E", 241.63, 241.71], ["quando", 241.71, 242.18], ["o", 242.18, 242.26], ["tempo", 242.26, 242.65], ["passar", 242.65, 243.12]]}, {"sec": "Refrão Final", "text": "E os nossos cabelos mudarem de cor", "w": [["E", 243.12, 243.19], ["os", 243.19, 243.35], ["nossos", 243.35, 243.82], ["cabelos", 243.82, 244.37], ["mudarem", 245.64, 246.19], ["de", 246.19, 246.34], ["cor", 246.34, 246.58]]}, {"sec": "Refrão Final", "text": "Eu ainda vou olhar pra você", "w": [["Eu", 246.58, 246.73], ["ainda", 246.73, 247.13], ["vou", 247.13, 247.36], ["olhar", 247.36, 247.75], ["pra", 247.75, 247.99], ["você", 249.84, 250.15]]}, {"sec": "Refrão Final", "text": "Do mesmo jeito que olhei naquele dia", "w": [["Do", 250.15, 250.31], ["mesmo", 250.31, 250.7], ["jeito", 250.7, 251.09], ["que", 251.09, 251.33], ["olhei", 251.33, 251.72], ["naquele", 251.72, 252.26], ["dia", 252.26, 252.5]]}, {"sec": "Refrão Final", "text": "E agradecer a Deus", "w": [["E", 252.5, 252.58], ["agradecer", 254.72, 255.42], ["a", 255.42, 255.5], ["Deus", 255.5, 255.81]]}, {"sec": "Refrão Final", "text": "Por ter conhecido o meu amor", "w": [["Por", 255.81, 256.05], ["ter", 256.05, 256.28], ["conhecido", 256.28, 256.99], ["o", 256.99, 257.07], ["meu", 257.07, 257.3], ["amor", 257.3, 257.61]]}, {"sec": "Final", "text": "Feliz aniversário, meu amor...", "w": [["Feliz", 262.38, 262.77], ["aniversário,", 262.77, 263.63], ["meu", 263.63, 263.87], ["amor...", 263.87, 264.18]]}, {"sec": "Final", "text": "Que Deus continue cuidando de você", "w": [["Que", 268.82, 269.05], ["Deus", 269.05, 269.37], ["continue", 269.37, 269.99], ["cuidando", 269.99, 270.62], ["de", 270.62, 270.77], ["você", 272.5, 272.81]]}, {"sec": "Final", "text": "E que Ele nos permita viver", "w": [["E", 272.81, 272.89], ["que", 272.89, 273.13], ["Ele", 273.13, 273.36], ["nos", 273.36, 273.59], ["permita", 273.59, 274.14], ["viver", 274.14, 274.53]]}, {"sec": "Final", "text": "Muitos e muitos anos juntos", "w": [["Muitos", 274.53, 275.0], ["e", 275.0, 275.08], ["muitos", 275.08, 275.55], ["anos", 275.55, 275.86], ["juntos", 275.86, 276.33]]}, {"sec": "Final", "text": "Porque depois de tudo que vivemos", "w": [["Porque", 281.54, 282.01], ["depois", 282.01, 282.48], ["de", 282.48, 282.63], ["tudo", 282.63, 282.95], ["que", 282.95, 283.18], ["vivemos", 283.18, 283.73]]}, {"sec": "Final", "text": "Eu só tenho uma coisa pra dizer:", "w": [["Eu", 283.73, 283.89], ["só", 283.89, 284.04], ["tenho", 284.04, 284.43], ["uma", 285.42, 285.65], ["coisa", 285.65, 286.05], ["pra", 286.05, 286.28], ["dizer:", 286.28, 286.67]]}, {"sec": "Final", "text": "Eu escolheria você...", "w": [["Eu", 286.67, 286.83], ["escolheria", 289.54, 290.32], ["você...", 290.32, 290.63]]}, {"sec": "Final", "text": "De novo.", "w": [["De", 290.63, 290.79], ["novo.", 290.79, 291.1]]}, {"sec": "Final", "text": "E de novo.", "w": [["E", 300.86, 300.94], ["de", 300.94, 301.1], ["novo.", 301.1, 301.41]]}, {"sec": "Final", "text": "E de novo.", "w": [["E", 303.01, 303.09], ["de", 303.09, 303.25], ["novo.", 303.25, 303.56]]}];
+  var N = LINES.length;
+  LINES.forEach(function(L){ L.s = L.w[0][1]; L.e = L.w[L.w.length-1][2]; });
+  var SEC = {}; LINES.forEach(function(L, i){ if(!(L.sec in SEC)) SEC[L.sec] = i; });
+
+  var audio = document.getElementById('audio');
+  audio.src = 'assets/foi-deus-quem-escreveu.mp3';
+  audio.addEventListener('error', function(){ showError('O navegador não conseguiu tocar a música (código ' + (audio.error && audio.error.code) + ').'); });
+
+  function fmt(t){ if(!isFinite(t) || t < 0) t = 0; var m = Math.floor(t/60), s = Math.floor(t - m*60); return m + ':' + (s < 10 ? '0' : '') + s; }
+  function currentIndex(t){ var idx = -1; for(var i=0;i<N;i++){ if(t + .05 >= LINES[i].s) idx = i; else break; } return idx; }
+  function wordT(li, key){ var ws = LINES[li].w; for(var i=0;i<ws.length;i++){ if(plain(ws[i][0]) === key) return ws[i][1]; } return LINES[li].s; }
+  function plain(w){ return w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,''); }
+
+  /* ===== Som ===== */
+  var actx = null, analyser = null, freq = null;
+  function ensureAudioGraph(){
+    if(location.protocol === 'file:') return;
+    if(actx){ if(actx.state === 'suspended') actx.resume(); return; }
+    try{
+      var AC = window.AudioContext || window.webkitAudioContext; actx = new AC();
+      var src = actx.createMediaElementSource(audio);
+      analyser = actx.createAnalyser(); analyser.fftSize = 1024; analyser.smoothingTimeConstant = .75;
+      src.connect(analyser); analyser.connect(actx.destination);
+      freq = new Uint8Array(analyser.frequencyBinCount);
+    }catch(e){ analyser = null; }
+  }
+  var A = { bass:0, mid:0, high:0, beat:0, avg:.2, lastBeat:0 };
+  function readAudio(dt, nowS){
+    var b = 0, m = 0, h = 0;
+    if(window.__F){ b = __F[0]; m = __F[1]; h = __F[2]; }
+    else if(analyser && !audio.paused){
+      analyser.getByteFrequencyData(freq);
+      for(var i=1;i<10;i++) b += freq[i]; b /= 9*255;
+      for(var j=10;j<90;j++) m += freq[j]; m /= 80*255;
+      for(var k=90;k<250;k++) h += freq[k]; h /= 160*255;
+    } else if(!audio.paused){ b = .3 + .25*Math.max(0, Math.sin(nowS*Math.PI*2/.8)); m = .3; h = .15; }
+    A.bass += (b - A.bass)*Math.min(1, dt*14); A.mid += (m - A.mid)*Math.min(1, dt*8); A.high += (h - A.high)*Math.min(1, dt*8);
+    A.avg = A.avg*.985 + b*.015;
+    if(b > A.avg*1.22 && b > .22 && nowS - A.lastBeat > .3){ A.beat = 1; A.lastBeat = nowS; }
+    A.beat *= Math.exp(-dt*5);
+  }
+
+  /* ===== Desenho: utilidades ===== */
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = Math.min(2, window.devicePixelRatio || 1);
+  var GREEN_INK = '#2f6b4a', LEAF = '#4f8f5f';
+  var NIGHT = '#0d1020', GOLD = '#e3b865', GOLD2 = '#f6d996', PAPER = '#f5eddc', INK = '#3a2a1c', INK_PAST = '#6b5642', ROSE = '#c4476a', IVORY = '#f6eedd';
+  var SCRIPT = '"Dancing Script", cursive', SERIF = '"Cormorant Garamond", Georgia, serif';
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function ease(x){ x = clamp(x,0,1); return x*x*(3-2*x); }
+  function easeOut(x){ x = clamp(x,0,1); return 1 - Math.pow(1-x, 3); }
+  function easeBack(x){ x = clamp(x,0,1); var c1 = 1.7, c3 = c1+1; return Math.max(0, 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2)); }
+  function lerp(a,b,k){ return a + (b-a)*k; }
+  function heartXY(a){ var s = Math.sin(a); return [16*s*s*s/17, -(13*Math.cos(a) - 5*Math.cos(2*a) - 2*Math.cos(3*a) - Math.cos(4*a))/17]; }
+  function heartPath(x, y, r){ ctx.beginPath(); for(var i=0;i<=40;i++){ var p = heartXY(i/40*Math.PI*2); if(i) ctx.lineTo(x + p[0]*r, y + p[1]*r); else ctx.moveTo(x + p[0]*r, y + p[1]*r); } ctx.closePath(); }
+  // desenha uma linha (lista de pontos) só até a fração p — efeito de caneta desenhando
+  function pen(pts, p, color, w){
+    if(p <= 0 || pts.length < 2) return; var n = Math.max(2, Math.ceil(pts.length*clamp(p,0,1)));
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for(var i=1;i<n;i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke();
+  }
+  function seg(x1,y1,x2,y2,n){ n = n || 12; var p = []; for(var i=0;i<=n;i++) p.push([lerp(x1,x2,i/n), lerp(y1,y2,i/n)]); return p; }
+  function arc(cx,cy,rx,ry,a0,a1,n){ n = n || 24; var p = []; for(var i=0;i<=n;i++){ var a = a0 + (a1-a0)*i/n; p.push([cx + Math.cos(a)*rx, cy + Math.sin(a)*ry]); } return p; }
+  function poly(list){ var p = []; for(var i=0;i<list.length-1;i++){ var s = seg(list[i][0],list[i][1],list[i+1][0],list[i+1][1],8); if(i) s.shift(); p = p.concat(s); } return p; }
+  function hrtPts(cx,cy,r){ var p = []; for(var i=0;i<=40;i++){ var h = heartXY(i/40*Math.PI*2); p.push([cx + h[0]*r, cy + h[1]*r]); } return p; }
+  // desenha uma sequência de traços, um depois do outro, conforme p (0 a 1)
+  function strokes(list, p, color, w){
+    var total = 0; list.forEach(function(s){ total += s.p.length; });
+    var budget = total*clamp(p,0,1);
+    for(var i=0;i<list.length && budget > 0;i++){ var s = list[i], q = Math.min(1, budget/s.p.length); budget -= s.p.length; pen(s.p, q, s.c || color, s.w || w); }
+  }
+  function glowDot(x, y, r, col, a){ var g = ctx.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0, col.replace('A', a)); g.addColorStop(1, col.replace('A', 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r,0,6.3); ctx.fill(); }
+
+  // escrita à mão: cada letra é contornada e depois preenchida, da esquerda para a direita
+  function handwrite(text, x, y, fs, p, color, alpha){
+    if(p <= 0 || alpha <= 0) return;
+    ctx.save(); ctx.globalAlpha *= alpha; ctx.textBaseline = 'alphabetic';
+    var n = text.length;
+    for(var i=0;i<n;i++){
+      var ch = text[i]; if(ch === ' ') continue;
+      var cp = clamp(p*n - i*0.85, 0, 1.6)/1.6; if(cp <= 0) break;
+      var cx = x + ctx.measureText(text.slice(0, i)).width;
+      if(cp < 1){ ctx.setLineDash([cp*fs*2.2, fs*3]); ctx.lineWidth = Math.max(1, fs*.03); ctx.strokeStyle = color; ctx.strokeText(ch, cx, y); ctx.setLineDash([]); }
+      var fa = clamp((cp - .45)/.55, 0, 1);
+      if(fa > 0){ var ga = ctx.globalAlpha; ctx.globalAlpha = ga*fa; ctx.fillStyle = color; ctx.fillText(ch, cx, y); ctx.globalAlpha = ga; }
+    }
+    ctx.restore();
+  }
+  // texto grande no centro: palavras entram no tempo delas; algumas em dourado
+  function bigText(li, t, cfg){
+    var ws = LINES[li].w; ctx.save(); ctx.textBaseline = 'alphabetic';
+    var fs = cfg.fs; ctx.font = cfg.font(fs);
+    var maxW = W*.86, rows = [[]], widths = [0], spc = ctx.measureText(' ').width;
+    ws.forEach(function(o){ var w = ctx.measureText(o[0]).width, r = rows.length-1;
+      if(rows[r].length && widths[r] + spc + w > maxW){ rows.push([]); widths.push(0); r++; }
+      rows[r].push({o:o, w:w}); widths[r] += (rows[r].length > 1 ? spc : 0) + w; });
+    var lh = fs*1.12, y0 = cfg.y - (rows.length-1)*lh/2;
+    rows.forEach(function(row, ri){
+      var x = W/2 - widths[ri]/2;
+      row.forEach(function(it){
+        var p = (t - it.o[1])/.6;
+        if(p > 0){
+          var e = easeOut(p), hl = cfg.hl && cfg.hl.test(plain(it.o[0]));
+          ctx.save(); ctx.globalAlpha *= clamp(p*1.6, 0, 1);
+          ctx.translate(x, y0 + ri*lh + (1-e)*fs*.35);
+          ctx.shadowColor = hl ? 'rgba(227,184,101,.8)' : 'rgba(0,0,0,.65)'; ctx.shadowBlur = fs*.35;
+          ctx.fillStyle = hl ? GOLD2 : (cfg.color || IVORY); ctx.fillText(it.o[0], 0, 0); ctx.restore();
+        }
+        x += it.w + spc;
+      });
+    });
+    ctx.restore();
+  }
+
+  /* ===== Fundo noturno com poeira dourada ===== */
+  var DUST = []; for(var d=0; d<70; d++) DUST.push({x:Math.random(), y:Math.random(), s:.5 + Math.random()*1.8, v:.004 + Math.random()*.018, ph:Math.random()*6});
+  function night(t, dt, warm){
+    var g = ctx.createRadialGradient(W/2, -H*.1, 0, W/2, -H*.1, H*1.2);
+    g.addColorStop(0, warm ? 'rgba(120,80,30,.55)' : 'rgba(40,52,100,.5)'); g.addColorStop(1, 'rgba(13,16,32,0)');
+    ctx.fillStyle = NIGHT; ctx.fillRect(0,0,W,H); ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    for(var i=0;i<DUST.length;i++){ var p = DUST[i]; p.y -= p.v*dt*(1 + A.bass*2); if(p.y < 0) p.y = 1;
+      ctx.fillStyle = 'rgba(243,212,143,' + (.25 + .35*Math.sin(t*1.5 + p.ph)*.5 + A.high*.4) + ')'; ctx.fillRect(p.x*W, p.y*H, p.s, p.s); }
+  }
+  function godRays(t, a){
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    var ax = W/2, ay = -20, len = H*1.3;
+    for(var i=0;i<7;i++){
+      var ang = Math.PI/2 + (i-3)*.22 + Math.sin(t*.2 + i)*.05, w = .05 + .025*Math.sin(t*.7 + i*2);
+      var g = ctx.createLinearGradient(ax, ay, ax + Math.cos(ang)*len, ay + Math.sin(ang)*len);
+      g.addColorStop(0, 'rgba(243,212,143,' + (a*(.16 + A.bass*.12)) + ')'); g.addColorStop(1, 'rgba(243,212,143,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(ax, ay);
+      ctx.lineTo(ax + Math.cos(ang - w)*len, ay + Math.sin(ang - w)*len); ctx.lineTo(ax + Math.cos(ang + w)*len, ay + Math.sin(ang + w)*len); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* ===== Flores (todo tipo): desenhadas uma vez e reaproveitadas ===== */
+  var FLOWER = (function(){
+    function mk(fn){ var c = document.createElement('canvas'); c.width = c.height = 160; var g = c.getContext('2d'); g.translate(80,80); fn(g); return c; }
+    function petals(g, n, rx, ry, dist, c1, c2, rot){ for(var i=0;i<n;i++){ g.save(); g.rotate(i/n*Math.PI*2 + (rot||0)); var gr = g.createLinearGradient(0,0,0,-dist-ry); gr.addColorStop(0,c2); gr.addColorStop(1,c1); g.fillStyle = gr; g.beginPath(); g.ellipse(0,-dist,rx,ry,0,0,Math.PI*2); g.fill(); g.restore(); } }
+    function center(g, r, c1, c2){ var cg = g.createRadialGradient(-r*.3,-r*.3,1,0,0,r); cg.addColorStop(0,c1); cg.addColorStop(1,c2); g.fillStyle = cg; g.beginPath(); g.arc(0,0,r,0,6.3); g.fill(); }
+    return {
+      rose: mk(function(g){ [[62,7,0],[50,6,.4],[38,5,.9],[27,5,1.5],[16,4,2.1]].forEach(function(rg, ri){ for(var i=0;i<rg[1];i++){ g.save(); g.rotate(i/rg[1]*Math.PI*2 + rg[2]); var gr = g.createRadialGradient(0,-rg[0]*.55,2,0,-rg[0]*.35,rg[0]*.75); gr.addColorStop(0, ri > 2 ? '#a3002c' : '#ff5a80'); gr.addColorStop(.6, ri > 2 ? '#7a0020' : '#e0244f'); gr.addColorStop(1, '#5c0018'); g.fillStyle = gr; g.beginPath(); g.ellipse(0,-rg[0]*.42,rg[0]*.5,rg[0]*.52,0,0,Math.PI*2); g.fill(); g.restore(); } }); }),
+      daisy: mk(function(g){ petals(g, 20, 8, 32, 40, '#ffffff', '#e3eadf'); center(g, 19, '#ffe36b', '#c98a0e'); }),
+      sunflower: mk(function(g){ petals(g, 18, 10, 26, 46, '#ffd23f', '#f0a500'); petals(g, 18, 8, 20, 40, '#ffe06b', '#e8a000', .17); center(g, 28, '#7a4a1e', '#3b2210'); }),
+      tulip: mk(function(g){ g.fillStyle = '#c94f9a'; g.beginPath(); g.moveTo(-34,-10); g.quadraticCurveTo(-40,40,0,46); g.quadraticCurveTo(40,40,34,-10); g.lineTo(18,10); g.lineTo(0,-30); g.lineTo(-18,10); g.closePath(); g.fill(); g.fillStyle = '#e07bbd'; g.beginPath(); g.moveTo(-14,4); g.quadraticCurveTo(0,-48,14,4); g.quadraticCurveTo(0,40,-14,4); g.fill(); }),
+      lavender: mk(function(g){ g.strokeStyle = '#4f8f5f'; g.lineWidth = 3; g.beginPath(); g.moveTo(0,70); g.lineTo(0,-60); g.stroke(); for(var i=0;i<12;i++){ var y = -60 + i*9; g.fillStyle = i%2 ? '#8a6bd1' : '#a58be0'; g.beginPath(); g.ellipse(-6 + (i%2)*12, y, 7, 5, 0, 0, 6.3); g.fill(); } }),
+      blue: mk(function(g){ petals(g, 5, 18, 22, 22, '#6fa8ff', '#3b6fd1'); center(g, 9, '#fff3a0', '#e0b020'); })
+    };
+  })();
+  var FKINDS = ['rose','daisy','sunflower','tulip','lavender','blue'];
+  function flower(kind, x, y, s, rot){ if(s <= 0) return; ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.drawImage(FLOWER[kind], -s/2, -s/2, s, s); ctx.restore(); }
+
+  /* ===== Capa do livro: abre no começo e fecha no final ===== */
+  var COVER_GREEN = ['#24573f', '#123224'];
+  function drawCover(t, alpha, openK, zoomK, closing){
+    if(alpha <= 0) return;
+    ctx.save(); ctx.globalAlpha = alpha;
+    godRays(t, 1);
+    var bw = Math.min(W*.74, H*.5*.74), bh = bw*1.36, cx = W/2, cy = H*.47;
+    ctx.translate(cx, cy); ctx.scale(1 + zoomK*1.6, 1 + zoomK*1.6); ctx.translate(-cx, -cy);
+    var x0 = cx - bw/2, y0 = cy - bh/2;
+    ctx.fillStyle = PAPER; ctx.fillRect(x0 + 4, y0 + 4, bw - 6, bh - 8);
+    var sc = Math.cos(openK*Math.PI);
+    if(sc > 0){
+      ctx.save(); ctx.translate(x0, 0); ctx.scale(sc, 1); ctx.translate(-x0, 0);
+      ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 12;
+      var lg = ctx.createLinearGradient(x0, y0, x0 + bw, y0 + bh); lg.addColorStop(0, COVER_GREEN[0]); lg.addColorStop(1, COVER_GREEN[1]);
+      ctx.fillStyle = lg; ctx.fillRect(x0, y0, bw, bh); ctx.shadowColor = 'transparent';
+      ctx.strokeStyle = GOLD; ctx.lineWidth = 2; ctx.strokeRect(x0 + bw*.06, y0 + bw*.06, bw*.88, bh - bw*.12);
+      ctx.lineWidth = 1; ctx.strokeRect(x0 + bw*.085, y0 + bw*.085, bw*.83, bh - bw*.17);
+      [[0,0],[1,0],[0,1],[1,1]].forEach(function(c){ ctx.beginPath(); ctx.arc(x0 + bw*(c[0] ? .885 : .115), y0 + (c[1] ? bh - bw*.115 : bw*.115), bw*.035, 0, 6.3); ctx.stroke(); });
+      ctx.font = (bw*.15) + 'px "Great Vibes", cursive';
+      var l1 = 'Foi Deus', l2 = 'quem escreveu', tp = closing ? 1 : 0;
+      handwrite(l1, cx - ctx.measureText(l1).width/2, cy - bw*.12, bw*.15, closing ? 1 : (t - 1.6)/2.4, GOLD2, 1);
+      handwrite(l2, cx - ctx.measureText(l2).width/2, cy + bw*.1, bw*.15, closing ? 1 : (t - 3.4)/2.8, GOLD2, 1);
+      ctx.font = 'italic 500 ' + (bw*.065) + 'px ' + SERIF; ctx.textAlign = 'center';
+      var sub = closing ? 'e a história continua…' : 'a nossa história', sa = closing ? clamp((t - closing)/1.5, 0, 1) : clamp((t - 6.2)/1.2, 0, 1);
+      ctx.fillStyle = 'rgba(243,212,143,' + sa*(.75 + .25*Math.sin(t*2)) + ')'; ctx.fillText(sub, cx, cy + bw*.33); ctx.textAlign = 'left';
+      // galhinhos com flores na capa
+      var fp = closing ? 1 : clamp((t - 5.5)/2, 0, 1);
+      flower('rose', x0 + bw*.2, y0 + bh - bw*.2, bw*.12*easeBack(fp)); flower('daisy', x0 + bw*.32, y0 + bh - bw*.15, bw*.09*easeBack(fp)); flower('sunflower', x0 + bw*.8, y0 + bw*.22, bw*.1*easeBack(fp)); flower('lavender', x0 + bw*.7, y0 + bw*.2, bw*.12*easeBack(fp), .4);
+      ctx.fillStyle = 'rgba(0,0,0,' + (openK*.5) + ')'; ctx.fillRect(x0, y0, bw, bh);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  /* ===== Páginas do livro ===== */
+  var PAPER_TEX = null;
+  function paperTexture(){
+    if(PAPER_TEX && PAPER_TEX.w === W && PAPER_TEX.h === H) return PAPER_TEX.c;
+    var c = document.createElement('canvas'); c.width = Math.round(W*DPR); c.height = Math.round(H*DPR); var g = c.getContext('2d'); g.scale(DPR, DPR);
+    g.fillStyle = PAPER; g.fillRect(0,0,W,H);
+    var v = g.createRadialGradient(W/2, H/2, Math.min(W,H)*.35, W/2, H/2, Math.max(W,H)*.8);
+    v.addColorStop(0, 'rgba(150,110,60,0)'); v.addColorStop(1, 'rgba(150,110,60,.28)'); g.fillStyle = v; g.fillRect(0,0,W,H);
+    for(var i=0;i<900;i++){ g.fillStyle = 'rgba(120,90,50,' + (Math.random()*.08) + ')'; g.fillRect(Math.random()*W, Math.random()*H, 1 + Math.random()*1.5, 1 + Math.random()*1.5); }
+    var sp = g.createLinearGradient(0,0,W*.08,0); sp.addColorStop(0, 'rgba(90,60,30,.22)'); sp.addColorStop(1, 'rgba(90,60,30,0)'); g.fillStyle = sp; g.fillRect(0,0,W*.08,H);
+    PAPER_TEX = {w:W, h:H, c:c}; return c;
+  }
+  function pageLayout(pg){
+    if(pg.geo && pg.geo.W === W && pg.geo.H === H) return pg.geo;
+    var fs = clamp(W*.078, 24, 46), mx = W*.09, rows;
+    for(var tries=0; tries<6; tries++){
+      ctx.font = '500 ' + fs + 'px ' + SCRIPT; rows = [];
+      for(var li=pg.from; li<pg.to; li++){
+        var cur = [];
+        LINES[li].w.forEach(function(o){ var test = cur.concat([o]).map(function(z){ return z[0]; }).join(' ');
+          if(cur.length && ctx.measureText(test).width > W - mx*2 - fs*1.5){ rows.push({li:li, w:cur}); cur = []; } cur.push(o); });
+        rows.push({li:li, w:cur});
+      }
+      if(H*.13 + rows.length*fs*1.32 <= H*.5) break; fs *= .92;
+    }
+    rows.forEach(function(r){ r.text = r.w.map(function(z){ return z[0]; }).join(' '); r.s = r.w[0][1]; r.e = r.w[r.w.length-1][2]; r.width = ctx.measureText(r.text).width; });
+    var top = H*.13, bottom = top + rows.length*fs*1.32;
+    var iy = Math.max(H*.5, bottom + fs*.4);
+    pg.geo = {W:W, H:H, fs:fs, mx:mx, rows:rows, top:top, ill:{x:W*.08, y:iy, w:W*.84, h:H*.88 - iy}};
+    return pg.geo;
+  }
+  var DOODLE = { olhei:'eye', tempo:'clock', finalmente:'hearts', prometi:'ring', tambem:'heart', aconteceu:'spark', escreveu:'quill', presente:'gift', ale:'star', agradecer:'spark', perdoar:'heart', certeza:'heart', jessica:'hearts', mao:'heart', cor:'spark', aniversario:'gift', juntos:'hearts', novo:'heart', seguro:'anchor', gloria:'sun', luta:'cloud' };
+  function smallDoodle(kind, x, y, s, p){
+    var L = [];
+    if(kind === 'eye'){ L.push({p:arc(x, y + s*.25, s*.6, s*.5, Math.PI*1.15, Math.PI*1.85, 16)}); L.push({p:arc(x, y - s*.4, s*.6, s*.45, Math.PI*.15, Math.PI*.85, 16)}); L.push({p:arc(x, y - s*.07, s*.12, s*.12, 0, 6.3, 10)}); }
+    if(kind === 'clock'){ L.push({p:arc(x, y, s*.45, s*.45, 0, 6.3, 26)}); L.push({p:seg(x, y, x, y - s*.3, 6)}); L.push({p:seg(x, y, x + s*.22, y + s*.08, 6)}); }
+    if(kind === 'hearts'){ L.push({p:hrtPts(x - s*.3, y, s*.25), c:ROSE}); L.push({p:hrtPts(x + s*.25, y - s*.1, s*.33), c:ROSE}); }
+    if(kind === 'ring'){ L.push({p:arc(x, y, s*.32, s*.32, 0, 6.3, 22), c:'#b8862a'}); L.push({p:poly([[x - s*.12, y - s*.32],[x, y - s*.5],[x + s*.12, y - s*.32]]), c:'#b8862a'}); }
+    if(kind === 'heart'){ L.push({p:hrtPts(x, y, s*.5), c:ROSE}); }
+    if(kind === 'quill'){ L.push({p:poly([[x - s*.45, y + s*.4],[x + s*.4, y - s*.45]])}); L.push({p:arc(x + s*.12, y - s*.15, s*.35, s*.12, -.8, 2.3, 14), c:GREEN_INK}); }
+    if(kind === 'gift'){ L.push({p:poly([[x - s*.38, y - s*.1],[x + s*.38, y - s*.1],[x + s*.38, y + s*.4],[x - s*.38, y + s*.4],[x - s*.38, y - s*.1]])}); L.push({p:seg(x, y - s*.1, x, y + s*.4, 6), c:ROSE}); L.push({p:arc(x - s*.15, y - s*.22, s*.15, s*.1, 0, 6.3, 12), c:ROSE}); L.push({p:arc(x + s*.15, y - s*.22, s*.15, s*.1, 0, 6.3, 12), c:ROSE}); }
+    if(kind === 'star'){ var st = []; for(var e=0;e<=10;e++){ var ea = -Math.PI/2 + e/10*Math.PI*2, er = e%2 ? s*.2 : s*.48; st.push([x + Math.cos(ea)*er, y + Math.sin(ea)*er]); } L.push({p:st, c:'#b8862a'}); }
+    if(kind === 'anchor'){ L.push({p:arc(x, y - s*.38, s*.08, s*.08, 0, 6.3, 10)}); L.push({p:seg(x, y - s*.3, x, y + s*.4, 8)}); L.push({p:arc(x, y + s*.05, s*.35, s*.35, .2, Math.PI - .2, 16)}); L.push({p:seg(x - s*.22, y - s*.15, x + s*.22, y - s*.15, 6)}); }
+    if(kind === 'sun'){ L.push({p:arc(x, y, s*.22, s*.22, 0, 6.3, 16), c:'#d9960f'}); for(var r=0;r<8;r++){ var a = r/8*Math.PI*2; L.push({p:seg(x + Math.cos(a)*s*.32, y + Math.sin(a)*s*.32, x + Math.cos(a)*s*.48, y + Math.sin(a)*s*.48, 4), c:'#d9960f'}); } }
+    if(kind === 'cloud'){ L.push({p:arc(x - s*.2, y, s*.2, s*.18, Math.PI*.5, Math.PI*1.6, 10).concat(arc(x + s*.05, y - s*.12, s*.25, s*.22, Math.PI, Math.PI*2, 12)).concat(arc(x + s*.3, y, s*.18, s*.17, Math.PI*1.4, Math.PI*2.5, 10))}); }
+    if(kind === 'spark'){ for(var i=0;i<4;i++){ var a = i*Math.PI/4; L.push({p:seg(x - Math.cos(a)*s*.45, y - Math.sin(a)*s*.45, x + Math.cos(a)*s*.45, y + Math.sin(a)*s*.45, 6), c:'#b8862a'}); } }
+    strokes(L, p, INK, Math.max(1.6, s*.07));
+  }
+  function drawPage(pg, t){
+    var g = pageLayout(pg);
+    ctx.drawImage(paperTexture(), 0, 0, W, H);
+    // enfeite no topo e número da página
+    ctx.strokeStyle = 'rgba(168,122,44,.6)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(W*.3, H*.075); ctx.lineTo(W*.46, H*.075); ctx.moveTo(W*.54, H*.075); ctx.lineTo(W*.7, H*.075); ctx.stroke();
+    ctx.save(); ctx.translate(W/2, H*.075); ctx.rotate(Math.PI/4); ctx.strokeRect(-4,-4,8,8); ctx.restore();
+    ctx.font = 'italic 500 ' + (g.fs*.55) + 'px ' + SERIF; ctx.fillStyle = 'rgba(58,42,28,.55)'; ctx.textAlign = 'center'; ctx.fillText('— ' + pg.num + ' —', W/2, H*.955); ctx.textAlign = 'left';
+    // texto escrito à mão
+    var cur = -1; g.rows.forEach(function(r, i){ if(t >= r.s - .05) cur = i; });
+    ctx.font = '500 ' + g.fs + 'px ' + SCRIPT;
+    for(var i=0;i<g.rows.length;i++){
+      var r = g.rows[i], y = g.top + (i + .8)*g.fs*1.32; if(t < r.s - .05) break;
+      var rs = pg.num > 1 ? Math.max(r.s, LINES[pg.from].s + .6) : r.s;
+      handwrite(r.text, g.mx, y, g.fs, (t - rs)/Math.max(.5, r.e - r.s), i < cur ? INK_PAST : INK, 1);
+      var slot = 0;
+      r.w.forEach(function(o){ var k = DOODLE[plain(o[0])]; if(k){ smallDoodle(k, Math.min(W - g.fs*.6, g.mx + r.width + g.fs*.75 + slot*g.fs*1.1), y - g.fs*.3, g.fs*.8, (t - o[2] - .1)/.9); slot++; } });
+    }
+    // ilustração grande, que acompanha a letra
+    ctx.save(); pg.ill(t, g.ill); ctx.restore();
+    cornerFlowers(pg, t);
+  }
+  function turnPage(cur, next, t, p){
+    drawPage(next, t);
+    // sombra da página que está virando
+    var w = W*Math.cos(p*Math.PI/2);
+    var sh = ctx.createLinearGradient(w, 0, w + 60, 0); sh.addColorStop(0, 'rgba(0,0,0,' + (.35*(1-p)) + ')'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sh; ctx.fillRect(w, 0, 60, H);
+    if(w > 1){ ctx.save(); ctx.beginPath(); ctx.rect(0,0,w,H); ctx.clip(); ctx.scale(w/W, 1); drawPage(cur, t); ctx.fillStyle = 'rgba(80,55,25,' + (p*.35) + ')'; ctx.fillRect(0,0,W,H); ctx.restore(); }
+  }
+
+  // --- Ilustrações das páginas ---
+  function figure(x, y, h, face){ // bonequinho em traço
+    return [ {p:arc(x, y - h*.82, h*.12, h*.12, 0, 6.3, 14)}, {p:seg(x, y - h*.7, x, y - h*.25, 8)},
+      {p:poly([[x - h*.14, y],[x, y - h*.25],[x + h*.14, y]])}, {p:poly([[x - h*.18*face, y - h*.38],[x, y - h*.58],[x + h*.2*face, y - h*.45]])} ];
+  }
+  // o bonequinho do Felipe chegando de skate
+  function skater(x, y, h, t, speed, meet){
+    var roll = meet*14, hop = 0;
+    if(meet >= 1){ var since = t - SKATE_STOP; hop = since > 0 && since < .45 ? Math.sin(since/.45*Math.PI)*h*.22 : 0; }
+    var lean = speed ? -.12 : 0, by = y - hop;
+    ctx.save(); ctx.translate(x, by); ctx.rotate(lean);
+    // prancha com as pontas levantadas e rodinhas girando
+    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-h*.38, -h*.1); ctx.quadraticCurveTo(-h*.32, 0, -h*.2, 0); ctx.lineTo(h*.2, 0); ctx.quadraticCurveTo(h*.32, 0, h*.38, -h*.1); ctx.stroke();
+    [-h*.2, h*.2].forEach(function(wx){ ctx.fillStyle = GREEN_INK; ctx.beginPath(); ctx.arc(wx, h*.06, h*.05, 0, 6.3); ctx.fill();
+      ctx.strokeStyle = '#fffaf0'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(wx, h*.06); ctx.lineTo(wx + Math.cos(roll)*h*.045, h*.06 + Math.sin(roll)*h*.045); ctx.stroke(); });
+    // corpo em pose de equilíbrio
+    var L = [ {p:arc(0, -h*.88, h*.12, h*.12, 0, 6.3, 14)}, {p:seg(0, -h*.76, 0, -h*.34, 8)},
+      {p:poly([[-h*.16, -h*.02],[-h*.05, -h*.2],[0, -h*.34],[h*.06, -h*.2],[h*.17, -h*.02]])},
+      {p:poly([[-h*.34, -h*.58],[0, -h*.66],[h*.3, -h*.74]])} ];
+    strokes(L, 1, INK, 2);
+    // boné virado para trás
+    ctx.fillStyle = GREEN_INK; ctx.beginPath(); ctx.arc(0, -h*.9, h*.125, Math.PI, Math.PI*2); ctx.fill(); ctx.fillRect(-h*.24, -h*.92, h*.13, h*.04);
+    ctx.restore();
+    // risquinhos de velocidade
+    if(speed){ ctx.strokeStyle = 'rgba(58,42,28,.45)'; ctx.lineWidth = 1.5; for(var k=0;k<3;k++){ var yy = y - h*(.25 + k*.22), len = h*(.35 + .15*Math.sin(t*20 + k)); ctx.beginPath(); ctx.moveTo(x - h*.5 - len, yy); ctx.lineTo(x - h*.5, yy); ctx.stroke(); } }
+  }
+  var SKATE_STOP = 0;
+  function illBrasilia(t, R){
+    var u = Math.min(R.w, R.h*1.4), base = R.y + R.h*.82;
+    var L0 = LINES[0], L1 = LINES[1], L2 = LINES[2], L4 = LINES[4];
+    SKATE_STOP = L2.s + 1.2;
+    var cc = R.x + R.w*.3, uc = u*.62;      // Congresso Nacional, ao fundo à esquerda
+    var hx = R.x + R.w*.75;                 // o local do congresso da igreja, à direita
+    // sol do futuro nascendo atrás
+    var sun = ease((t - L4.s)/3);
+    if(sun > 0){ var sy = lerp(base, R.y + R.h*.22, sun), sx = (cc + hx)/2; ctx.save(); ctx.beginPath(); ctx.rect(R.x - 60, 0, R.w + 120, base); ctx.clip(); ctx.globalAlpha *= sun;
+      glowDot(sx, sy, u*.32, 'rgba(243,212,143,A)', .55); ctx.fillStyle = '#efc46e'; ctx.beginPath(); ctx.arc(sx, sy, u*.09, 0, 6.3); ctx.fill();
+      for(var r=0;r<12;r++){ var a = r/12*Math.PI*2 + t*.2; ctx.strokeStyle = 'rgba(214,160,60,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sx + Math.cos(a)*u*.13, sy + Math.sin(a)*u*.13); ctx.lineTo(sx + Math.cos(a)*u*.19, sy + Math.sin(a)*u*.19); ctx.stroke(); }
+      ctx.restore(); }
+    // Congresso Nacional
+    var p = (t - L0.s - .6)/4, tw = uc*.06, th = uc*.5, gap = uc*.025;
+    strokes([
+      {p:seg(R.x + R.w*.02, base, R.x + R.w*.98, base, 30)},
+      {p:poly([[cc - uc*.46, base],[cc - uc*.46, base - uc*.06],[cc + uc*.46, base - uc*.06],[cc + uc*.46, base]])},
+      {p:poly([[cc - gap - tw, base - uc*.06],[cc - gap - tw, base - th],[cc - gap, base - th],[cc - gap, base - uc*.06]])},
+      {p:poly([[cc + gap, base - uc*.06],[cc + gap, base - th],[cc + gap + tw, base - th],[cc + gap + tw, base - uc*.06]])},
+      {p:seg(cc - gap, base - th*.62, cc + gap, base - th*.62, 4)},
+      {p:arc(cc - uc*.27, base - uc*.06, uc*.11, uc*.09, Math.PI, Math.PI*2, 18)},
+      {p:arc(cc + uc*.27, base - uc*.2, uc*.17, uc*.11, 0, Math.PI, 20)},
+      {p:seg(cc + uc*.27, base - uc*.09, cc + uc*.27, base - uc*.06, 3)}
+    ], p, INK, 2);
+    // o pavilhão do congresso da igreja, com a cruz e a faixa
+    var hp2 = (t - L1.s + .4)/2.4, hw = u*.34, hh = u*.24, peak = base - hh - u*.11;
+    strokes([
+      {p:poly([[hx - hw/2, base],[hx - hw/2, base - hh],[hx + hw/2, base - hh],[hx + hw/2, base]])},
+      {p:poly([[hx - hw*.58, base - hh + 2],[hx, peak],[hx + hw*.58, base - hh + 2]])},
+      {p:seg(hx, peak, hx, peak - u*.08, 6), c:'#b8862a'}, {p:seg(hx - u*.028, peak - u*.055, hx + u*.028, peak - u*.055, 4), c:'#b8862a'},
+      {p:poly([[hx - hw*.1, base],[hx - hw*.1, base - hh*.38]]).concat(arc(hx, base - hh*.38, hw*.1, hw*.1, Math.PI, Math.PI*2, 10)).concat(poly([[hx + hw*.1, base - hh*.38],[hx + hw*.1, base]]))}
+    ], hp2, INK, 2);
+    var bn = clamp((t - L1.s - 1.2)/.8, 0, 1);
+    if(bn > 0){ ctx.save(); ctx.globalAlpha *= bn; var bw2 = hw*.86, bh2 = u*.055, by2 = base - hh*.97;
+      ctx.fillStyle = GREEN_INK; ctx.fillRect(hx - bw2/2, by2, bw2, bh2); ctx.fillStyle = '#fffaf0'; ctx.font = '600 ' + (bh2*.62) + 'px ' + SERIF; ctx.textAlign = 'center'; ctx.fillText('CONGRESSO', hx, by2 + bh2*.72); ctx.textAlign = 'left';
+      [-1, 1].forEach(function(sd){ ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx + sd*hw*.58, base - hh); ctx.lineTo(hx + sd*hw*.58, base - hh - u*.12); ctx.stroke();
+        ctx.fillStyle = sd < 0 ? ROSE : LEAF; ctx.beginPath(); ctx.moveTo(hx + sd*hw*.58, base - hh - u*.12); ctx.lineTo(hx + sd*hw*.58 + u*.05 + Math.sin(t*4)*2, base - hh - u*.1); ctx.lineTo(hx + sd*hw*.58, base - hh - u*.08); ctx.closePath(); ctx.fill(); });
+      ctx.restore(); }
+    // ele chega de skate até ela, na frente do congresso da igreja
+    var meet = easeOut((t - L1.e)/(L2.s - L1.e + 1.2)), fy = base + R.h*.13, fh = u*.2;
+    var vis = clamp((t - L1.e + .3)/.8, 0, 1);
+    if(vis > 0){
+      var xb = hx + u*.1;
+      ctx.save(); ctx.globalAlpha *= vis;
+      var xs = lerp(R.x - u*.25, hx - u*.12, meet), speed = (meet > 0 && meet < 1) ? 1 : 0;
+      skater(xs, fy, fh, t, speed, meet);
+      her(xb, fy, fh, {face:-1, wave: (meet >= 1 && t < wordT(2, 'aconteceu')) ? 'L' : null, tilt: meet >= 1 ? -1 : 0});
+      var hp = (t - wordT(2, 'aconteceu') - .2)/.9, mx = hx - u*.01;
+      if(hp > 0){ ctx.save(); ctx.translate(mx, fy - fh*1.12 - Math.sin(t*2)*3); var s = easeBack(hp)*u*.05*(1 + A.bass*.15); heartPath(0, 0, s); ctx.fillStyle = ROSE; ctx.fill(); ctx.restore();
+        for(var k=0;k<6;k++){ var a = k/6*Math.PI*2 + t; var rr = u*(.09 + .03*Math.sin(t*3 + k)); ctx.fillStyle = 'rgba(214,160,60,' + clamp(hp,0,1)*.8 + ')'; ctx.fillRect(mx + Math.cos(a)*rr, fy - fh*1.2 + Math.sin(a)*rr, 2.5, 2.5); } }
+      ctx.restore();
+    }
+  }
+
+  function illTime(t, R){
+    var u = Math.min(R.w/3, R.h), cy = R.y + R.h*.5;
+    // ampulheta com areia caindo
+    var hx = R.x + R.w*.18, hp = (t - LINES[5].s)/1.2, hh = u*.75, hw = u*.32;
+    strokes([{p:poly([[hx - hw, cy - hh/2],[hx + hw, cy - hh/2],[hx + u*.03, cy],[hx + hw, cy + hh/2],[hx - hw, cy + hh/2],[hx - u*.03, cy],[hx - hw, cy - hh/2]])},
+      {p:seg(hx - hw*1.2, cy - hh/2, hx + hw*1.2, cy - hh/2, 6)}, {p:seg(hx - hw*1.2, cy + hh/2, hx + hw*1.2, cy + hh/2, 6)}], hp, INK, 2);
+    if(hp > 1){ var sand = clamp((t - LINES[5].s - 1.2)/12, 0, 1); ctx.fillStyle = '#d9a64a';
+      var top = (1 - sand); ctx.beginPath(); ctx.moveTo(hx - hw*top*.85, cy - hh*.5*top + 2); ctx.lineTo(hx + hw*top*.85, cy - hh*.5*top + 2); ctx.lineTo(hx, cy - 2); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(hx - hw*.9, cy + hh/2 - 2); ctx.lineTo(hx + hw*.9, cy + hh/2 - 2); ctx.lineTo(hx + hw*.9*(1 - sand*.6), cy + hh/2 - hh*.45*sand); ctx.lineTo(hx - hw*.9*(1 - sand*.6), cy + hh/2 - hh*.45*sand); ctx.closePath(); ctx.fill();
+      if(sand < 1){ ctx.fillRect(hx - 1, cy, 2, hh/2 - 2); } }
+    // broto que vira um coração: "o nosso amor cresceu"
+    var sx = R.x + R.w*.5, gp = ease((t - wordT(6, 'cresceu') + .4)/2.6), gy = cy + hh/2;
+    if(gp > 0){
+      var stem = []; for(var i=0;i<=20;i++){ var v = i/20; stem.push([sx + Math.sin(v*3 + t*.8)*u*.04*v, gy - v*hh*.85*gp]); }
+      pen(stem, 1, '#4b7a3a', 2.5);
+      if(gp > .4){ ctx.fillStyle = '#6a9a4f'; var lk = ease((gp - .4)/.3); ctx.beginPath(); ctx.ellipse(sx - u*.08*lk, gy - hh*.35, u*.08*lk, u*.035*lk, -.5, 0, 6.3); ctx.ellipse(sx + u*.08*lk, gy - hh*.5, u*.08*lk, u*.035*lk, .5, 0, 6.3); ctx.fill(); }
+      if(gp > .75){ var top2 = stem[stem.length-1]; heartPath(top2[0], top2[1] - u*.06, u*.1*easeBack((gp - .75)/.25)*(1 + A.bass*.12)); ctx.fillStyle = ROSE; ctx.fill(); }
+    }
+    // calendário que passa os meses até abril
+    var cx2 = R.x + R.w*.83, cw = u*.62, ch = u*.66, vp = (t - LINES[7].s + .2)/1;
+    if(vp > 0){
+      ctx.save(); ctx.globalAlpha *= clamp(vp, 0, 1);
+      ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.fillRect(cx2 - cw/2, cy - ch/2, cw, ch); ctx.strokeRect(cx2 - cw/2, cy - ch/2, cw, ch);
+      ctx.fillStyle = ROSE; ctx.fillRect(cx2 - cw/2, cy - ch/2, cw, ch*.28);
+      var MES = ['JAN','FEV','MAR','ABR'], k = Math.min(3, Math.floor(Math.max(0, t - LINES[7].s)/1.6));
+      if(t > wordT(8, 'dia')) k = 3;
+      ctx.fillStyle = '#fff'; ctx.font = '600 ' + (ch*.18) + 'px ' + SERIF; ctx.textAlign = 'center'; ctx.fillText(MES[k], cx2, cy - ch/2 + ch*.21);
+      ctx.fillStyle = 'rgba(58,42,28,.5)'; for(var r=0;r<4;r++) for(var c=0;c<5;c++) ctx.fillRect(cx2 - cw*.38 + c*cw*.18, cy - ch*.05 + r*ch*.15, cw*.08, ch*.06);
+      var flip = (Math.max(0, t - LINES[7].s) % 1.6)/1.6; if(k < 3 && flip < .35){ ctx.fillStyle = 'rgba(255,250,240,' + (1 - flip/.35) + ')'; ctx.fillRect(cx2 - cw/2, cy - ch/2 - flip*ch*.6, cw, ch*.5); }
+      if(t > wordT(8, 'dia')){ var hp2 = (t - wordT(8, 'dia'))/.8; heartPath(cx2 + cw*.32, cy - ch*.5, cw*.14*easeBack(hp2)); ctx.fillStyle = ROSE; ctx.fill(); }
+      ctx.textAlign = 'left'; ctx.restore();
+    }
+  }
+  function illWedding(t, R){
+    var u = Math.min(R.w, R.h*1.3), cy = R.y + R.h*.55;
+    // calendário: 25 de abril circulado
+    var kx = R.x + R.w*.2, cw = u*.3, ch = u*.34, kp = (t - LINES[9].s + .1)/.8;
+    if(kp > 0){ ctx.save(); ctx.globalAlpha *= clamp(kp,0,1);
+      ctx.fillStyle = '#fffaf0'; ctx.fillRect(kx - cw/2, cy - ch/2, cw, ch); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(kx - cw/2, cy - ch/2, cw, ch);
+      ctx.fillStyle = ROSE; ctx.fillRect(kx - cw/2, cy - ch/2, cw, ch*.26); ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+      ctx.font = '600 ' + (ch*.16) + 'px ' + SERIF; ctx.fillText('ABRIL', kx, cy - ch/2 + ch*.19);
+      ctx.fillStyle = INK; ctx.font = '600 ' + (ch*.42) + 'px ' + SERIF; ctx.fillText('25', kx, cy + ch*.3); ctx.textAlign = 'left'; ctx.restore();
+      pen(arc(kx, cy + ch*.15, cw*.36, ch*.3, -1.8, -1.8 + Math.PI*2.1, 30), (t - wordT(9, 'abril'))/.9, ROSE, 2.5); }
+    // igreja com luz
+    var gx = R.x + R.w*.68, gw = u*.36, gh = u*.42, gb = cy + gh*.45, ip = (t - LINES[12].s + .2)/2.2;
+    if(ip > 0){
+      ctx.save(); ctx.globalAlpha *= clamp(ip*1.5, 0, 1); glowDot(gx, gb - gh*.6, u*.4, 'rgba(243,212,143,A)', .45); ctx.restore();
+      strokes([{p:poly([[gx - gw/2, gb],[gx - gw/2, gb - gh*.55],[gx, gb - gh*.9],[gx + gw/2, gb - gh*.55],[gx + gw/2, gb],[gx - gw/2, gb]])},
+        {p:seg(gx, gb - gh*.9, gx, gb - gh*1.15, 6), c:'#b8862a'}, {p:seg(gx - gw*.1, gb - gh*1.06, gx + gw*.1, gb - gh*1.06, 4), c:'#b8862a'},
+        {p:arc(gx, gb - gh*.6, gw*.09, gw*.09, 0, 6.3, 14)},
+        {p:poly([[gx - gw*.14, gb],[gx - gw*.14, gb - gh*.22]]).concat(arc(gx, gb - gh*.22, gw*.14, gw*.14, Math.PI, Math.PI*2, 12)).concat(poly([[gx + gw*.14, gb - gh*.22],[gx + gw*.14, gb]]))}], ip, INK, 2);
+    }
+    var cp2 = grow(t, wordT(12, 'deus') - .2, .8);
+    if(cp2 > 0){ ctx.save(); ctx.globalAlpha *= cp2; var fy2 = R.y + R.h*.98, fh2 = u*.3, mx2 = R.x + R.w*.47, hold = t > wordT(14, 'prometeu');
+      var hb = him(mx2 - u*.09, fy2, fh2, {face:1, tilt:1, hold: hold ? [mx2, fy2 - fh2*.45] : null});
+      her(mx2 + u*.09, fy2, fh2*.95, {face:-1, tilt:-1, fill:'#fffdf7', holdL: hold ? [mx2, fy2 - fh2*.45] : null});
+      ctx.restore(); }
+    // alianças: uma em "eu prometi", outra em "você prometeu"
+    var rx = R.x + R.w*.47, ry = R.y + R.h*.22, rr = u*.075;
+    var r1 = (t - wordT(13, 'prometi'))/1, r2 = (t - wordT(14, 'prometeu'))/1;
+    if(r1 > 0){ ctx.save(); glowDot(rx, ry, rr*3, 'rgba(243,212,143,A)', .5*clamp(r2,0,1)); ctx.restore(); pen(arc(rx - rr*.55, ry, rr, rr, -Math.PI/2, Math.PI*1.5, 30), r1, '#b8862a', 3.5); }
+    if(r2 > 0){ pen(arc(rx + rr*.55, ry, rr, rr, Math.PI/2, Math.PI*2.5, 30), r2, '#b8862a', 3.5);
+      if(r2 > 1) for(var k=0;k<5;k++){ var a = k/5*Math.PI*2 + t*1.5; ctx.fillStyle = 'rgba(214,160,60,.8)'; ctx.fillRect(rx + Math.cos(a)*rr*2, ry + Math.sin(a)*rr*1.6, 2.5, 2.5); } }
+  }
+  // ---------- bonequinho animado: respira, anda, acena, bate palma, dá a mão, abraça, senta ----------
+  // o: {color, dress, fill, hair, walk(0-1), phase, face(1/-1), wave('L'/'R'), up, clap, hold:[x,y], holdL:[x,y], sit, cane, umbrella(0-1), tilt}
+  function guy(x, y, h, o){
+    o = o || {}; var col = o.color || INK, t = T_NOW, ph = o.phase || 0, face = o.face || 1;
+    var walk = o.walk || 0, wp = t*9 + ph, sw = Math.sin(wp)*walk;
+    var bob = walk ? Math.abs(Math.cos(wp))*h*.035*walk : Math.sin(t*2.2 + ph)*h*.012;
+    var hipY = y - h*.27 - bob, shY = y - h*.6 - bob, headY = y - h*.82 - bob, hr = h*.12;
+    if(o.sit){ hipY = y - h*.3; shY = hipY - h*.34 - Math.sin(t*2.2 + ph)*h*.008; headY = shY - h*.22; }
+    var hx = x + (o.tilt || 0)*h*.05;
+    ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = o.w || 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    // pernas
+    ctx.beginPath();
+    if(o.sit){ var sk = Math.sin(t*2.5 + ph)*h*.03; ctx.moveTo(x, hipY); ctx.lineTo(x + face*h*.2, hipY); ctx.lineTo(x + face*h*.2 + sk, y);
+      ctx.moveTo(x - face*h*.03, hipY + 2); ctx.lineTo(x + face*h*.16, hipY + 2); ctx.lineTo(x + face*h*.15 - sk, y); }
+    else { var lx = o.dress ? h*.06 : h*.12; ctx.moveTo(x - (o.dress ? lx : 0), hipY); ctx.lineTo(x - lx + sw*h*.17, y); ctx.moveTo(x + (o.dress ? lx : 0), hipY); ctx.lineTo(x + lx - sw*h*.17, y); }
+    ctx.stroke();
+    // corpo
+    if(o.dress && !o.sit){ ctx.beginPath(); ctx.moveTo(x, shY - h*.05); ctx.lineTo(x - h*.17, hipY + h*.04); ctx.lineTo(x + h*.17, hipY + h*.04); ctx.closePath(); if(o.fill){ ctx.fillStyle = o.fill; ctx.fill(); } ctx.stroke(); }
+    else { ctx.beginPath(); ctx.moveTo(x, shY - h*.06); ctx.lineTo(x, hipY); ctx.stroke(); if(o.dress && o.sit){ ctx.beginPath(); ctx.moveTo(x, shY); ctx.lineTo(x - h*.08, hipY); ctx.lineTo(x + face*h*.22, hipY); ctx.closePath(); if(o.fill){ ctx.fillStyle = o.fill; ctx.fill(); } ctx.stroke(); } }
+    // braços
+    function arm(side, hand){ var sx = x, sy = shY; var ex = (sx + hand[0])/2 + side*h*.04, ey = (sy + hand[1])/2 + h*.03; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(ex, ey, hand[0], hand[1]); ctx.stroke(); }
+    var swing = walk ? sw*h*.12 : Math.sin(t*2.2 + ph)*h*.015;
+    var Lh = [x - h*.17 - swing, shY + h*.27], Rh = [x + h*.17 + swing, shY + h*.27];
+    if(o.up){ var j = Math.sin(t*8 + ph)*h*.04; Lh = [x - h*.22, shY - h*.3 + j]; Rh = [x + h*.22, shY - h*.3 - j]; }
+    if(o.clap){ var c = Math.abs(Math.sin(t*9 + ph))*h*.07; Lh = [x + face*h*.14 - c, shY + h*.06]; Rh = [x + face*h*.14 + c, shY + h*.06]; }
+    if(o.wave === 'L') Lh = [x - h*.24 + Math.sin(t*9)*h*.05, shY - h*.32];
+    if(o.wave === 'R') Rh = [x + h*.24 + Math.sin(t*9)*h*.05, shY - h*.32];
+    if(o.hold) Rh = o.hold; if(o.holdL) Lh = o.holdL;
+    if(o.sit && !o.hold && !o.holdL && !o.cane){ Lh = [x + face*h*.12, hipY - h*.02]; Rh = [x + face*h*.16, hipY - h*.03]; }
+    if(o.cane){ var cx2 = x + face*h*.3; Rh = [cx2, y - h*.42]; if(face < 0) Lh = Rh; }
+    if(o.umbrella){ Rh = [x + h*.12, shY - h*.05]; }
+    arm(-1, Lh); arm(1, Rh);
+    // bengala do tamanho certo: do chão até a mão, com o cabo curvo
+    if(o.cane){ var cxx = x + face*h*.3; ctx.lineWidth = Math.max(1.5, h*.025); ctx.beginPath(); ctx.moveTo(cxx, y); ctx.lineTo(cxx, y - h*.42); ctx.arc(cxx + face*h*.04, y - h*.42, h*.04, Math.PI, face > 0 ? Math.PI*2 : 0, face < 0); ctx.stroke(); ctx.lineWidth = o.w || 2; }
+    // guarda-chuva
+    if(o.umbrella){ var ux = x + h*.12, ut = headY - h*.38, ur = h*.5*o.umbrella; ctx.beginPath(); ctx.moveTo(ux, shY - h*.05); ctx.lineTo(ux, ut); ctx.stroke();
+      if(ur > 1){ ctx.fillStyle = GREEN_INK; ctx.beginPath(); ctx.arc(ux, ut, ur, Math.PI, Math.PI*2); ctx.closePath(); ctx.fill(); } }
+    // cabeça e cabelo
+    ctx.beginPath(); ctx.arc(hx, headY, hr, 0, 6.3); ctx.fillStyle = PAPER; ctx.fill(); ctx.stroke();
+    if(o.hair){ ctx.fillStyle = o.hair; ctx.beginPath(); ctx.arc(hx, headY, hr*1.05, Math.PI*1.05, Math.PI*1.95); ctx.fill(); if(o.dress){ ctx.fillRect(hx - hr*1.05, headY - hr*.2, hr*.35, hr*1.4); ctx.fillRect(hx + hr*.7, headY - hr*.2, hr*.35, hr*1.4); } }
+    ctx.restore();
+    return {L:Lh, R:Rh, head:[hx, headY]};
+  }
+  var HAIR_F = '#3a2a1c', HAIR_J = '#5a3a22';
+  function him(x, y, h, o){ o = o || {}; o.hair = o.hair || HAIR_F; return guy(x, y, h, o); }
+  function her(x, y, h, o){ o = o || {}; o.dress = true; o.color = o.color || GREEN_INK; o.hair = o.hair || HAIR_J; o.fill = o.fill || 'rgba(79,143,95,.18)'; return guy(x, y, h, o); }
+
+  // ---------- bonequinhos (Felipe, Jéssica e a Alê) ----------
+  function person(x, y, h, o){
+    o = o || {}; var col = o.color || INK, L = [];
+    var hy = y - h*.82, hr = h*.12;
+    L.push({p:arc(x, hy, hr, hr, 0, 6.3, 16), c:col});
+    if(o.dress){ L.push({p:poly([[x, y - h*.7],[x - h*.17, y - h*.22],[x + h*.17, y - h*.22],[x, y - h*.7]]), c:col}); L.push({p:poly([[x - h*.07, y],[x - h*.07, y - h*.22]]), c:col}); L.push({p:poly([[x + h*.07, y],[x + h*.07, y - h*.22]]), c:col}); }
+    else { L.push({p:seg(x, y - h*.7, x, y - h*.25, 8), c:col}); L.push({p:poly([[x - h*.14, y],[x, y - h*.25],[x + h*.14, y]]), c:col}); }
+    var al = o.armL || [-.2, -.35], ar = o.armR || [.2, -.35];
+    L.push({p:poly([[x + al[0]*h, y + al[1]*h],[x, y - h*.6],[x + ar[0]*h, y + ar[1]*h]]), c:col});
+    strokes(L, o.p == null ? 1 : o.p, col, o.w || 2);
+    if(o.hair){ ctx.fillStyle = o.hair; ctx.beginPath(); ctx.arc(x, hy, hr*1.05, Math.PI*1.05, Math.PI*1.95); ctx.fill(); if(o.dress){ ctx.fillRect(x - hr*1.05, hy - hr*.2, hr*.35, hr*1.4); ctx.fillRect(x + hr*.7, hy - hr*.2, hr*.35, hr*1.4); } }
+  }
+  // a Alê: cabeça maior, braços curtinhos, vestido, maria-chiquinha balançando, pernas correndo
+  function child(x, y, h, t, run, dir, jumping){
+    var hr = h*.17, hy = y - h*.8, sw = Math.sin(t*12)*run, bob = Math.sin(t*12)*h*.03*run;
+    ctx.save(); ctx.translate(x, 0); ctx.scale(dir, 1); ctx.translate(-x, 0);
+    ctx.strokeStyle = ROSE; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    // pernas
+    ctx.beginPath(); ctx.moveTo(x - h*.05, y - h*.28); ctx.lineTo(x - h*.06 - sw*h*.14, y); ctx.moveTo(x + h*.05, y - h*.28); ctx.lineTo(x + h*.06 + sw*h*.14, y); ctx.stroke();
+    // vestido
+    ctx.fillStyle = 'rgba(196,71,106,.25)'; ctx.beginPath(); ctx.moveTo(x, y - h*.64); ctx.lineTo(x - h*.17, y - h*.27); ctx.lineTo(x + h*.17, y - h*.27); ctx.closePath(); ctx.fill(); ctx.stroke();
+    // braços curtos, balançando (ou para cima quando pula)
+    var up = jumping ? 1 : 0;
+    ctx.beginPath(); ctx.moveTo(x, y - h*.58); ctx.lineTo(x - h*.15, y - h*.58 + (up ? -h*.2 : h*.14 + sw*h*.06)); ctx.moveTo(x, y - h*.58); ctx.lineTo(x + h*.15, y - h*.58 + (up ? -h*.2 : h*.14 - sw*h*.06)); ctx.stroke();
+    // cabeça, cabelo e maria-chiquinha
+    ctx.beginPath(); ctx.arc(x, hy + bob, hr, 0, 6.3); ctx.stroke();
+    ctx.fillStyle = '#5a3a22'; ctx.beginPath(); ctx.arc(x, hy + bob, hr*1.05, Math.PI*1.05, Math.PI*1.95); ctx.fill();
+    var pig = Math.sin(t*12 + 1)*h*.04*(run + (jumping ? 1 : 0));
+    ctx.beginPath(); ctx.arc(x - hr*1.25, hy + bob - hr*.2 + pig, hr*.38, 0, 6.3); ctx.arc(x + hr*1.25, hy + bob - hr*.2 - pig, hr*.38, 0, 6.3); ctx.fill();
+    ctx.restore();
+  }
+  function lw(){ return Math.max(1.8, W*.005); }
+  function grow(t, t0, d){ return clamp((t - t0)/(d || 1), 0, 1); }
+  function sparkles(x, y, r, n, a){ for(var k=0;k<n;k++){ var an = k/n*Math.PI*2 + T_NOW*1.4, rr = r*(1 + .2*Math.sin(T_NOW*3 + k)); ctx.fillStyle = 'rgba(214,160,60,' + a + ')'; ctx.fillRect(x + Math.cos(an)*rr - 1.5, y + Math.sin(an)*rr - 1.5, 3, 3); } }
+  var T_NOW = 0;
+
+  // p4: placa de caminhos e o ponto de interrogação
+  function illSign(t, R){
+    var u = Math.min(R.w, R.h*1.3), cx = R.x + R.w*.42, base = R.y + R.h*.95, top = R.y + R.h*.08;
+    strokes([{p:seg(R.x + R.w*.05, base, R.x + R.w*.95, base, 20)}, {p:seg(cx, base, cx, top, 16)}], grow(t, LINES[15].s, 1.2), INK, lw());
+    var arrows = [[-1, .2],[1, .38],[-1, .56],[1, .74]];
+    arrows.forEach(function(a, i){ var p = grow(t, LINES[15].s + .8 + i*.5, .7); if(p <= 0) return; var y = top + R.h*a[1]*.95, w = u*.32;
+      var x1 = cx, x2 = cx + a[0]*w; strokes([{p:poly([[x1, y - u*.03],[x2, y - u*.03],[x2 + a[0]*u*.05, y],[x2, y + u*.03],[x1, y + u*.03]])}], p, i%2 ? GREEN_INK : INK, lw()); });
+    var q = grow(t, wordT(17, 'responder') - .3, 1.2);
+    if(q > 0){ ctx.save(); ctx.globalAlpha *= q; ctx.font = '700 ' + (u*.38) + 'px ' + SERIF; ctx.fillStyle = ROSE; ctx.fillText('?', R.x + R.w*.72, R.y + R.h*.62 + Math.sin(t*2)*4); ctx.restore(); }
+    person(R.x + R.w*.62, base, u*.28, {p:grow(t, LINES[16].s, 1), armR:[.18, -.62]});
+  }
+  // p5: tantos caminhos; Deus escolheu o meu; e o seu encontrou o meu
+  var PTH = null;
+  function illPaths(t, R){
+    if(!PTH || PTH.k !== R.x + ',' + R.y + ',' + R.w){
+      function rnd(s){ var x = Math.sin(s*999.7)*43758.5; return x - Math.floor(x); }
+      var M = [R.x + R.w*.5, R.y + R.h*.2], list = [];
+      for(var i=0;i<9;i++){ var x0 = R.x + R.w*(.04 + .92*rnd(i+1)), endY = R.y + R.h*(.15 + .55*rnd(i+7)), pts = [];
+        for(var y=R.y + R.h; y>endY; y-=5){ var v = (R.y + R.h - y)/R.h; pts.push([x0 + Math.sin(v*6 + i)*R.w*.1*v + Math.sin(v*17 + i*3)*R.w*.015, y]); } list.push(pts); }
+      function toward(sx, side){ var pts = []; for(var j=0;j<=60;j++){ var v = j/60; pts.push([lerp(sx, M[0], ease(v)) + Math.sin(v*Math.PI*3)*R.w*.1*(1-v)*side, lerp(R.y + R.h, M[1], v)]); } return pts; }
+      PTH = {k:R.x + ',' + R.y + ',' + R.w, M:M, list:list, a:toward(R.x + R.w*.15, 1), b:toward(R.x + R.w*.85, -1)};
+    }
+    var g = grow(t, LINES[18].s - .3, 2.2);
+    PTH.list.forEach(function(p){ pen(p, g, 'rgba(58,42,28,.3)', 1.5); }); pen(PTH.a, g, 'rgba(58,42,28,.35)', 1.5); pen(PTH.b, g, 'rgba(58,42,28,.35)', 1.5);
+    var ga = grow(t, wordT(19, 'escolheu') - .1, 1.6), gb = grow(t, wordT(20, 'encontrar') - .2, 1.4);
+    if(ga > 0){ var lg = ctx.createLinearGradient(PTH.M[0], R.y - R.h*.3, PTH.M[0], PTH.M[1]); lg.addColorStop(0, 'rgba(227,184,101,.45)'); lg.addColorStop(1, 'rgba(227,184,101,0)'); ctx.save(); ctx.globalAlpha *= ga; ctx.fillStyle = lg;
+      ctx.beginPath(); ctx.moveTo(PTH.M[0] - R.w*.04, R.y - R.h*.3); ctx.lineTo(PTH.M[0] + R.w*.04, R.y - R.h*.3); ctx.lineTo(PTH.M[0] + R.w*.18, PTH.M[1]); ctx.lineTo(PTH.M[0] - R.w*.18, PTH.M[1]); ctx.closePath(); ctx.fill(); ctx.restore();
+      pen(PTH.a, ga, GREEN_INK, 3.5); }
+    if(gb > 0) pen(PTH.b, gb, ROSE, 3.5);
+    var mt = grow(t, wordT(20, 'encontrar') + 1.1, .8);
+    if(mt > 0){ heartPath(PTH.M[0], PTH.M[1] - 4, R.w*.07*easeBack(mt)*(1 + A.bass*.1)); ctx.fillStyle = ROSE; ctx.fill(); sparkles(PTH.M[0], PTH.M[1] - 4, R.w*.12, 8, mt); }
+  }
+  // p6: a pena escreve no livro aberto
+  function illQuill(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.62, bw = Math.min(R.w*.9, R.h*1.5), bh = bw*.42;
+    var bp = grow(t, LINES[21].s - .2, 1.4);
+    strokes([{p:poly([[cx, cy + bh*.5],[cx - bw/2, cy + bh*.38],[cx - bw/2, cy - bh*.5],[cx, cy - bh*.4],[cx + bw/2, cy - bh*.5],[cx + bw/2, cy + bh*.38],[cx, cy + bh*.5],[cx, cy - bh*.4]])}], bp, INK, lw());
+    var wp = grow(t, LINES[21].s + .6, LINES[22].e - LINES[21].s), pts = [];
+    for(var r=0;r<3;r++) for(var i=0;i<=60;i++){ var v = i/60; pts.push([cx + bw*.06 + v*bw*.38, cy - bh*.25 + r*bh*.25 + Math.sin(v*30)*bh*.04 - Math.abs(Math.sin(v*30))*bh*.05]); }
+    pen(pts, wp, GREEN_INK, 1.8);
+    var lp = []; for(var r2=0;r2<3;r2++) lp = lp.concat(seg(cx - bw*.44, cy - bh*.25 + r2*bh*.25, cx - bw*.06, cy - bh*.25 + r2*bh*.25, 20)); pen(lp, bp, 'rgba(58,42,28,.35)', 1.2);
+    if(wp > 0 && wp < 1){ var tip = pts[Math.floor(wp*(pts.length-1))]; ctx.save(); ctx.translate(tip[0], tip[1]); ctx.rotate(-.7);
+      ctx.fillStyle = 'rgba(255,252,244,.95)'; ctx.strokeStyle = INK; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(bh*.35, -bh*.9, bh*.12, -bh*1.6); ctx.quadraticCurveTo(-bh*.25, -bh*.8, 0, 0); ctx.fill(); ctx.stroke(); ctx.restore(); }
+    // páginas que saem voando do livro
+    for(var f=0; f<6; f++){ var fp = ((t - LINES[22].s)*.35 + f/6) % 1; if(t < LINES[22].s) break; var x = cx + Math.sin(f*2.3)*bw*.4*fp, y = cy - bh*.5 - fp*R.h*.55, fl = Math.cos(t*2 + f);
+      ctx.save(); ctx.globalAlpha *= 1 - fp; ctx.translate(x, y); ctx.rotate(f + t*.5); ctx.scale(fl, 1); ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = 'rgba(58,42,28,.5)'; ctx.lineWidth = 1; ctx.fillRect(-9,-12,18,24); ctx.strokeRect(-9,-12,18,24); ctx.restore(); }
+  }
+  // p7: dias de luta (chuva) e dias de glória (sol)
+  function illStorm(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.35, u = Math.min(R.w, R.h*1.3);
+    var tl = wordT(24, 'luta'), tg = wordT(24, 'gloria') - .8, clear = ease((t - tg)/1.3), cl = grow(t, LINES[23].s, 1);
+    if(clear > 0){ ctx.save(); ctx.globalAlpha *= clear; glowDot(cx, cy, u*.45, 'rgba(243,200,110,A)', .5); ctx.fillStyle = '#f0c25a'; ctx.beginPath(); ctx.arc(cx, cy, u*.11*(1 + A.bass*.1), 0, 6.3); ctx.fill();
+      for(var r=0;r<12;r++){ var a = r/12*Math.PI*2 + t*.3; ctx.strokeStyle = '#d9960f'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a)*u*.15, cy + Math.sin(a)*u*.15); ctx.lineTo(cx + Math.cos(a)*u*.22, cy + Math.sin(a)*u*.22); ctx.stroke(); }
+      for(var b=0;b<5;b++){ ctx.strokeStyle = ['#e0244f','#f0a500','#ffd23f','#4f8f5f','#3b6fd1'][b]; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, R.y + R.h*.98, u*(.42 - b*.035), Math.PI, Math.PI*2); ctx.stroke(); } ctx.restore(); }
+    for(var c=0;c<2;c++){ var side = c ? 1 : -1, ox = cx + side*(u*.12 + clear*u*.5); ctx.save(); ctx.globalAlpha *= cl*(1 - clear*.8);
+      strokes([{p:arc(ox - u*.12, cy, u*.1, u*.09, Math.PI*.5, Math.PI*1.55, 10).concat(arc(ox, cy - u*.07, u*.14, u*.12, Math.PI, Math.PI*2, 12)).concat(arc(ox + u*.13, cy, u*.09, u*.09, Math.PI*1.45, Math.PI*2.5, 10)).concat(seg(ox + u*.13, cy + u*.09, ox - u*.12, cy + u*.09, 8))}], 1, INK, lw()); ctx.restore(); }
+    var rain = grow(t, tl - .4, .6)*(1 - clear);
+    if(rain > 0){ ctx.strokeStyle = 'rgba(59,111,209,' + rain*.7 + ')'; ctx.lineWidth = 1.5; for(var d=0; d<36; d++){ var x = cx - u*.35 + (d*29.3 % (u*.7)), y = cy + u*.12 + ((t*260 + d*53) % (R.h*.55)); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 3, y + 10); ctx.stroke(); } }
+    var bx = R.x + R.w/2, by = R.y + R.h*.99, bh = R.h*.4, umb = clamp(grow(t, tl - .7, .5) - clear*1.5, 0, 1);
+    him(bx - bh*.16, by, bh, {face:1, umbrella: umb > 0 ? umb : 0, up: clear > .5, phase:0});
+    her(bx + bh*.16, by, bh*.95, {face:-1, up: clear > .5, phase:1.3, tilt: umb > .5 ? -1 : 0});
+  }
+  // p8: mil vezes — corações se multiplicam e viram um
+  var MANY = []; for(var mh=0; mh<500; mh++) MANY.push({x:Math.random(), y:Math.random(), s:.5 + Math.random(), g:Math.random() < .3});
+  function illThousand(t, R){
+    var t0 = LINES[25].s, n = Math.min(MANY.length, Math.floor(Math.pow(2, (t - t0)/.42))), join = ease((t - wordT(26, 'voce'))/1.1), cx = R.x + R.w/2, cy = R.y + R.h*.36;
+    for(var i=0;i<n;i++){ var h = MANY[i], x = lerp(R.x + h.x*R.w, cx, join), y = lerp(R.y + h.y*R.h*.8, cy, join), s = lerp(4 + h.s*5, 1, join)*(1 + A.bass*.25);
+      heartPath(x, y, s); ctx.fillStyle = h.g ? LEAF : ROSE; ctx.fill(); }
+    if(join > 0){ var hr = Math.min(R.w, R.h)*.3; heartPath(cx, cy, hr*easeBack(join)*(1 + A.bass*.06)); ctx.fillStyle = ROSE; ctx.fill(); ctx.strokeStyle = GREEN_INK; ctx.lineWidth = 3; ctx.stroke(); sparkles(cx, cy, hr*1.3, 10, join); }
+    var by = R.y + R.h*.99, bh = R.h*.34, hand = [cx, by - bh*.42];
+    him(cx - bh*.15, by, bh, {face:1, hold: join > 0 ? null : hand, up: join > 0, tilt: n > 20 ? -.5 : 0});
+    her(cx + bh*.15, by, bh*.95, {face:-1, holdL: join > 0 ? null : hand, up: join > 0, phase:1});
+  }
+
+  // p9: farol, porto seguro
+  function illLighthouse(t, R){
+    var u = Math.min(R.w, R.h*1.3), bx = R.x + R.w*.62, by = R.y + R.h*.86, th = R.h*.7, bw = u*.16;
+    var safe = ease((t - wordT(28, 'porto'))/.8), ang = Math.sin(t*.9)*.9 - Math.PI; ang = lerp(ang, -Math.PI*.97, safe);
+    var ly = by - th - bw*.25, len = R.w*.9;
+    ctx.save(); var bg = ctx.createRadialGradient(bx, ly, 0, bx, ly, len); bg.addColorStop(0, 'rgba(240,194,90,' + (.55 + safe*.3) + ')'); bg.addColorStop(1, 'rgba(240,194,90,0)');
+    ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(bx, ly); ctx.lineTo(bx + Math.cos(ang - .14)*len, ly + Math.sin(ang - .14)*len); ctx.lineTo(bx + Math.cos(ang + .14)*len, ly + Math.sin(ang + .14)*len); ctx.closePath(); ctx.fill(); ctx.restore();
+    var p = grow(t, LINES[27].s - .2, 1.5);
+    for(var s=0;s<5;s++){ var y1 = by - th*s/5, y2 = by - th*(s+1)/5, w1 = bw*(1 - s*.06), w2 = bw*(1 - (s+1)*.06); if(p < (s+1)/5) break;
+      ctx.fillStyle = s%2 ? '#fffaf0' : GREEN_INK; ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(bx - w1/2, y1); ctx.lineTo(bx + w1/2, y1); ctx.lineTo(bx + w2/2, y2); ctx.lineTo(bx - w2/2, y2); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    if(p >= 1){ ctx.fillStyle = INK; ctx.fillRect(bx - bw*.42, by - th - bw*.5, bw*.84, bw*.1); glowDot(bx, ly, bw*(.9 + A.bass*.5 + safe), 'rgba(255,220,140,A)', .95); }
+    for(var w=0; w<3; w++){ ctx.strokeStyle = 'rgba(59,111,209,' + (.6 - w*.15) + ')'; ctx.lineWidth = 2; ctx.beginPath(); for(var x=R.x; x<=R.x + R.w; x+=8){ var yy = by + w*R.h*.045 + Math.sin(x*.04 + t*2 + w)*3; if(x === R.x) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); } ctx.stroke(); }
+    var bxp = R.x + R.w*.2 + Math.sin(t*.4)*R.w*.04, byp = by - 4 + Math.sin(t*1.6)*3; ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bxp - u*.08, byp); ctx.lineTo(bxp + u*.08, byp); ctx.lineTo(bxp + u*.05, byp + u*.04); ctx.lineTo(bxp - u*.05, byp + u*.04); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bxp, byp); ctx.lineTo(bxp, byp - u*.12); ctx.lineTo(bxp + u*.06, byp - u*.03); ctx.closePath(); ctx.fillStyle = ROSE; ctx.fill();
+  }
+  // p10: o mundo girando com um coração em volta, e flores nascendo
+  function illGlobe(t, R){
+    var gx = R.x + R.w/2, gy = R.y + R.h*.48, Rr = Math.min(R.w*.3, R.h*.36), rot = t*.4, p = grow(t, LINES[29].s - .2, 1.2);
+    ctx.save(); ctx.globalAlpha *= p; ctx.fillStyle = 'rgba(79,143,95,.12)'; ctx.beginPath(); ctx.arc(gx, gy, Rr, 0, 6.3); ctx.fill();
+    ctx.strokeStyle = 'rgba(47,107,74,.7)'; ctx.lineWidth = 1.3;
+    for(var m=0;m<6;m++){ var a2 = (m/6*Math.PI + rot) % Math.PI; ctx.beginPath(); ctx.ellipse(gx, gy, Math.abs(Math.cos(a2))*Rr, Rr, 0, 0, 6.3); ctx.stroke(); }
+    for(var pl=-2; pl<=2; pl++){ var yy = gy + pl*Rr*.38, rx = Math.sqrt(Math.max(0, Rr*Rr - Math.pow(pl*Rr*.38, 2))); ctx.beginPath(); ctx.ellipse(gx, yy, rx, rx*.12, 0, 0, 6.3); ctx.stroke(); }
+    ctx.strokeStyle = GREEN_INK; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(gx, gy, Rr, 0, 6.3); ctx.stroke(); ctx.restore();
+    var oa = t*1.1; heartPath(gx + Math.cos(oa)*Rr*1.4, gy + Math.sin(oa)*Rr*.4, Rr*.16*(1 + A.bass*.2)); ctx.fillStyle = ROSE; ctx.fill();
+    if(p >= 1){ var gh = Rr*.42, hand = [gx, gy - Rr - gh*.42]; him(gx - gh*.15, gy - Rr + 1, gh, {walk:.8, hold:hand}); her(gx + gh*.15, gy - Rr + 1, gh*.95, {walk:.8, phase:Math.PI, holdL:hand}); }
+    var fl = grow(t, LINES[30].e + .5, 6);
+    for(var f=0; f<9; f++){ var a = Math.PI*(.05 + .9*f/8), s = Rr*.42*easeBack(clamp(fl*9 - f, 0, 1)); flower(FKINDS[f % 6], gx - Math.cos(a)*Rr*1.15, gy + Math.sin(a)*Rr*1.1, s, Math.sin(t + f)*.1); }
+  }
+  // p11: sonhos, planos, a casa, um presente e flores
+  function house(cx, base, s, p, col){
+    strokes([{p:poly([[cx - s*.5, base],[cx - s*.5, base - s*.55],[cx + s*.5, base - s*.55],[cx + s*.5, base],[cx - s*.5, base]])},
+      {p:poly([[cx - s*.6, base - s*.5],[cx, base - s*.95],[cx + s*.6, base - s*.5]])},
+      {p:poly([[cx + s*.25, base - s*.75],[cx + s*.25, base - s*.95],[cx + s*.38, base - s*.95],[cx + s*.38, base - s*.66]])},
+      {p:poly([[cx - s*.12, base],[cx - s*.12, base - s*.32],[cx + s*.12, base - s*.32],[cx + s*.12, base]])},
+      {p:poly([[cx - s*.42, base - s*.42],[cx - s*.22, base - s*.42],[cx - s*.22, base - s*.25],[cx - s*.42, base - s*.25],[cx - s*.42, base - s*.42]])}], p, col || INK, lw());
+  }
+  function illDreams(t, R){
+    var u = Math.min(R.w, R.h*1.3), cx = R.x + R.w*.5, base = R.y + R.h*.88;
+    var dp = grow(t, wordT(31, 'sonhos') - .2, 1.2);
+    if(dp > 0){ var bx = R.x + R.w*.2, by = R.y + R.h*.22; strokes([{p:arc(bx, by, u*.13, u*.08, 0, 6.3, 26)}, {p:arc(bx + u*.1, by + u*.12, u*.02, u*.02, 0, 6.3, 8)}, {p:arc(bx + u*.14, by + u*.17, u*.012, u*.012, 0, 6.3, 8)}], dp, INK, lw());
+      var st = []; for(var e=0;e<=10;e++){ var ea = -Math.PI/2 + e/10*Math.PI*2, er = e%2 ? u*.02 : u*.045; st.push([bx + Math.cos(ea)*er, by + Math.sin(ea)*er]); } pen(st, dp, '#b8862a', 2); }
+    house(cx, base, u*.42, grow(t, wordT(31, 'planos') - .2, 3.5));
+    pen(seg(R.x + R.w*.04, base, R.x + R.w*.96, base, 20), grow(t, LINES[31].s, 1), INK, lw());
+    var gp = grow(t, wordT(34, 'presente'), .7);
+    if(gp > 0){ var gx = cx + u*.33, s = u*.13*easeBack(gp); ctx.fillStyle = GREEN_INK; ctx.fillRect(gx - s/2, base - s, s, s); ctx.fillStyle = ROSE; ctx.fillRect(gx - s*.08, base - s, s*.16, s); ctx.fillRect(gx - s/2, base - s*.62, s, s*.14);
+      ctx.strokeStyle = ROSE; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(gx - s*.18, base - s*1.08, s*.18, s*.1, -.4, 0, 6.3); ctx.ellipse(gx + s*.18, base - s*1.08, s*.18, s*.1, .4, 0, 6.3); ctx.stroke(); sparkles(gx, base - s*.6, s, 6, gp); }
+    var fp = grow(t, wordT(35, 'florescer') - .2, 2.2);
+    for(var f=0; f<10; f++){ var fx = R.x + R.w*(.05 + f*.1 + (f > 4 ? .02 : 0)); if(Math.abs(fx - cx) < u*.24) continue; var k = clamp(fp*10 - f, 0, 1); if(k <= 0) continue;
+      ctx.strokeStyle = LEAF; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, base); ctx.lineTo(fx, base - u*.12*k); ctx.stroke(); flower(FKINDS[f % 6], fx, base - u*.12*k, u*.1*easeBack(k), Math.sin(t + f)*.15); }
+  }
+  // p12: a Alê chegou — família de três
+  function illFamily(t, R){
+    var u = Math.min(R.w, R.h*1.3), base = R.y + R.h*.9, cx = R.x + R.w*.5;
+    house(R.x + R.w*.82, base, u*.3, 1, 'rgba(58,42,28,.55)');
+    pen(seg(R.x + R.w*.04, base, R.x + R.w*.96, base, 20), 1, INK, lw());
+    var fh = u*.5, ap = grow(t, wordT(36, 'chegou') - .3, 1);
+
+    var ax = cx, ay = base, kidDraw = null;
+    if(ap > 0){
+      var t0 = wordT(36, 'chegou'), go = t - t0, td = wordT(39, 'duas');
+      var free = cx + Math.sin(go*1.05)*R.w*.3, toMom = ease((t - td + 1)/1), stay = cx + u*.11;
+      ax = lerp(free, stay, toMom);
+      var vel = Math.cos(go*1.05)*(1 - toMom), run = Math.min(1, Math.abs(vel)*1.6)*(1 - toMom);
+      var jumpK = (go % 2.8), jump = jumpK < .5 ? Math.sin(jumpK/.5*Math.PI)*fh*.22*(1 - toMom) : 0;
+      ay = base - jump - Math.abs(Math.sin(t*11))*fh*.035*run;
+      kidDraw = [ax, ay, fh*.48*easeBack(ap), run, vel < 0 ? -1 : 1, jump > 1];
+      sparkles(ax, base - fh*.3, u*.1, 7, clamp(1.4 - go/1.5, 0, 1));
+    }
+    // pai e mãe: acenam para ela enquanto brinca; depois o pai chega perto e os dois abraçam a filha
+    var hugK = ap > 0 ? ease((t - wordT(39, 'duas') + .6)/1.2) : 0, dadX = lerp(cx - u*.24, cx - u*.03, hugK), momX = cx + u*.24;
+    var watching = ap > 0 && hugK < .2;
+    him(dadX, base, fh, {face:1, walk: (hugK > 0 && hugK < 1) ? 1 : 0, wave: watching && Math.sin(t*.7) > 0 ? 'R' : null, tilt: watching ? (ax > dadX ? 1 : -1) : 1,
+      hold: hugK >= 1 ? [ax - fh*.04, ay - fh*.3] : null});
+    her(momX, base, fh*.94, {face:-1, clap: watching && Math.sin(t*.7) <= 0, holdL: hugK >= 1 ? [ax + fh*.06, ay - fh*.3] : null, tilt: watching ? (ax > momX ? 1 : -1) : -1});
+    if(kidDraw){ ctx.save(); ctx.globalAlpha *= ap; child(kidDraw[0], kidDraw[1], kidDraw[2], t, kidDraw[3], kidDraw[4], kidDraw[5]); ctx.restore(); }
+    var hp = grow(t, wordT(37, 'casa') - .5, 3);
+    for(var h=0; h<5; h++){ var k = (hp*1.4 - h*.15); if(k <= 0 || k > 1) continue; heartPath(R.x + R.w*.82 + Math.sin(k*6 + h)*10, base - u*.3 - k*R.h*.6, 5 + h); ctx.fillStyle = 'rgba(196,71,106,' + (1 - k) + ')'; ctx.fill(); }
+    var dp = grow(t, wordT(39, 'duas'), .8);
+    if(dp > 0){ [[cx + u*.24, base - fh*1.15],[ax, ay - fh*.62],[cx - u*.03, base - fh*1.2]].forEach(function(q, i){ heartPath(q[0], q[1] - Math.sin(t*2 + i)*3, u*.04*easeBack(dp)); ctx.fillStyle = ROSE; ctx.fill(); }); }
+    var sp = grow(t, wordT(41, 'viver') - .3, 1.5);
+    if(sp > 0){ ctx.save(); ctx.globalAlpha *= sp; glowDot(R.x + R.w*.15, R.y + R.h*.15, u*.22, 'rgba(243,200,110,A)', .7); ctx.fillStyle = '#f0c25a'; ctx.beginPath(); ctx.arc(R.x + R.w*.15, R.y + R.h*.15, u*.06, 0, 6.3); ctx.fill(); ctx.restore(); }
+  }
+  // p13: não foi perfeito — o coração rachado é consertado com ouro
+  function illKintsugi(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.45, r = Math.min(R.w, R.h)*.42;
+    var hp = grow(t, LINES[42].s - .2, 1.2), beat = 1 + (t > wordT(46, 'certeza') ? A.bass*.08 + Math.max(0, Math.sin(t*6))*.03 : 0);
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(beat, beat); ctx.translate(-cx, -cy);
+    if(hp > 0){ ctx.save(); ctx.globalAlpha *= hp; heartPath(cx, cy, r); ctx.fillStyle = 'rgba(196,71,106,.85)'; ctx.fill(); ctx.restore(); pen(hrtPts(cx, cy, r), hp, INK, lw()); }
+    var crack = [[cx, cy - r*.48],[cx - r*.1, cy - r*.25],[cx + r*.08, cy - r*.05],[cx - r*.12, cy + r*.18],[cx + r*.04, cy + r*.38],[cx, cy + r*.62]];
+    var branch = [[cx + r*.08, cy - r*.05],[cx + r*.3, cy + r*.05],[cx + r*.42, cy - r*.08]];
+    var cp = grow(t, wordT(42, 'perfeito') - .1, .8), gold = grow(t, wordT(44, 'perdoar') - .2, 2.4);
+    pen(poly(crack), cp, '#3a1520', 3); pen(poly(branch), grow(t, wordT(43, 'aprender'), .6), '#3a1520', 2.5);
+    if(gold > 0){ ctx.save(); ctx.shadowColor = GOLD; ctx.shadowBlur = 10; pen(poly(crack), gold, '#e3b23c', 4.5); pen(poly(branch), clamp(gold*1.4 - .3, 0, 1), '#e3b23c', 3.5); ctx.restore(); }
+    ctx.restore();
+    var ip = grow(t, wordT(47, 'voce') - .1, 1.4);
+    if(ip > 0){ ctx.font = '700 ' + (r*.42) + 'px ' + SCRIPT; var tx = 'F + J'; handwrite(tx, cx - ctx.measureText(tx).width/2, R.y + R.h*.98, r*.42, ip, GREEN_INK, 1); }
+  }
+  // p14: o livro abre e as páginas viram sozinhas
+  function illBook(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.6, bw = Math.min(R.w*.9, R.h*1.6), bh = bw*.42, bp = grow(t, LINES[48].s - .2, 1);
+    ctx.save(); ctx.globalAlpha *= bp;
+    ctx.fillStyle = COVER_GREEN[0]; ctx.fillRect(cx - bw*.52, cy - bh*.52, bw*1.04, bh*1.08);
+    ctx.fillStyle = '#fffaf0'; ctx.fillRect(cx - bw/2, cy - bh/2, bw/2, bh); ctx.fillRect(cx, cy - bh/2, bw/2, bh);
+    ctx.strokeStyle = 'rgba(58,42,28,.35)'; ctx.lineWidth = 1; for(var r=0;r<5;r++){ ctx.beginPath(); ctx.moveTo(cx - bw*.44, cy - bh*.3 + r*bh*.15); ctx.lineTo(cx - bw*.06, cy - bh*.3 + r*bh*.15); ctx.moveTo(cx + bw*.06, cy - bh*.3 + r*bh*.15); ctx.lineTo(cx + bw*.44, cy - bh*.3 + r*bh*.15); ctx.stroke(); }
+    var fp = ((t - LINES[48].s)*.9) % 1, sc = Math.cos(fp*Math.PI);
+    ctx.save(); ctx.translate(cx, 0); ctx.scale(sc, 1); ctx.fillStyle = sc > 0 ? '#fffaf0' : '#f1e8d6'; ctx.fillRect(0, cy - bh/2, bw/2, bh); ctx.strokeStyle = 'rgba(58,42,28,.4)'; ctx.strokeRect(0, cy - bh/2, bw/2, bh); ctx.restore();
+    ctx.restore();
+    var sp = grow(t, wordT(49, 'historia') - .3, 2);
+    for(var k=0;k<7;k++){ var q = clamp(sp*1.6 - k*.1, 0, 1); if(q <= 0) continue; var a = -Math.PI*(.15 + .7*k/6), d = bw*.55*easeOut(q);
+      var x = cx + Math.cos(a)*d, y = cy - bh*.3 + Math.sin(a)*d*.8; if(k%3 === 0){ heartPath(x, y, 7); ctx.fillStyle = ROSE; ctx.fill(); } else if(k%3 === 1) flower(FKINDS[k%6], x, y, 20); else { ctx.fillStyle = '#d9960f'; ctx.fillRect(x - 3, y - 3, 6, 6); } }
+  }
+  // p15: o barco na tempestade e o arco-íris
+  function illBoat(t, R){
+    var cx = R.x + R.w/2, sea = R.y + R.h*.7, u = Math.min(R.w, R.h*1.3), calm = ease((t - wordT(51, 'gloria') + .8)/1.4), rough = grow(t, wordT(51, 'luta') - .5, .6)*(1 - calm);
+    var amp = 3 + rough*14;
+    if(calm > 0){ ctx.save(); ctx.globalAlpha *= calm; for(var b=0;b<5;b++){ ctx.strokeStyle = ['#e0244f','#f0a500','#ffd23f','#4f8f5f','#3b6fd1'][b]; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(cx, sea, u*(.48 - b*.04), Math.PI, Math.PI*2); ctx.stroke(); } ctx.restore(); }
+    if(rough > 0){ ctx.save(); ctx.globalAlpha *= rough; ctx.fillStyle = 'rgba(70,74,90,.5)'; ctx.fillRect(R.x, R.y, R.w, R.h*.4); ctx.restore(); }
+    var tilt = Math.sin(t*2.2)*(.05 + rough*.3), byy = sea - 6 + Math.sin(t*2.2 + 1)*amp*.6;
+    ctx.save(); ctx.translate(cx, byy); ctx.rotate(tilt); var s = u*.18;
+    ctx.fillStyle = GREEN_INK; ctx.beginPath(); ctx.moveTo(-s, 0); ctx.lineTo(s, 0); ctx.lineTo(s*.7, s*.35); ctx.lineTo(-s*.7, s*.35); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -s*1.2); ctx.stroke(); ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.moveTo(0, -s*1.15); ctx.lineTo(s*.75, -s*.15); ctx.lineTo(0, -s*.15); ctx.closePath(); ctx.fill(); ctx.stroke();
+    var calmNow = calm > .5, fh3 = s*.95;
+    him(-s*.62, 0, fh3, {face:1, w:1.8, hold: calmNow ? null : [-s*.05, -s*.6], wave: calmNow ? 'L' : null, phase:0});
+    her(-s*.3, 0, fh3*.95, {face:1, w:1.8, holdL: calmNow ? null : [-s*.62, -fh3*.5], up: calmNow, phase:1});
+    ctx.fillStyle = GREEN_INK; ctx.beginPath(); ctx.moveTo(-s, 0); ctx.lineTo(s, 0); ctx.lineTo(s*.7, s*.35); ctx.lineTo(-s*.7, s*.35); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    for(var w=0; w<3; w++){ ctx.strokeStyle = 'rgba(59,111,209,' + (.7 - w*.18) + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); for(var x=R.x; x<=R.x + R.w; x+=6){ var yy = sea + 6 + w*R.h*.07 + Math.sin(x*.035 + t*(2 + rough*2) + w)*amp; if(x === R.x) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); } ctx.stroke(); }
+  }
+  // p16: mil vezes — agora com flores de todo tipo formando um coração
+  var FL1000 = []; for(var fq=0; fq<260; fq++) FL1000.push({x:Math.random(), y:Math.random(), k:FKINDS[fq % 6], r:Math.random()*6, h:hrtPts(0,0,1)[fq % 41]});
+  function illFlowers(t, R){
+    var t0 = LINES[52].s, n = Math.min(FL1000.length, Math.floor(Math.pow(2, (t - t0)/.5))), join = ease((t - wordT(53, 'voce'))/1.4), cx = R.x + R.w/2, cy = R.y + R.h*.5, hr = Math.min(R.w, R.h)*.45;
+    for(var i=0;i<n;i++){ var f = FL1000[i], jx = cx + f.h[0]*hr*(.6 + .4*((i*7)%10)/10), jy = cy + f.h[1]*hr*(.6 + .4*((i*7)%10)/10);
+      flower(f.k, lerp(R.x + f.x*R.w, jx, join), lerp(R.y + f.y*R.h, jy, join), (16 + (i%5)*3)*(1 + A.bass*.15), f.r + t*.2); }
+  }
+  // p17: âncora com a corda formando um coração
+  function illAnchor(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.5, s = Math.min(R.w, R.h)*.5, p = grow(t, LINES[54].s - .2, 2);
+    strokes([{p:arc(cx, cy - s*.72, s*.1, s*.1, 0, 6.3, 14)}, {p:seg(cx, cy - s*.62, cx, cy + s*.7, 16)}, {p:seg(cx - s*.35, cy - s*.38, cx + s*.35, cy - s*.38, 8)},
+      {p:arc(cx, cy + s*.12, s*.6, s*.6, .25, Math.PI - .25, 24)}, {p:poly([[cx + s*.55, cy + s*.3],[cx + s*.68, cy + s*.18],[cx + s*.5, cy + s*.15]])}, {p:poly([[cx - s*.55, cy + s*.3],[cx - s*.68, cy + s*.18],[cx - s*.5, cy + s*.15]])}], p, GREEN_INK, lw()*1.6);
+    var rp = grow(t, wordT(55, 'porto') - .3, 1.8);
+    if(rp > 0){ ctx.save(); ctx.setLineDash([6, 4]); pen(hrtPts(cx, cy - s*.05, s*.85), rp, '#b8862a', 3); ctx.restore(); }
+    if(rp >= 1) sparkles(cx, cy - s*.1, s*.9, 10, 1);
+  }
+  // p18: os dois na colina vendo o pôr do sol; o infinito no céu
+  function illHill(t, R){
+    var u = Math.min(R.w, R.h*1.3), cx = R.x + R.w/2, hy = R.y + R.h*.8, p = grow(t, LINES[56].s - .2, 1.5);
+    ctx.save(); ctx.globalAlpha *= p; glowDot(cx, hy, u*.45, 'rgba(243,170,90,A)', .55); ctx.fillStyle = '#f2a65a'; ctx.beginPath(); ctx.arc(cx, hy, u*.14, Math.PI, Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.globalAlpha *= p; ctx.fillStyle = 'rgba(79,143,95,.9)'; ctx.beginPath(); ctx.moveTo(R.x, R.y + R.h); ctx.quadraticCurveTo(cx, hy - R.h*.08, R.x + R.w, R.y + R.h); ctx.closePath(); ctx.fill(); ctx.restore();
+    var lean = grow(t, wordT(57, 'mundo') - .8, 1), hand = [cx, hy - R.h*.02 - u*.11];
+    him(cx - u*.06, hy - R.h*.02, u*.26, {hold:hand, tilt:lean*.6}); her(cx + u*.06 - lean*u*.015, hy - R.h*.02, u*.25, {holdL:hand, tilt:-lean*1.4, phase:1});
+    var ip = grow(t, wordT(57, 'mundo') - .6, 1.8), inf = [];
+    for(var i=0;i<=80;i++){ var a = i/80*Math.PI*2, d = 1 + Math.sin(a)*Math.sin(a); inf.push([cx + u*.24*Math.cos(a)/d, R.y + R.h*.2 + u*.24*Math.sin(a)*Math.cos(a)/d]); }
+    ctx.save(); ctx.shadowColor = GOLD; ctx.shadowBlur = 8; pen(inf, ip, '#b8862a', 3); ctx.restore();
+  }
+  // p19: Jéssica, hoje é seu dia — o nome dela com flores e um presente
+  function illName(t, R){
+    var cx = R.x + R.w/2, fs = Math.min(R.w*.24, R.h*.42), np = grow(t, wordT(58, 'jessica') - .2, 1.8);
+    ctx.save(); ctx.font = fs + 'px "Great Vibes", cursive'; var nm = 'Jéssica', nw = ctx.measureText(nm).width;
+    handwrite(nm, cx - nw/2, R.y + R.h*.45, fs, np, GREEN_INK, 1); ctx.restore();
+    var fp = grow(t, wordT(58, 'dia'), 2.5);
+    for(var f=0; f<8; f++){ var k = clamp(fp*8 - f, 0, 1), a = f/8*Math.PI*2; flower(FKINDS[f % 6], cx + Math.cos(a)*nw*.62, R.y + R.h*.32 + Math.sin(a)*R.h*.3, R.h*.13*easeBack(k), Math.sin(t + f)*.2); }
+    var gp = grow(t, wordT(59, 'presente') - .2, 1), open = grow(t, wordT(59, 'eu') - .2, .8);
+    if(gp > 0){ var gx = cx, gy = R.y + R.h*.92, s = R.h*.22*easeBack(gp); ctx.fillStyle = GREEN_INK; ctx.fillRect(gx - s/2, gy - s, s, s); ctx.fillStyle = ROSE; ctx.fillRect(gx - s*.08, gy - s, s*.16, s);
+      ctx.save(); ctx.translate(gx - s*.55, gy - s); ctx.rotate(-open*.9); ctx.fillStyle = '#245a3e'; ctx.fillRect(0, -s*.2, s*1.1, s*.2); ctx.restore();
+      if(open > 0){ heartPath(gx, gy - s - open*s*.6, s*.3*easeBack(open)*(1 + A.bass*.1)); ctx.fillStyle = ROSE; ctx.fill(); sparkles(gx, gy - s - open*s*.6, s*.5, 8, open); } }
+  }
+  // p20: entre milhões de pessoas, foi você
+  var CROWD = []; for(var cq=0; cq<220; cq++) CROWD.push({x:Math.random(), y:Math.random(), ph:Math.random()*6});
+  function illCrowd(t, R){
+    var ap = grow(t, LINES[60].s - .2, 2.5), pick = grow(t, wordT(61, 'voce') - .2, 1.2), chosen = 137;
+    for(var i=0;i<CROWD.length;i++){ if(i/CROWD.length > ap) break; var c = CROWD[i], x = R.x + c.x*R.w, y = R.y + c.y*R.h;
+      if(i === chosen) continue; ctx.fillStyle = 'rgba(58,42,28,' + (.45*(1 - pick*.7)) + ')'; ctx.beginPath(); ctx.arc(x, y - 4, 2.6, 0, 6.3); ctx.fill(); ctx.fillRect(x - 1.5, y - 1, 3, 6); }
+    var c2 = CROWD[chosen], X = lerp(R.x + c2.x*R.w, R.x + R.w/2, ease(pick)), Y = lerp(R.y + c2.y*R.h, R.y + R.h/2, ease(pick)), s = lerp(3, Math.min(R.w, R.h)*.3, ease(pick));
+    if(ap > .6){ glowDot(X, Y, s*2.2 + 10, 'rgba(79,170,110,A)', .5); heartPath(X, Y, s + 4); ctx.fillStyle = pick > .3 ? ROSE : GREEN_INK; ctx.fill(); }
+    if(pick >= 1) sparkles(X, Y, s*1.5, 10, 1);
+  }
+  // p21: o dicionário — amor, certeza: você
+  function illDict(t, R){
+    var x0 = R.x + R.w*.08, w = R.w*.84, y0 = R.y + R.h*.05, h = R.h*.9, cp = grow(t, LINES[62].s - .2, 1);
+    ctx.save(); ctx.globalAlpha *= cp; ctx.fillStyle = '#fffaf0'; ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 10; ctx.fillRect(x0, y0, w, h); ctx.shadowColor = 'transparent'; ctx.strokeStyle = 'rgba(58,42,28,.35)'; ctx.strokeRect(x0, y0, w, h); ctx.restore();
+    var fs = Math.min(h*.2, w*.13);
+    var e1 = grow(t, wordT(65, 'amor') - .2, 1.2);
+    if(e1 > 0){ ctx.font = '600 ' + fs + 'px ' + SERIF; handwrite('amor', x0 + w*.08, y0 + h*.3, fs, e1, INK, 1); ctx.font = 'italic 500 ' + (fs*.5) + 'px ' + SERIF; ctx.fillStyle = 'rgba(58,42,28,' + e1*.7 + ')'; ctx.fillText('(s.m.)', x0 + w*.08 + fs*2.4, y0 + h*.3);
+      ctx.strokeStyle = 'rgba(58,42,28,.35)'; ctx.lineWidth = 2; for(var l=0;l<2;l++){ ctx.beginPath(); ctx.moveTo(x0 + w*.08, y0 + h*(.42 + l*.09)); ctx.lineTo(x0 + w*.08 + w*(.8 - l*.25)*clamp(e1*1.5 - .5 - l*.2, 0, 1), y0 + h*(.42 + l*.09)); ctx.stroke(); } }
+    var e2 = grow(t, wordT(66, 'certeza') - .2, 1.2);
+    if(e2 > 0){ ctx.font = '600 ' + (fs*.8) + 'px ' + SERIF; handwrite('certeza:', x0 + w*.08, y0 + h*.78, fs*.8, e2, INK, 1); }
+    var e3 = grow(t, wordT(67, 'voce') - .1, 1.2);
+    if(e3 > 0){ ctx.font = '700 ' + fs + 'px ' + SCRIPT; var vx = x0 + w*.58; handwrite('você', vx, y0 + h*.8, fs, e3, ROSE, 1); pen(arc(vx + fs*1.05, y0 + h*.8 - fs*.3, fs*1.3, fs*.62, -2, -2 + Math.PI*2.1, 40), grow(t, wordT(67, 'voce') + .8, .9), GREEN_INK, 2.5); }
+  }
+  // p22: segurando a sua mão até a última página
+  function illWalk(t, R){
+    var cx = R.x + R.w/2, hz = R.y + R.h*.25, base = R.y + R.h;
+    ctx.strokeStyle = 'rgba(58,42,28,.5)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx - R.w*.42, base); ctx.lineTo(cx - R.w*.02, hz); ctx.moveTo(cx + R.w*.42, base); ctx.lineTo(cx + R.w*.02, hz); ctx.stroke();
+    for(var k=0;k<6;k++){ var v = ((t*.25 + k/6) % 1), y = lerp(hz, base, v*v); ctx.fillStyle = 'rgba(58,42,28,.3)'; ctx.fillRect(cx - 1.5*v - 1, y, 2 + 3*v, 6*v + 1); }
+    var wp = grow(t, LINES[69].s, 8), d = lerp(1, .55, wp), py = lerp(base - R.h*.02, R.y + R.h*.62, wp), u = Math.min(R.w, R.h*1.3)*.45*d, bob = 0;
+    var hand = [cx, py - u*.42];
+    him(cx - u*.18, py, u, {walk:1, hold:hand}); her(cx + u*.18, py, u*.95, {walk:1, phase:Math.PI, holdL:hand});
+    var hp = grow(t, wordT(70, 'mao') - .3, .8); if(hp > 0){ heartPath(cx, py - u*.45 - bob, u*.08*easeBack(hp)); ctx.fillStyle = ROSE; ctx.fill(); }
+    var lp = grow(t, wordT(71, 'pagina') - .2, 1.6);
+    if(lp > 0){ var px = R.x + R.w*.82, pyy = R.y + R.h*.15, pw = R.w*.2, ph = pw*1.3; ctx.save(); ctx.globalAlpha *= lp; ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = INK; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(px - pw/2, pyy); ctx.lineTo(px + pw/2, pyy); ctx.lineTo(px + pw/2, pyy + ph*.75); ctx.lineTo(px + pw*.25, pyy + ph); ctx.lineTo(px - pw/2, pyy + ph); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.font = 'italic 600 ' + (pw*.16) + 'px ' + SERIF; ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.fillText('continua…', px, pyy + ph*.5); ctx.textAlign = 'left'; ctx.restore(); }
+  }
+  // p23: quando os cabelos mudarem de cor — os dois velhinhos no banco
+  function illOld(t, R){
+    var u = Math.min(R.w, R.h*1.3), cx = R.x + R.w/2, base = R.y + R.h*.92;
+    var mini = grow(t, wordT(75, 'dia') - 1, 1.5);
+    if(mini > 0){ ctx.save(); ctx.globalAlpha *= mini*.35; var bx = R.x + R.w*.8, bb = R.y + R.h*.45, s = u*.25; ctx.strokeStyle = INK; ctx.lineWidth = 1.2; ctx.strokeRect(bx - s*.08, bb - s*.5, s*.06, s*.5); ctx.strokeRect(bx + s*.02, bb - s*.5, s*.06, s*.5); ctx.beginPath(); ctx.moveTo(bx - s*.5, bb); ctx.lineTo(bx + s*.5, bb); ctx.stroke(); ctx.restore(); }
+    var tree = grow(t, LINES[72].s - .2, 1.6);
+    strokes([{p:seg(R.x + R.w*.15, base, R.x + R.w*.15, R.y + R.h*.35, 12)}, {p:arc(R.x + R.w*.15, R.y + R.h*.28, u*.14, u*.12, 0, 6.3, 24), c:LEAF}], tree, INK, lw()*1.3);
+    pen(poly([[cx - u*.3, base - u*.12],[cx + u*.3, base - u*.12]]), tree, INK, 3); pen(poly([[cx - u*.26, base - u*.12],[cx - u*.26, base]]), tree, INK, 2.5); pen(poly([[cx + u*.26, base - u*.12],[cx + u*.26, base]]), tree, INK, 2.5);
+    var gray = grow(t, wordT(73, 'cor') - .8, 2), hairM = mixC([50,35,25], [200,200,205], gray), hairW = mixC([90,58,34], [215,215,220], gray);
+    var look = grow(t, wordT(74, 'voce') - .4, .8);
+    him(cx - u*.12, base, u*.42, {sit:true, face:1, hair:hairM, cane: gray > .5, tilt: look});
+    her(cx + u*.12, base, u*.4, {sit:true, face:-1, hair:hairW, tilt: -look*.6, phase:1});
+    var lk = grow(t, wordT(74, 'voce') - .2, .8); if(lk > 0){ heartPath(cx, base - u*.62 - Math.sin(t*2)*3, u*.06*easeBack(lk)); ctx.fillStyle = ROSE; ctx.fill(); }
+    var ag = grow(t, wordT(76, 'deus') - .3, 1.8); if(ag > 0){ ctx.save(); ctx.globalAlpha *= ag; var lg = ctx.createLinearGradient(cx, R.y - R.h*.3, cx, base); lg.addColorStop(0, 'rgba(227,184,101,.5)'); lg.addColorStop(1, 'rgba(227,184,101,0)'); ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(cx - R.w*.06, R.y - R.h*.3); ctx.lineTo(cx + R.w*.06, R.y - R.h*.3); ctx.lineTo(cx + R.w*.32, base); ctx.lineTo(cx - R.w*.32, base); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  }
+  function mixC(a, b, k){ return 'rgb(' + Math.round(lerp(a[0],b[0],k)) + ',' + Math.round(lerp(a[1],b[1],k)) + ',' + Math.round(lerp(a[2],b[2],k)) + ')'; }
+  // p24: feliz aniversário — o bolo, as velas e muitos anos
+  function illCake(t, R){
+    var cx = R.x + R.w/2, base = R.y + R.h*.95, u = Math.min(R.w, R.h*1.3), cw = u*.62, p = grow(t, LINES[78].s - .2, 1.2);
+    ctx.save(); ctx.globalAlpha *= p;
+    ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = INK; ctx.lineWidth = 2;
+    [[cw, u*.18, 0],[cw*.72, u*.16, u*.18]].forEach(function(l){ ctx.fillStyle = '#f7e6d0'; ctx.fillRect(cx - l[0]/2, base - l[2] - l[1], l[0], l[1]); ctx.strokeRect(cx - l[0]/2, base - l[2] - l[1], l[0], l[1]);
+      ctx.fillStyle = LEAF; ctx.beginPath(); for(var i=0;i<=12;i++){ var x = cx - l[0]/2 + l[0]*i/12; ctx.arc(x, base - l[2] - l[1], l[0]/24, 0, Math.PI); } ctx.fill(); });
+    ctx.restore();
+    var many = grow(t, wordT(81, 'anos') - 1.2, 2.5), n = Math.round(lerp(3, 9, many)), topY = base - u*.34;
+    for(var c=0;c<n;c++){ var x = cx - cw*.3 + cw*.6*(n === 1 ? .5 : c/(n-1)), on = grow(t, LINES[78].s + .4 + c*.12, .3); if(on <= 0) continue;
+      ctx.fillStyle = c%2 ? ROSE : GREEN_INK; ctx.fillRect(x - 2.5, topY - u*.1, 5, u*.1);
+      var fl = 1 + Math.sin(t*14 + c)*.15 + A.high*.4; glowDot(x, topY - u*.13, u*.05*fl, 'rgba(255,200,90,A)', .8); ctx.fillStyle = '#ffb02e'; ctx.beginPath(); ctx.ellipse(x, topY - u*.125, u*.012*fl, u*.025*fl, 0, 0, 6.3); ctx.fill(); }
+    var fam = grow(t, LINES[78].s - .3, .8);
+    if(fam > 0){ ctx.save(); ctx.globalAlpha *= fam; var fh4 = u*.36;
+      him(R.x + R.w*.08, base, fh4, {face:1, clap:true});
+      child(R.x + R.w*.2, base - Math.abs(Math.sin(t*5))*fh4*.12, fh4*.5, t, 0, 1, Math.sin(t*5) > .6);
+      her(R.x + R.w*.92, base, fh4*.95, {face:-1, wave:'R'}); ctx.restore(); }
+    var cf = grow(t, LINES[78].s, 3); for(var k=0;k<26;k++){ var v = ((t*.18 + k*.137) % 1); if(cf <= 0) break; ctx.fillStyle = [ROSE, LEAF, '#d9960f', '#3b6fd1'][k%4]; ctx.save(); ctx.translate(R.x + (k*.381 % 1)*R.w, R.y + v*R.h); ctx.rotate(t*2 + k); ctx.globalAlpha *= cf*.8; ctx.fillRect(-3, -1.5, 6, 3); ctx.restore(); }
+  }
+  // p25: de novo, e de novo, e de novo — o jardim floresce
+  function illAgain(t, R){
+    var cx = R.x + R.w/2, cy = R.y + R.h*.45, u = Math.min(R.w, R.h);
+    var times3 = [wordT(85, 'novo'), wordT(86, 'novo'), wordT(87, 'novo')];
+    times3.forEach(function(tt, i){ var k = grow(t, tt - .4, .9); if(k <= 0) return; var x = cx + (i - 1)*u*.32; heartPath(x, cy, u*.13*easeBack(k)*(1 + A.bass*.1)); ctx.fillStyle = i === 1 ? GREEN_INK : ROSE; ctx.fill(); sparkles(x, cy, u*.2, 6, k); });
+    var gp = grow(t, LINES[82].s, 14), gb = grow(t, times3[2] + .5, 4);
+    for(var f=0; f<14; f++){ var k2 = clamp(gp*14 - f, 0, 1) || 0; if(k2 <= 0) continue; var fx = R.x + R.w*(.04 + .92*((f*.37) % 1)), fy = R.y + R.h*(.72 + ((f*.53) % 1)*.2);
+      ctx.strokeStyle = LEAF; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, R.y + R.h); ctx.lineTo(fx, fy); ctx.stroke(); flower(FKINDS[f % 6], fx, fy, (u*.09 + gb*u*.07)*easeBack(k2), Math.sin(t + f)*.2); }
+    var fam = grow(t, LINES[83].s, 1);
+    if(fam > 0){ ctx.save(); ctx.globalAlpha *= fam; var fb = R.y + R.h*.99, fh5 = R.h*.3, sway = Math.sin(t*1.6)*fh5*.03;
+      him(cx - fh5*.32 + sway, fb, fh5, {hold:[cx - fh5*.12 + sway, fb - fh5*.32], phase:0});
+      child(cx + sway, fb, fh5*.5, t, 0, 1, false);
+      her(cx + fh5*.32 + sway, fb, fh5*.95, {holdL:[cx + fh5*.12 + sway, fb - fh5*.32], phase:1}); ctx.restore(); }
+  }
+  function cornerFlowers(pg, t){
+    var s = Math.min(W, H)*.11, k = easeBack(grow(t, LINES[pg.from].s - .9, 1.2)), kind = FKINDS[(pg.num + 2) % 6], kind2 = FKINDS[(pg.num + 4) % 6];
+    ctx.strokeStyle = LEAF; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(W, H*.98); ctx.quadraticCurveTo(W - s*1.2, H - s*.4, W - s*1.5*k, H - s*1.4*k); ctx.stroke();
+    flower(kind, W - s*.55, H - s*.75, s*.9*k, .3); flower(kind2, W - s*1.35, H - s*.35, s*.6*k, -.2);
+    ctx.fillStyle = LEAF; ctx.beginPath(); ctx.ellipse(W - s*1.05*k, H - s*1.05*k, s*.2*k, s*.08*k, -.7, 0, 6.3); ctx.fill();
+  }
+
+  var PAGES = [
+    {num:1, from:0, to:5, ill:illBrasilia}, {num:2, from:5, to:9, ill:illTime}, {num:3, from:9, to:15, ill:illWedding},
+    {num:4, from:15, to:18, ill:illSign}, {num:5, from:18, to:21, ill:illPaths}, {num:6, from:21, to:23, ill:illQuill},
+    {num:7, from:23, to:25, ill:illStorm}, {num:8, from:25, to:27, ill:illThousand}, {num:9, from:27, to:29, ill:illLighthouse},
+    {num:10, from:29, to:31, ill:illGlobe}, {num:11, from:31, to:36, ill:illDreams}, {num:12, from:36, to:42, ill:illFamily},
+    {num:13, from:42, to:48, ill:illKintsugi}, {num:14, from:48, to:50, ill:illBook}, {num:15, from:50, to:52, ill:illBoat},
+    {num:16, from:52, to:54, ill:illFlowers}, {num:17, from:54, to:56, ill:illAnchor}, {num:18, from:56, to:58, ill:illHill},
+    {num:19, from:58, to:60, ill:illName}, {num:20, from:60, to:62, ill:illCrowd}, {num:21, from:62, to:68, ill:illDict},
+    {num:22, from:68, to:72, ill:illWalk}, {num:23, from:72, to:78, ill:illOld}, {num:24, from:78, to:82, ill:illCake},
+    {num:25, from:82, to:88, ill:illAgain}
+  ];
+  var TURN_LEAD = .7, TURN_DUR = 1.7; // a página começa a virar 0,7 s antes da frase nova e leva 1,7 s
+  function drawBook(t, alpha){
+    if(alpha <= 0) return;
+    ctx.save(); ctx.globalAlpha = alpha;
+    var k = 0, turning = -1, p = 0;
+    for(var i=0;i<PAGES.length;i++){
+      var s0 = LINES[PAGES[i].from].s;
+      if(i > 0 && t >= s0 - TURN_LEAD && t < s0 - TURN_LEAD + TURN_DUR){ turning = i; p = (t - (s0 - TURN_LEAD))/TURN_DUR; }
+      if(i === 0 || t >= s0 - TURN_LEAD + TURN_DUR) k = i;
+    }
+    if(turning > 0) turnPage(PAGES[turning-1], PAGES[turning], t, ease(p)); else drawPage(PAGES[k], t);
+    ctx.restore();
+  }
+
+  /* ===== Roteiro: capa abre, páginas, e o livro fecha no fim ===== */
+  function env(t, a, b, fin, fout){ return clamp((t - a)/fin, 0, 1)*clamp((b - t)/fout, 0, 1); }
+  var T_CLOSE = LINES[N-1].e + 5;
+  function render(t, dt){
+    T_NOW = t;
+    night(t, dt, false);
+    drawCover(t, env(t, -1, 12.6, .01, .8), ease((t - 9.4)/1.9), ease((t - 10.6)/1.6), 0);
+    drawBook(t, env(t, 11.8, T_CLOSE + .9, .8, .9));
+    if(t > T_CLOSE) drawCover(t, clamp((t - T_CLOSE)/.7, 0, 1), 1 - ease((t - T_CLOSE - 1.3)/1.8), 1 - ease((t - T_CLOSE)/1.6), T_CLOSE + 3.3);
+    document.body.classList.toggle('paper', t > 12.4 && t < T_CLOSE + .4);
+  }
+
+  function resize(){ W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); PAGES.forEach(function(p){ p.geo = null; }); }
+  window.addEventListener('resize', resize); resize();
+
+  /* ===== Interface ===== */
+  var player = document.getElementById('player'), cover = document.getElementById('cover'), startBtn = document.getElementById('startBtn'), startLabel = document.getElementById('startLabel');
+  var elSec = document.getElementById('section'), live = document.getElementById('liveLine');
+  var fill = document.getElementById('fill'), track = document.getElementById('track'), elCur = document.getElementById('cur'), elDur = document.getElementById('dur');
+  var playBtn = document.getElementById('play'), icoPlay = document.getElementById('icoPlay'), icoPause = document.getElementById('icoPause');
+  function setPlaying(on){
+    document.body.classList.toggle('playing', on);
+    if(on){ icoPlay.setAttribute('hidden',''); icoPause.removeAttribute('hidden'); playBtn.setAttribute('aria-label','Pausar'); }
+    else { icoPause.setAttribute('hidden',''); icoPlay.removeAttribute('hidden'); playBtn.setAttribute('aria-label','Tocar'); }
+    wake();
+  }
+  audio.addEventListener('loadedmetadata', function(){ elDur.textContent = fmt(audio.duration); });
+  audio.addEventListener('play', function(){ setPlaying(true); });
+  audio.addEventListener('pause', function(){ setPlaying(false); });
+  audio.addEventListener('ended', function(){ setTimeout(function(){ startLabel.textContent = 'Ouvir de novo'; cover.classList.add('end'); cover.hidden = false; document.body.classList.add('covered'); requestAnimationFrame(function(){ cover.classList.remove('gone'); }); }, 1500); });
+  function play(){ ensureAudioGraph(); if(audio.ended) audio.currentTime = 0; var p = audio.play(); if(p && p.catch) p.catch(function(e){ showError('Não deu para tocar: ' + e.message); }); }
+  function toggle(){ if(audio.paused) play(); else audio.pause(); }
+  playBtn.addEventListener('click', toggle);
+  startBtn.addEventListener('click', function(){ cover.classList.add('gone'); document.body.classList.remove('covered'); setTimeout(function(){ cover.hidden = true; cover.classList.remove('end'); }, 900); audio.currentTime = 0; play(); });
+  var idleTimer = 0;
+  function wake(){ document.body.classList.remove('idle'); clearTimeout(idleTimer); if(!audio.paused) idleTimer = setTimeout(function(){ document.body.classList.add('idle'); }, 2800); }
+  ['pointermove','pointerdown','keydown'].forEach(function(ev){ document.addEventListener(ev, wake); });
+  function seekFromX(x){ var rc = track.getBoundingClientRect(); var pct = clamp((x - rc.left)/rc.width, 0, 1); if(audio.duration) audio.currentTime = pct*audio.duration; }
+  var dragging = false;
+  track.addEventListener('pointerdown', function(e){ dragging = true; track.setPointerCapture(e.pointerId); seekFromX(e.clientX); });
+  track.addEventListener('pointermove', function(e){ if(dragging) seekFromX(e.clientX); });
+  track.addEventListener('pointerup', function(){ dragging = false; });
+  track.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ audio.currentTime = Math.min(audio.duration||0, audio.currentTime + 5); e.preventDefault(); }
+    if(e.key === 'ArrowLeft'){ audio.currentTime = Math.max(0, audio.currentTime - 5); e.preventDefault(); }
+  });
+  document.addEventListener('keydown', function(e){ if(e.code === 'Space' && cover.hidden && e.target.tagName !== 'BUTTON'){ e.preventDefault(); toggle(); } });
+
+  var lastNow = performance.now(), lastIdx = -2;
+  function frame(now){
+    requestAnimationFrame(frame);
+    var dt = Math.min(.05, (now - lastNow)/1000); lastNow = now;
+    var t = audio.currentTime, d = audio.duration || 0;
+    readAudio(dt, now/1000);
+    var idx = currentIndex(t);
+    if(idx !== lastIdx){ lastIdx = idx; elSec.textContent = idx >= 0 ? LINES[idx].sec : ''; live.textContent = idx >= 0 ? LINES[idx].text : ''; }
+    try{ render(t, dt); }catch(e){ showError('Erro ao desenhar: ' + e.message); throw e; }
+    var pct = d ? t/d : 0; fill.style.width = (pct*100) + '%'; track.setAttribute('aria-valuenow', Math.round(pct*100));
+    elCur.textContent = fmt(t); elDur.textContent = fmt(d);
+  }
+  if(location.hash === '#render'){ // modo de gravação do MP4
+    window.__renderStep = function(t, f, dt){ window.__F = f; readAudio(dt, t); render(t, dt); };
+    window.__ready = (document.fonts ? document.fonts.ready : Promise.resolve()).then(function(){ PAGES.forEach(function(p){ p.geo = null; }); return true; });
+    return;
+  }
+  player.hidden = false; cover.hidden = false; document.body.classList.add('covered');
+  var fontsP = document.fonts ? Promise.all(['500 40px "Dancing Script"','600 40px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','40px "Great Vibes"'].map(function(f){ return document.fonts.load(f).catch(function(){}); })) : Promise.resolve();
+  Promise.race([fontsP, new Promise(function(r){ setTimeout(r, 4000); })]).then(function(){ PAGES.forEach(function(p){ p.geo = null; }); startBtn.disabled = false; startLabel.textContent = 'Ouvir a música'; });
+  requestAnimationFrame(frame);
+})();
+</script>
+<script>
+document.querySelectorAll('.back').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); if(window.parent !== window) parent.postMessage('fechar-clipe', '*'); else location.href = 'index.html'; }); });
+</script>
+</body>
+</html>
