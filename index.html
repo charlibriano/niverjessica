@@ -424,7 +424,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   function openClip(){
     clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
     frame = document.createElement('iframe'); frame.title = 'Foi Deus quem escreveu'; frame.allow = 'autoplay';
-    frame.src = window.__CLIP_URL__ || 'clipe.html';
+    frame.src = window.__CLIP_URL__ || ('clipe.html?v=' + Date.now());   // sempre a versão mais nova do clipe, sem ficar preso no cache do navegador
     clipLayer.appendChild(frame);
   }
   function closeClip(){ clipLayer.classList.remove('show'); setTimeout(function(){ if(frame){ frame.remove(); frame = null; } clipLayer.hidden = true; }, 600); }
