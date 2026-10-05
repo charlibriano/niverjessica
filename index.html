@@ -530,7 +530,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
   var GP = [], buds = [];
   MOTIVOS.forEach(function(m, i){
     var r = Math.floor(i/7), c = i % 7;
-    var x = .075 + (c + (r % 2 ? .5 : 0))*(.85/6.5) + (rnd(i + 1) - .5)*.016, yb = .5 + r*.105 + (rnd(i + 50) - .5)*.014, L = .08 + r*.02, s = .66 + r*.13;
+    var x = .075 + (c + (r % 2 ? .5 : 0))*(.85/6.5) + (rnd(i + 1) - .5)*.016, s = .7 + r*.12, yb = .46 + r*.125 + (rnd(i + 50) - .5)*.012, L = .104*s;   // vaso embaixo, flor logo acima
     GP.push({x:x, yb:yb, y:yb - L, s:s, kind:KINDS[i % 6], ph:rnd(i + 3)*6.28, rot:(rnd(i + 9) - .5)*.5, i:i, row:r});
     var b = document.createElement('button'); b.className = 'bud'; b.type = 'button'; b.setAttribute('aria-label', 'Flor ' + (i + 1));
     b.style.left = (x*100).toFixed(2) + '%'; b.style.top = ((yb - L)*100).toFixed(2) + '%'; b.style.setProperty('--s', s.toFixed(2));
@@ -575,6 +575,24 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     g.fillStyle = 'rgba(255,255,255,.28)'; g.beginPath(); g.ellipse(-bw*.35, -bh*.3, bw*.13, bh*.32, .15, 0, 6.3); g.fill();
     g.fillStyle = '#3f8f4a'; g.strokeStyle = 'rgba(30,70,40,.5)'; [[-1, .95],[1, .95],[0, .75]].forEach(function(sp){ g.beginPath(); g.moveTo(0, bh*.36); g.quadraticCurveTo(sp[0]*bw*1.05, bh*.1, sp[0]*bw*(sp[0] ? .75 : .1), -bh*(sp[0] ? .12 : .22)*sp[1]); g.quadraticCurveTo(sp[0]*bw*.3, bh*.2, 0, bh*.36); g.fill(); g.stroke(); });
     g.restore(); }
+  function gmix(hex, k){ var n = parseInt(hex.substr(1), 16), r = (n >> 16) & 255, gg = (n >> 8) & 255, b = n & 255; return 'rgb(' + Math.round(r + (255 - r)*k) + ',' + Math.round(gg + (255 - gg)*k) + ',' + Math.round(b + (255 - b)*k) + ')'; }
+  var POTC = [['#d2693f','#a54f2c'],['#f4efe6','#cdc3ae'],['#8fb996','#6a9573'],['#3f6fa8','#2c5385'],['#e3b04a','#b98626'],['#e59aa8','#c0728a']];
+  // vasinho de cerâmica (barro, branco, verde, azul, mostarda ou rosa), com pires, aro, faixa ou bolinhas e terra por cima
+  function gPot(g, bx, by, sz, i, sc){
+    sc = sc === undefined ? 1 : sc; if(sc <= 0) return; var w1 = sz*.98*sc, w2 = sz*.66*sc, h = sz*.8*sc, c = POTC[(i*5 + Math.floor(i/7)) % 6], rimH = h*.22, topY = by - h;
+    g.fillStyle = 'rgba(40,25,10,.22)'; g.beginPath(); g.ellipse(bx - sz*.14, by + 1.5, sz*.64*sc, sz*.12*sc, 0, 0, 6.3); g.fill();
+    g.fillStyle = c[1]; g.beginPath(); g.ellipse(bx, by - 1, w2*.64, sz*.06*sc, 0, 0, 6.3); g.fill();
+    var gr = g.createLinearGradient(bx - w1/2, 0, bx + w1/2, 0); gr.addColorStop(0, gmix(c[0], .35)); gr.addColorStop(.45, c[0]); gr.addColorStop(1, c[1]); g.fillStyle = gr;
+    g.beginPath(); g.moveTo(bx - w1/2, topY + rimH*.5); g.lineTo(bx + w1/2, topY + rimH*.5); g.lineTo(bx + w2/2, by - sz*.04*sc); g.quadraticCurveTo(bx, by + sz*.02*sc, bx - w2/2, by - sz*.04*sc); g.closePath(); g.fill();
+    g.save(); g.beginPath(); g.moveTo(bx - w1/2, topY + rimH*.5); g.lineTo(bx + w1/2, topY + rimH*.5); g.lineTo(bx + w2/2, by - sz*.04*sc); g.lineTo(bx - w2/2, by - sz*.04*sc); g.closePath(); g.clip(); var p = i % 3;
+    if(p === 0){ g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(bx - w1/2, topY + h*.5, w1, h*.1); g.fillRect(bx - w1/2, topY + h*.68, w1, h*.05); }
+    else if(p === 1){ g.fillStyle = 'rgba(255,255,255,.6)'; for(var dd=0; dd<6; dd++){ g.beginPath(); g.arc(bx - w1*.3 + (dd % 3)*w1*.3, topY + h*(.5 + Math.floor(dd/3)*.22), h*.045, 0, 6.3); g.fill(); } }
+    else { g.fillStyle = 'rgba(255,255,255,.2)'; g.fillRect(bx - w1*.36, topY + rimH, w1*.12, h*.6); }
+    g.restore();
+    g.fillStyle = '#4a3020'; g.beginPath(); g.ellipse(bx, topY + rimH*.1, w1*.5, sz*.08*sc, 0, 0, 6.3); g.fill();
+    var rg = g.createLinearGradient(bx - w1/2, 0, bx + w1/2, 0); rg.addColorStop(0, gmix(c[0], .45)); rg.addColorStop(.5, gmix(c[0], .1)); rg.addColorStop(1, c[1]); g.fillStyle = rg; g.fillRect(bx - w1/2 - sz*.04*sc, topY + rimH*.1, w1 + sz*.08*sc, rimH*.9);
+    g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(bx - w1/2 - sz*.04*sc, topY + rimH*.1, w1 + sz*.08*sc, 1.4); g.fillStyle = 'rgba(0,0,0,.14)'; g.fillRect(bx - w1/2 - sz*.04*sc, topY + rimH*.9, w1 + sz*.08*sc, 1.4);
+  }
   function drawGarden(t, dt){
     var S = sizeG(), g = gctx, W = S.w, H = S.h, U = W*.075; gW = W; gH = H; if(!gT0) gT0 = t;
     g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, W, H);
@@ -583,26 +601,40 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
     var sx = W*.82, sy = H*.1, sg = g.createRadialGradient(sx, sy, 0, sx, sy, W*.6); sg.addColorStop(0, 'rgba(255,240,180,.9)'); sg.addColorStop(1, 'rgba(255,240,180,0)'); g.fillStyle = sg; g.fillRect(0, 0, W, H*.8);
     g.fillStyle = '#ffeaa6'; g.beginPath(); g.arc(sx, sy, W*.04, 0, 6.3); g.fill();
     for(var c=0;c<3;c++){ var cx = ((t*5*(1 + c*.3) + c*W*.45) % (W*1.4)) - W*.2, cy = H*(.1 + c*.07), cs = W*.05*(1 + c*.2); g.fillStyle = 'rgba(255,255,255,.82)'; [[0,0,1],[.9,.15,.8],[-.9,.15,.75],[.35,-.45,.8],[-.4,-.3,.7]].forEach(function(b){ g.beginPath(); g.arc(cx + b[0]*cs, cy + b[1]*cs, cs*b[2], 0, 6.3); g.fill(); }); }
-    for(var L=0;L<2;L++){ g.fillStyle = L ? 'rgba(100,165,120,.6)' : 'rgba(130,175,160,.5)'; g.beginPath(); g.moveTo(0, H*.4); for(var x2=0; ; x2+=6){ var xx2 = Math.min(x2, W); g.lineTo(xx2, H*(.31 + L*.035) - Math.sin(xx2/W*(3 + L*2) + L*1.7)*H*.03 - Math.sin(xx2/W*8 + L)*H*.008); if(x2 >= W) break; } g.lineTo(W, H*.42); g.lineTo(0, H*.42); g.closePath(); g.fill(); }
-    var gr = g.createLinearGradient(0, H*.36, 0, H); gr.addColorStop(0, '#a9d98f'); gr.addColorStop(.5, '#7dbd6c'); gr.addColorStop(1, '#5ba15a'); g.fillStyle = gr; g.beginPath(); g.moveTo(0, H*.4); for(var x3=0; ; x3+=6){ var xx3 = Math.min(x3, W); g.lineTo(xx3, H*.375 + Math.sin(xx3/W*5)*H*.012); if(x3 >= W) break; } g.lineTo(W, H); g.lineTo(0, H); g.closePath(); g.fill();
+    for(var L=0;L<2;L++){ g.fillStyle = L ? 'rgba(100,165,120,.6)' : 'rgba(130,175,160,.5)'; g.beginPath(); g.moveTo(0, H*.34); for(var x2=0; ; x2+=6){ var xx2 = Math.min(x2, W); g.lineTo(xx2, H*(.24 + L*.035) - Math.sin(xx2/W*(3 + L*2) + L*1.7)*H*.03 - Math.sin(xx2/W*8 + L)*H*.008); if(x2 >= W) break; } g.lineTo(W, H*.36); g.lineTo(0, H*.36); g.closePath(); g.fill(); }
+    // varanda: mureta branca ao fundo e piso de madeira em perspectiva
+    var dy0 = H*.34;
+    var wg2 = g.createLinearGradient(0, H*.26, 0, dy0); wg2.addColorStop(0, '#f6efe0'); wg2.addColorStop(1, '#e2d6bf'); g.fillStyle = wg2; g.fillRect(0, H*.26, W, dy0 - H*.26);
+    g.fillStyle = '#fffaf0'; g.fillRect(0, H*.252, W, H*.012); g.fillStyle = 'rgba(160,140,110,.2)'; for(var bl=0; bl<=16; bl++) g.fillRect(bl*W/16 - 2, H*.266, 4, dy0 - H*.266);
+    g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(0, dy0 - 3, W, 3);
+    var dk = g.createLinearGradient(0, dy0, 0, H); dk.addColorStop(0, '#dcb480'); dk.addColorStop(1, '#a87a46'); g.fillStyle = dk; g.fillRect(0, dy0, W, H - dy0);
+    g.strokeStyle = 'rgba(90,55,25,.28)'; g.lineWidth = 1; for(var pl=-8; pl<=8; pl++){ g.beginPath(); g.moveTo(W/2 + pl*W*.13*.55, dy0); g.lineTo(W/2 + pl*W*.13, H); g.stroke(); }
+    for(var jn=1; jn<7; jn++){ var yj = dy0 + (H - dy0)*Math.pow(jn/7, 1.35); g.beginPath(); g.moveTo(0, yj); g.lineTo(W, yj); g.stroke(); }
+    var fl = g.createLinearGradient(0, dy0, 0, H); fl.addColorStop(0, 'rgba(255,240,190,.3)'); fl.addColorStop(1, 'rgba(255,240,190,0)'); g.fillStyle = fl; g.fillRect(0, dy0, W, H*.32);
+    // plantas penduradas nos cantos de cima, balançando de leve
+    [[.1, 0],[.9, 1]].forEach(function(hp){ var hx3 = W*hp[0], hy3 = H*.15, ps = W*.055, sw3 = Math.sin(t*.9 + hp[1]*2)*2;
+      g.strokeStyle = '#8a6a3a'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(hx3, 0); g.lineTo(hx3 - ps*.5 + sw3*.2, hy3 + ps*.3); g.moveTo(hx3, 0); g.lineTo(hx3 + ps*.5 + sw3*.2, hy3 + ps*.3); g.stroke();
+      for(var tl=0; tl<3; tl++){ var tx = hx3 + (tl - 1)*ps*.45 + sw3*.2; for(var lk=0; lk<7; lk++){ gLeaf(g, tx + Math.sin(t*.8 + lk*.6 + tl)*3, hy3 + ps*.55 + lk*ps*.34 + tl*3, ps*.4, Math.PI/2 + (lk % 2 ? .6 : -.6), '#5fb064', '#3f8f4a'); } }
+      gPot(g, hx3 + sw3*.2, hy3 + ps*.95, ps, hp[1] + 2, 1); });
     // flores, fileira por fileira (de trás para a frente), com neblina leve entre as fileiras de trás
     for(var r=0; r<5; r++){
-      if(r === 2){ var fog = g.createLinearGradient(0, H*.34, 0, H*.7); fog.addColorStop(0, 'rgba(255,255,255,.16)'); fog.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = fog; g.fillRect(0, H*.34, W, H*.36); }
+      if(r === 2){ var fog = g.createLinearGradient(0, H*.3, 0, H*.62); fog.addColorStop(0, 'rgba(255,255,255,.16)'); fog.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = fog; g.fillRect(0, H*.3, W, H*.32); }
       for(var i=r*7; i<r*7 + 7; i++){
-        var P = GP[i], s = P.s, enter = gcl((t - gT0 - i*.035 - .1)/.9, 0, 1), bx = P.x*W, by = P.yb*H, hy0 = P.y*H, sway = Math.sin(t*1.15 + P.ph)*U*s*.1;
-        var hx = bx + sway, hy = by - (by - hy0)*geo(enter), op = opened[i], sz = U*s;
-        // sombra e montinho de terra
-        g.fillStyle = 'rgba(40,25,10,.18)'; g.beginPath(); g.ellipse(bx, by + 1, sz*.55, sz*.13, 0, 0, 6.3); g.fill(); g.fillStyle = 'rgba(105,72,42,.65)'; g.beginPath(); g.ellipse(bx, by, sz*.4, sz*.09, 0, 0, 6.3); g.fill();
+        var P = GP[i], s = P.s, enter = gcl((t - gT0 - i*.035 - .35)/.9, 0, 1), bx = P.x*W, by = P.yb*H, hy0 = P.y*H, sway = Math.sin(t*1.15 + P.ph)*U*s*.1;
+        var sz = U*s*1.15, topY = by - sz*.8*.97, hx = bx + sway, hy = topY - (topY - hy0)*geo(enter), op = opened[i];
+        // o vasinho aparece primeiro, com um pulinho
+        gPot(g, bx, by, sz, i, gbk(gcl((t - gT0 - i*.03)/.45, 0, 1)));
         if(enter <= 0) continue;
         // caule curvo com folhas
-        var cxq = bx + sway*.3 - sz*.1, cyq = by - (by - hy)*.55, stw = Math.max(1.5, sz*.07);
-        g.strokeStyle = '#4f9a58'; g.lineWidth = stw; g.lineCap = 'round'; g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(cxq, cyq, hx, hy + sz*(op ? .1 : .3)); g.stroke();
-        g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = stw*.3; g.beginPath(); g.moveTo(bx - stw*.2, by); g.quadraticCurveTo(cxq - stw*.2, cyq, hx - stw*.2, hy + sz*(op ? .1 : .3)); g.stroke();
-        if(enter > .35){ [[.28, -1],[.5, 1]].forEach(function(lf){ var u = lf[0], qx = (1 - u)*(1 - u)*bx + 2*u*(1 - u)*cxq + u*u*hx, qy = (1 - u)*(1 - u)*by + 2*u*(1 - u)*cyq + u*u*(hy + sz*.3); gLeaf(g, qx, qy, sz*.62*gbk((enter - .35)/.4), lf[1] < 0 ? -Math.PI + .5 + Math.sin(t + P.ph)*.05 : -.5 + Math.sin(t*.9 + P.ph)*.05, '#58a85f', '#3f8f4a'); }); }
+        var cxq = bx + sway*.3 - sz*.1, cyq = topY - (topY - hy)*.55, stw = Math.max(1.5, sz*.07);
+        g.strokeStyle = '#4f9a58'; g.lineWidth = stw; g.lineCap = 'round'; g.beginPath(); g.moveTo(bx, topY); g.quadraticCurveTo(cxq, cyq, hx, hy + sz*(op ? .1 : .3)); g.stroke();
+        g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = stw*.3; g.beginPath(); g.moveTo(bx - stw*.2, topY); g.quadraticCurveTo(cxq - stw*.2, cyq, hx - stw*.2, hy + sz*(op ? .1 : .3)); g.stroke();
+        if(enter > .2){ var fk = gbk((enter - .2)/.4); [[-1],[1]].forEach(function(sd){ gLeaf(g, bx + sd[0]*sz*.08, topY + 1, sz*.34*fk, sd[0] < 0 ? -Math.PI + .6 + Math.sin(t*1.3 + P.ph)*.06 : -.6 + Math.sin(t*1.1 + P.ph)*.06, '#5fb064', '#3f8f4a'); }); }
+        if(enter > .35){ [[.28, -1],[.5, 1]].forEach(function(lf){ var u = lf[0], qx = (1 - u)*(1 - u)*bx + 2*u*(1 - u)*cxq + u*u*hx, qy = (1 - u)*(1 - u)*topY + 2*u*(1 - u)*cyq + u*u*(hy + sz*.3); gLeaf(g, qx, qy, sz*.62*gbk((enter - .35)/.4), lf[1] < 0 ? -Math.PI + .5 + Math.sin(t + P.ph)*.05 : -.5 + Math.sin(t*.9 + P.ph)*.05, '#58a85f', '#3f8f4a'); }); }
         if(enter < .55) continue;
         var he = gbk((enter - .55)/.45);
         if(op){
-          var k = gcl((t - op)/.9, 0, 1), big = sz*1.9*gbk(k)*he, rot = P.rot + Math.sin(t*.9 + P.ph)*.07 + (1 - geo(k))*-.9;
+          var k = gcl((t - op)/.9, 0, 1), big = sz*1.7*gbk(k)*he, rot = P.rot + Math.sin(t*.9 + P.ph)*.07 + (1 - geo(k))*-.9;
           if(k < 1){ var wg = g.createRadialGradient(hx, hy, 0, hx, hy, sz*1.3); wg.addColorStop(0, 'rgba(255,240,170,' + (.55*(1 - k)) + ')'); wg.addColorStop(1, 'rgba(255,240,170,0)'); g.fillStyle = wg; g.beginPath(); g.arc(hx, hy, sz*1.3, 0, 6.3); g.fill(); }
           g.save(); g.translate(hx, hy); g.rotate(rot); g.shadowColor = 'rgba(40,30,10,.3)'; g.shadowBlur = 4; g.shadowOffsetY = 2; var im = FLIMG[P.kind]; if(im.complete && im.naturalWidth) g.drawImage(im, -big/2, -big/2, big, big); g.restore();
         } else {
