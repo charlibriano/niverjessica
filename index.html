@@ -134,7 +134,7 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
 .lined:focus-visible{box-shadow:0 0 0 2px rgba(47,107,74,.35); border-radius:6px}
 .write .cta{margin-top:2%}
 .ale .inner{justify-content:flex-start; gap:2%; padding-top:9%}
-.crayon{width:100%; height:calc(var(--bw) * .5); display:block}
+.crayon{width:100%; height:calc(var(--bw) * .6); display:block}
 .notes{display:grid; gap:3%; width:100%}
 .vnote{all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; gap:3%; width:100%; padding:2.6% 3.5%; border-radius:999px; background:#fffdf7; border:2px dashed rgba(196,71,106,.55); box-shadow:0 4px 10px rgba(0,0,0,.08)}
 .vnote:focus-visible{outline:2px solid var(--green); outline-offset:3px}
@@ -622,43 +622,116 @@ h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); 
       pts.forEach(function(p, i){ var x = p[0] + jit()*J, y = p[1] + jit()*J; if(i) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); } g.globalAlpha = 1; }
   function circ(cx, cy, r, n){ var p = []; for(var i=0;i<=n;i++){ var a = i/n*Math.PI*2; p.push([cx + Math.cos(a)*r, cy + Math.sin(a)*r]); } return p; }
   function heartPts(cx, cy, r){ var p = []; for(var i=0;i<=28;i++){ var a = i/28*Math.PI*2, s = Math.sin(a); p.push([cx + 16*s*s*s/17*r, cy - (13*Math.cos(a) - 5*Math.cos(2*a) - 2*Math.cos(3*a) - Math.cos(4*a))/17*r]); } return p; }
-  function kid(g, x, y, h, col, o, J){ // bonequinho de criança
-    var hr = h*.16; crayon(g, circ(x, y - h + hr, hr, 14), col, 3, J);
-    if(o.dress){ crayon(g, [[x, y - h + hr*2],[x - h*.2, y - h*.32],[x + h*.2, y - h*.32],[x, y - h + hr*2]], col, 3, J); crayon(g, [[x - h*.07, y - h*.32],[x - h*.08, y]], col, 3, J); crayon(g, [[x + h*.07, y - h*.32],[x + h*.08, y]], col, 3, J); }
-    else { crayon(g, [[x, y - h + hr*2],[x, y - h*.32]], col, 3, J); crayon(g, [[x - h*.13, y],[x, y - h*.32],[x + h*.13, y]], col, 3, J); }
-    crayon(g, [[x - h*.26, y - h*.5],[x, y - h + hr*2.4],[x + h*.26, y - h*.5]], col, 3, J);
-    if(o.hair){ g.fillStyle = o.hair; g.beginPath(); g.arc(x, y - h + hr, hr*1.05, Math.PI, Math.PI*2); g.fill(); if(o.pig){ g.beginPath(); g.arc(x - hr*1.3, y - h + hr*.8, hr*.45, 0, 6.3); g.arc(x + hr*1.3, y - h + hr*.8, hr*.45, 0, 6.3); g.fill(); } if(o.long){ g.fillRect(x - hr*1.1, y - h + hr, hr*.4, hr*1.6); g.fillRect(x + hr*.7, y - h + hr, hr*.4, hr*1.6); } }
-    g.fillStyle = col; g.beginPath(); g.arc(x - hr*.35, y - h + hr*.95, 1.6, 0, 6.3); g.arc(x + hr*.35, y - h + hr*.95, 1.6, 0, 6.3); g.fill();
-    g.strokeStyle = col; g.lineWidth = 1.6; g.beginPath(); g.arc(x, y - h + hr*1.15, hr*.4, .2, Math.PI - .2); g.stroke();
+  // ---------- o desenho da Alê, em giz de cera: colorido, com a família, a casa, o cachorro e a natureza ----------
+  function ellPts(cx, cy, rx, ry, n){ var p = []; n = n || 18; for(var i=0;i<=n;i++){ var a = i/n*Math.PI*2; p.push([cx + Math.cos(a)*rx, cy + Math.sin(a)*ry]); } return p; }
+  // preenche uma área com riscos de giz (como uma criança pintando) e depois passa o contorno
+  function hatch(g, x, y, w, h, col, J, sp){
+    g.save(); g.strokeStyle = col; g.lineWidth = sp*1.2; g.globalAlpha = .62; g.lineCap = 'round'; var slope = -.35;
+    for(var yy = y - Math.abs(slope)*w; yy < y + h + sp; yy += sp){ g.beginPath(); g.moveTo(x - 3 + jit()*J, yy + jit()*J); g.lineTo(x + w + 3 + jit()*J, yy + slope*w + jit()*J); g.stroke(); }
+    g.restore();
+  }
+  function paint(g, pts, fill, line, lw, J, sp){
+    if(fill){ var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; pts.forEach(function(p){ x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+      g.save(); g.beginPath(); pts.forEach(function(p, i){ if(i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.closePath(); g.clip(); hatch(g, x0, y0, x1 - x0, y1 - y0, fill, J, sp || 3.2); g.restore(); }
+    if(line) crayon(g, pts.concat([pts[0]]), line, lw || 2.4, J);
+  }
+  function blob(g, x, y, r, col){ g.fillStyle = col; g.beginPath(); g.arc(x + jit()*1.2, y + jit()*1.2, r, 0, 6.3); g.fill(); }
+  function faceC(g, x, y, hr, J){ g.fillStyle = '#2a1a12'; blob(g, x - hr*.38, y - hr*.05, hr*.1, '#2a1a12'); blob(g, x + hr*.38, y - hr*.05, hr*.1, '#2a1a12'); blob(g, x - hr*.62, y + hr*.3, hr*.17, 'rgba(235,95,110,.45)'); blob(g, x + hr*.62, y + hr*.3, hr*.17, 'rgba(235,95,110,.45)');
+    var sm = []; for(var i=0;i<=8;i++){ var a = Math.PI*(.2 + .6*i/8); sm.push([x + Math.cos(a)*hr*.38, y + hr*.12 + Math.sin(a)*hr*.38]); } crayon(g, sm, '#8a2f2f', 2, J*.4); }
+  // uma pessoa desenhada por criança: cabeça grande, roupa colorida, braços e pernas de risco grosso
+  function person(g, x, base, H, o, J, handL, handR){
+    var hr = H*.17, hy = base - H + hr, sh = hy + hr + H*.02, lw = Math.max(3, H*.05), OL = '#3a2a1c', hem = base - H*.3, sw = o.dress ? H*.1 : H*.14;
+    if(o.curly){ for(var k=0;k<5;k++){ blob(g, x - hr*1.25 - (k % 2)*hr*.1, hy + hr*.1 + k*hr*.5, hr*.36, '#2b1a10'); blob(g, x + hr*1.25 + (k % 2)*hr*.1, hy + hr*.1 + k*hr*.5, hr*.36, '#2b1a10'); } blob(g, x, hy + hr*1.5, hr*.9, '#2b1a10'); }
+    if(o.pig){ blob(g, x - hr*1.35, hy + hr*.15, hr*.42, '#24160f'); blob(g, x + hr*1.35, hy + hr*.15, hr*.42, '#24160f'); blob(g, x - hr*1.35, hy - hr*.2, hr*.2, '#f06aa0'); blob(g, x + hr*1.35, hy - hr*.2, hr*.2, '#f06aa0'); }
+    if(o.dress){ paint(g, [[x - sw, sh],[x + sw, sh],[x + H*.27, hem],[x - H*.27, hem]], o.fill, OL, 2.2, J, 3);
+      crayon(g, [[x - H*.09, hem],[x - H*.09, base - H*.03]], o.skin, lw, J); crayon(g, [[x + H*.09, hem],[x + H*.09, base - H*.03]], o.skin, lw, J); }
+    else { var wy = base - H*.38; paint(g, [[x - sw, sh],[x + sw, sh],[x + H*.12, wy],[x - H*.12, wy]], o.fill, OL, 2.2, J, 3);
+      paint(g, [[x - H*.125, wy],[x + H*.125, wy],[x + H*.135, wy + H*.17],[x - H*.135, wy + H*.17]], o.shorts, OL, 2.2, J, 3);
+      crayon(g, [[x - H*.07, wy + H*.17],[x - H*.07, base - H*.03]], o.skin, lw, J); crayon(g, [[x + H*.07, wy + H*.17],[x + H*.07, base - H*.03]], o.skin, lw, J); }
+    [[-1, H*.09],[1, H*.09]].forEach(function(f){ paint(g, ellPts(x + f[0]*H*.09 + f[0]*H*.025, base - H*.02, H*.07, H*.032, 10), o.shoe || '#f4f1ea', OL, 1.8, J*.5, 2.6); });
+    var shL = [x - sw, sh + H*.02], shR = [x + sw, sh + H*.02], hL = handL || [x - H*.27, sh + H*.3], hR = handR || [x + H*.27, sh + H*.3];
+    [[shL, hL, -1],[shR, hR, 1]].forEach(function(A){ var mid = [(A[0][0] + A[1][0])/2 + A[2]*H*.03, (A[0][1] + A[1][1])/2 + H*.05];
+      crayon(g, [A[0], mid, A[1]], o.skin, lw*.95, J); blob(g, A[1][0], A[1][1], H*.04, o.skin); });
+    paint(g, ellPts(x, hy, hr, hr, 18), o.skin, OL, 2.4, J, 2.6);
+    if(o.curly){ for(var q=0;q<9;q++){ var a2 = Math.PI*(1.0 + q/8*1.0); blob(g, x + Math.cos(a2)*hr*1.02, hy + Math.sin(a2)*hr*.98, hr*.34, '#2b1a10'); } blob(g, x - hr*.35, hy - hr*.78, hr*.3, '#2b1a10'); blob(g, x + hr*.3, hy - hr*.82, hr*.3, '#2b1a10'); }
+    if(o.pig){ var dome = []; for(var d=0; d<=10; d++){ var a3 = Math.PI*(1 + d/10); dome.push([x + Math.cos(a3)*hr*1.04, hy + Math.sin(a3)*hr*.98]); } paint(g, dome, '#24160f', null, 0, J, 2.6); }
+    if(o.cap){ var dm = []; for(var c=0; c<=12; c++){ var a4 = Math.PI*(1 + c/12); dm.push([x + Math.cos(a4)*hr*1.12, hy - hr*.2 + Math.sin(a4)*hr*1.05]); }
+      paint(g, dm, o.cap, OL, 2.2, J, 2.8); paint(g, [[x + hr*.2, hy - hr*.3],[x + hr*1.95, hy - hr*.12],[x + hr*1.7, hy + hr*.08],[x + hr*.15, hy - hr*.12]], '#17294a', OL, 2, J, 2.6); blob(g, x - hr*.15, hy - hr*.95, hr*.16, '#fff'); }
+    faceC(g, x + (o.cap ? hr*.1 : 0), hy + hr*.05, hr, J);
+  }
+  function dogDraw(g, x, base, S, now, a, J){
+    var wag = Math.sin(now/90)*(.35 + a*.6), by = base - S*.52;
+    crayon(g, [[x - S*.55, by - S*.05],[x - S*.78, by - S*.32 + wag*S*.35]], '#111', S*.13, J);
+    [-.38, -.2, .22, .4].forEach(function(l){ crayon(g, [[x + l*S, by + S*.2],[x + l*S, base - S*.04]], '#8a5a2b', S*.12, J); });
+    paint(g, ellPts(x, by, S*.62, S*.3, 18), '#1c1c1c', '#000', 2, J, 2.4);
+    paint(g, ellPts(x + S*.64, by - S*.28, S*.3, S*.28, 14), '#1c1c1c', '#000', 2, J, 2.4);
+    paint(g, ellPts(x + S*.52, by - S*.18, S*.11, S*.22, 10), '#000', null, 0, J, 2);
+    paint(g, ellPts(x + S*.9, by - S*.2, S*.15, S*.11, 10), '#4a3a30', '#000', 1.6, J, 2.2);
+    blob(g, x + S*.74, by - S*.36, S*.065, '#fff'); blob(g, x + S*.76, by - S*.36, S*.035, '#000'); blob(g, x + S*1.03, by - S*.23, S*.045, '#000');
+    blob(g, x + S*.88, by - S*.04, S*.06, '#f06a82');
+    crayon(g, [[x + S*.4, by - S*.12],[x + S*.5, by - S*.02]], '#2f9e5b', S*.09, J*.5);
+  }
+  var bgC = document.createElement('canvas'), bgx = bgC.getContext('2d'), bgKey = '';
+  // o fundo (grama, casa, árvore, nuvens, flores) é desenhado só quando o traço "ferve", para ficar leve
+  function drawBg(S, win){
+    var key = S.w + 'x' + S.h + ':' + win; if(key === bgKey) return; bgKey = key; var g = bgx, w = S.w, h = S.h, J = 2;
+    bgC.width = aleCv.width; bgC.height = aleCv.height; g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, w, h); seed = win % 997 + 1;
+    var gy = h*.8;
+    [[.2, .27, .07, '#bfe3f7'],[.66, .25, .075, '#bfe3f7']].forEach(function(C){ var pts = []; for(var i=0;i<=24;i++){ var a = i/24*Math.PI*2, r = C[2]*h*(1 + .22*Math.sin(a*4)); pts.push([w*C[0] + Math.cos(a)*r*1.5, h*C[1] + Math.sin(a)*r*.75]); } paint(g, pts, C[3], '#7fb6d9', 2, J, 3); });
+    paint(g, [[0, gy],[w*.25, gy - 3],[w*.6, gy + 2],[w, gy - 2],[w, h],[0, h]], '#6cc06c', null, 0, J, 4);
+    for(var gi=0; gi<46; gi++){ var gx = ((gi*.618*1.37) % 1)*w, gyy = gy + h*.02 + ((gi*.37) % 1)*(h - gy)*.85; crayon(g, [[gx, gyy],[gx - 2, gyy - 7 - (gi % 3)*2]], '#3f8f4a', 2, J*.4); crayon(g, [[gx, gyy],[gx + 3, gyy - 6]], '#3f8f4a', 2, J*.4); }
+    crayon(g, [[0, gy],[w*.3, gy - 3],[w*.6, gy + 2],[w, gy - 2]], '#3f8f4a', 3.2, J);
+    // a árvore, com maçãs
+    var tx = w*.075, trunkW = h*.045; paint(g, [[tx - trunkW/2, gy + 3],[tx + trunkW/2, gy + 3],[tx + trunkW/2, gy - h*.2],[tx - trunkW/2, gy - h*.2]], '#8a5a2b', '#5a3a1c', 2.2, J, 3);
+    var crown = []; for(var ci=0; ci<=26; ci++){ var ca = ci/26*Math.PI*2, cr = h*.125*(1 + .13*Math.sin(ca*5)); crown.push([tx + Math.cos(ca)*cr*1.05, gy - h*.3 + Math.sin(ca)*cr]); } paint(g, crown, '#4fae5a', '#2f7a3a', 2.4, J, 3.4);
+    [[-.05,-.33],[.04,-.27],[-.02,-.22],[.06,-.34]].forEach(function(A){ blob(g, tx + A[0]*w, gy + A[1]*h, h*.02, '#e0372f'); });
+    // a casa deles, com chaminé, janelas, porta e fumaça
+    var hx0 = w*.765, ww = w*.2, wh = h*.25, wt = gy - wh;
+    paint(g, [[hx0 + ww*.68, wt - h*.1],[hx0 + ww*.84, wt - h*.1],[hx0 + ww*.84, wt],[hx0 + ww*.68, wt]], '#b5654a', '#6b3a22', 2, J, 3);
+    paint(g, [[hx0, wt],[hx0 + ww, wt],[hx0 + ww, gy],[hx0, gy]], '#f7d978', '#7a5a2a', 2.4, J, 3);
+    paint(g, [[hx0 - ww*.08, wt + 2],[hx0 + ww/2, wt - h*.14],[hx0 + ww*1.08, wt + 2]], '#d9473a', '#7a2a22', 2.4, J, 3);
+    paint(g, [[hx0 + ww*.4, gy],[hx0 + ww*.6, gy],[hx0 + ww*.6, gy - wh*.6],[hx0 + ww*.4, gy - wh*.6]], '#8a5a2b', '#5a3a1c', 2, J, 3); blob(g, hx0 + ww*.56, gy - wh*.3, 2, '#f0c040');
+    [[.1],[.7]].forEach(function(W2){ var wx2 = hx0 + ww*W2[0], wy2 = wt + wh*.2, ws = ww*.2; paint(g, [[wx2, wy2],[wx2 + ws, wy2],[wx2 + ws, wy2 + ws],[wx2, wy2 + ws]], '#bfe3f7', '#5a3a1c', 2, J, 3); crayon(g, [[wx2 + ws/2, wy2],[wx2 + ws/2, wy2 + ws]], '#5a3a1c', 1.6, J*.4); crayon(g, [[wx2, wy2 + ws/2],[wx2 + ws, wy2 + ws/2]], '#5a3a1c', 1.6, J*.4); });
+    var sm = []; for(var si=0; si<=16; si++){ sm.push([hx0 + ww*.76 + Math.sin(si*.7)*h*.03 + si*1.2, wt - h*.1 - si*h*.011]); } crayon(g, sm, '#b8c2cc', 3, J);
+    // flores na grama
+    [[.05, '#e0377a'],[.2, '#6fa8ff'],[.545, '#f0a500'],[.7, '#c94fb0'],[.97, '#e0377a'],[.3, '#f26a4a']].forEach(function(F, fi){ var fx = w*F[0], fy = gy + h*(.075 + (fi % 3)*.03);
+      crayon(g, [[fx, fy],[fx + 1, fy - h*.07]], '#2f8f3f', 2.6, J*.5); for(var p=0;p<6;p++){ var pa = p/6*Math.PI*2; blob(g, fx + Math.cos(pa)*h*.032, fy - h*.085 + Math.sin(pa)*h*.032, h*.02, F[1]); } blob(g, fx, fy - h*.085, h*.018, '#ffd23a'); });
   }
   var lastBoil = 0;
   function drawAle(now){
     if(cur !== 5) return;
-    var S = sizeCv(aleCv), g = acx, a = amp(), w = S.w, h = S.h;
-    if(now - lastBoil > 110){ lastBoil = now; seed = Math.floor(now/110) % 997 + 1; }
-    else seed = Math.floor(lastBoil/110) % 997 + 1;
-    g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, w, h);
-    var J = 2.2, base = h*.93;
-    crayon(g, [[w*.02, base],[w*.3, base - 3],[w*.6, base + 2],[w*.98, base - 2]], '#4f8f5f', 4, J);
-    // sol
-    crayon(g, circ(w*.86, h*.2, h*.09, 16), '#f0b31c', 4, J); for(var r=0;r<8;r++){ var an = r/8*Math.PI*2 + now/2500; crayon(g, [[w*.86 + Math.cos(an)*h*.13, h*.2 + Math.sin(an)*h*.13],[w*.86 + Math.cos(an)*h*.19, h*.2 + Math.sin(an)*h*.19]], '#f0b31c', 3, J); }
-    // florzinhas
-    [[.08,'#c4476a'],[.18,'#6fa8ff'],[.9,'#c94f9a']].forEach(function(f){ crayon(g, [[w*f[0], base],[w*f[0], base - h*.14]], '#4f8f5f', 3, J); crayon(g, circ(w*f[0], base - h*.17, h*.04, 10), f[1], 4, J); });
-    // texto em letra de criança, cada letra de uma cor
-    var txt = 'Feliz aniversário, mamãe!', cols = ['#c4476a','#2f6b4a','#3b6fd1','#f0a500'], x = w*.03, fsz = h*.13;
-    g.font = fsz + 'px "Gochi Hand", cursive'; var tw = g.measureText(txt).width; if(tw > w*.7){ fsz *= w*.7/tw; g.font = fsz + 'px "Gochi Hand", cursive'; }
-    for(var i=0;i<txt.length;i++){ g.fillStyle = cols[i % 4]; g.save(); g.translate(x, h*.17 + Math.sin(now/300 + i)*1.5); g.rotate(jit()*.12); g.fillText(txt[i], 0, 0); g.restore(); x += g.measureText(txt[i]).width; }
-    // papai, mamãe e a Alê de mãos dadas; a Alê pula e o coração bate com a voz dela
-    var fh = h*.52, cx = w*.47, jump = a*h*.12;
-    kid(g, cx - w*.2, base, fh, '#3b6fd1', {hair:'#3a2a1c'}, J);
-    kid(g, cx + w*.2, base, fh*.95, '#2f6b4a', {dress:true, hair:'#5a3a22', long:true}, J);
-    kid(g, cx, base - jump, fh*.62, '#c4476a', {dress:true, hair:'#5a3a22', pig:true}, J);
-    crayon(g, [[cx - w*.2 + fh*.26, base - fh*.5],[cx - fh*.62*.26, base - jump - fh*.62*.5]], '#888', 2, J*.5);
-    crayon(g, [[cx + fh*.62*.26, base - jump - fh*.62*.5],[cx + w*.2 - fh*.95*.26, base - fh*.95*.5]], '#888', 2, J*.5);
-    var hs = h*(.1 + a*.07) * (1 + Math.sin(now/220)*.04*(playing ? 1 : .3));
-    var hy = base - jump - fh*.62 - h*.13;
-    g.fillStyle = 'rgba(196,71,106,.35)'; g.beginPath(); heartPts(cx, hy, hs).forEach(function(p, i){ if(i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.fill();
-    crayon(g, heartPts(cx, hy, hs), '#c4476a', 4, J);
+    var S = sizeCv(aleCv), g = acx, a = amp(), w = S.w, h = S.h, win = Math.floor(now/110);
+    drawBg(S, win);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, aleCv.width, aleCv.height); g.drawImage(bgC, 0, 0); g.setTransform(S.d, 0, 0, S.d, 0, 0);
+    seed = (win*7 + 3) % 997 + 1; var J = 2.2, gy = h*.8, base = h*.9;
+    // confete caindo devagar ao redor do título
+    for(var cf=0; cf<16; cf++){ var cp = ((now/7000 + cf*.137) % 1), cxp = ((cf*.381) % 1)*w, cyp = cp*h*.62; g.save(); g.translate(cxp, cyp); g.rotate(now/500 + cf); g.fillStyle = ['#e0377a','#3b82c4','#f0a500','#2f9e5b'][cf % 4]; g.fillRect(-3, -1.2, 6, 2.4); g.restore(); }
+    // título em letra de criança, cada letra de uma cor
+    var txt = 'Feliz aniversário, mamãe!', cols = ['#e0377a','#2f9e5b','#3b82c4','#f0a500'], fsz = Math.min(h*.13, w*.07);
+    g.font = fsz + 'px "Gochi Hand", cursive'; var tw = g.measureText(txt).width, x = (w - tw)/2;
+    for(var i=0;i<txt.length;i++){ g.fillStyle = cols[i % 4]; g.save(); g.translate(x, h*.12 + Math.sin(now/300 + i)*1.5); g.rotate(jit()*.12); g.fillText(txt[i], 0, 0); g.restore(); x += g.measureText(txt[i]).width; }
+    // o sol com carinha: os raios giram mais rápido quando a Alê fala
+    var sx = w*.9, sy = h*.25, sr = h*.07;
+    for(var r=0;r<10;r++){ var an = r/10*Math.PI*2 + now/(2600 - a*1500); crayon(g, [[sx + Math.cos(an)*sr*1.3, sy + Math.sin(an)*sr*1.3],[sx + Math.cos(an)*sr*1.9, sy + Math.sin(an)*sr*1.9]], '#f0a500', 3, J); }
+    paint(g, ellPts(sx, sy, sr, sr, 16), '#ffd23a', '#e09a00', 2.4, J, 2.6); faceC(g, sx, sy, sr, J);
+    // passarinhos voando
+    for(var b=0;b<2;b++){ var bxp = w*(.4 + b*.2) + Math.sin(now/1500 + b*2)*10, byp = h*(.22 + b*.04) + Math.sin(now/700 + b)*3, fl = Math.sin(now/110 + b)*4; crayon(g, [[bxp - 7, byp - fl],[bxp, byp],[bxp + 7, byp - fl]], '#3a2a1c', 2, J*.3); }
+    // a família: papai (boné e bermuda), a Alê no meio e a mamãe (cabelo cacheado), de mãos dadas
+    var Hp = h*.56, Hm = h*.52, Ha = h*.34, jump = a*h*.1 + Math.max(0, Math.sin(now/260))*h*.01*(playing ? 1 : 0);
+    var px = w*.33, ax = w*.485, mx = w*.625, baseA = base - jump;
+    var aL = [ax - Ha*.24, baseA - Ha*.5], aR = [ax + Ha*.24, baseA - Ha*.5];
+    dogDraw(g, w*.17, base, h*.15, now, a, J);
+    person(g, px, base, Hp, {skin:'#b27650', fill:'#3b82c4', shorts:'#cdb88c', cap:'#2a4a80', shoe:'#f4f1ea'}, J, null, aL);
+    person(g, mx, base, Hm, {skin:'#c28860', fill:'#6bbf8a', dress:true, curly:true, shoe:'#7a4a2a'}, J, aR, null);
+    person(g, ax, baseA, Ha, {skin:'#c68b63', fill:'#f07fa0', dress:true, pig:true, shoe:'#c4476a'}, J, [px + Hp*.14, base - Hp*.38], [mx - Hm*.1, base - Hm*.4]);
+    // o coração bate com a voz dela; coraçõezinhos sobem quando ela fala
+    var hs = h*(.045 + a*.04)*(1 + Math.sin(now/220)*.05*(playing ? 1 : .3)), hy = baseA - Ha - h*.2;
+    g.fillStyle = 'rgba(224,55,122,.8)'; g.beginPath(); heartPts(ax, hy, hs).forEach(function(p, i){ if(i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.fill(); crayon(g, heartPts(ax, hy, hs), '#b02a5a', 2.6, J);
+    if(playing){ for(var hq=0; hq<4; hq++){ var hk = ((now/1800 + hq/4) % 1); g.save(); g.globalAlpha = 1 - hk; g.fillStyle = '#e0377a'; g.beginPath(); heartPts(ax + Math.sin(hk*6 + hq*2)*h*.07, hy - hk*h*.2, h*.018).forEach(function(p, i){ if(i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.fill(); g.restore(); } }
+    if(playing && a > .5){ g.font = (h*.07) + 'px "Gochi Hand", cursive'; g.fillStyle = '#3a2a1c'; g.fillText('au!', w*.17 + h*.1, base - h*.2); }
+    // borboletas perto das flores
+    for(var bf=0; bf<2; bf++){ var bfx = w*(.55 + bf*.3) + Math.sin(now/1300 + bf*3)*14, bfy = h*(.7 + bf*.03) + Math.sin(now/600 + bf)*5, wf = Math.abs(Math.sin(now/(playing ? 70 : 140) + bf)); g.fillStyle = bf ? '#f0a500' : '#8a63c4';
+      g.beginPath(); g.ellipse(bfx - 4*wf, bfy, 4*wf + 1, 3, -.4, 0, 6.3); g.ellipse(bfx + 4*wf, bfy, 4*wf + 1, 3, .4, 0, 6.3); g.fill(); }
   }
   function drawWaves(){
     [].forEach.call(document.querySelectorAll('.vnote'), function(b){
