@@ -37,6 +37,7 @@ body{height:100%; margin:0; overflow:hidden; background:var(--bg); color:var(--i
 header{display:flex; justify-content:space-between; align-items:baseline; gap:12px; min-height:28px; transition:opacity .8s}
 .song{font-family:"Cormorant Garamond", Georgia, serif; font-style:italic; font-size:1.25rem}
 .section{font-size:.85rem; color:var(--muted)}
+body.embedded header{justify-content:flex-start}
 .controls{display:grid; grid-template-columns:auto 1fr; align-items:center; gap:16px; padding-top:8px; transition:opacity .8s}
 body.playing.idle .controls, body.playing.idle header{opacity:0}
 body.playing.idle{cursor:none}
@@ -152,6 +153,7 @@ body.covered #player{opacity:0; pointer-events:none}
   var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var W = 0, H = 0, DPR = Math.min(2, window.devicePixelRatio || 1);
   var GREEN_INK = '#2f6b4a', LEAF = '#4f8f5f';
+  var RENDER_MODE = (location.hash === '#render'), RES = 0;   // RES: espaço reservado ao botão na tela inicial
   var NIGHT = '#0d1020', GOLD = '#e3b865', GOLD2 = '#f6d996', PAPER = '#f5eddc', INK = '#3a2a1c', INK_PAST = '#6b5642', ROSE = '#c4476a', IVORY = '#f6eedd';
   var SCRIPT = '"Dancing Script", cursive', SERIF = '"Cormorant Garamond", Georgia, serif';
   function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
@@ -296,7 +298,7 @@ body.covered #player{opacity:0; pointer-events:none}
   function deskScene(t, alpha){
     if(alpha <= 0) return;
     var ta = T_AMB || t, fk = 1 + Math.sin(ta*13)*.04 + Math.sin(ta*7.3 + 1)*.03 + A.bass*.05;
-    var bw = Math.min(W*.62, H*.33), bh = bw*1.36, cx = W/2, cy = H*.5, big = Math.max(W, H);
+    var Hs = H - RES*Math.min(150, H*.2), bw = Math.min(W*.62, Hs*.33), bh = bw*1.36, cx = W/2, cy = Hs*.5, big = Math.max(W, H);
     ctx.save(); ctx.globalAlpha = alpha;
     ctx.drawImage(woodTex(), 0, 0, W, H);
     var cX = cx - bw*.52, cY = cy - bh*.5 - bw*.2, r = bw*.07;
@@ -386,7 +388,7 @@ body.covered #player{opacity:0; pointer-events:none}
   function drawCover(t, alpha, openK, zoomK, closing){
     if(alpha <= 0) return;
     ctx.save(); ctx.globalAlpha = alpha;
-    var bw = Math.min(W*.62, H*.33), bh = bw*1.36, cx = W/2, cy = H*.5, sp = bw*.075, x0 = cx - bw/2, y0 = cy - bh/2, a = openK*Math.PI, ca = Math.cos(a), sa = Math.sin(a), closed = 1 - clamp(openK*2.4, 0, 1);
+    var Hs = H - RES*Math.min(150, H*.2), bw = Math.min(W*.62, Hs*.33), bh = bw*1.36, cx = W/2, cy = Hs*.5, sp = bw*.075, x0 = cx - bw/2, y0 = cy - bh/2, a = openK*Math.PI, ca = Math.cos(a), sa = Math.sin(a), closed = 1 - clamp(openK*2.4, 0, 1);
     ctx.translate(cx, cy); var zs = 1 + zoomK*1.6; ctx.scale(zs, zs); ctx.translate(-cx, -cy);
     // sombra do livro na mesa
     ctx.save(); ctx.shadowColor = 'rgba(0,0,0,' + (.65*(1 - zoomK)) + ')'; ctx.shadowBlur = bw*.16; ctx.shadowOffsetX = bw*.05; ctx.shadowOffsetY = bw*.07; ctx.fillStyle = '#0b1f16'; ctx.beginPath(); rrectPath(x0, y0, bw, bh, bw*.02); ctx.fill(); ctx.restore();
@@ -440,7 +442,7 @@ body.covered #player{opacity:0; pointer-events:none}
     rows.forEach(function(r){ r.text = r.w.map(function(z){ return z[0]; }).join(' '); r.s = r.w[0][1]; r.e = r.w[r.w.length-1][2]; r.width = ctx.measureText(r.text).width; });
     var top = H*.13, bottom = top + rows.length*fs*1.32;
     var iy = Math.max(H*.5, bottom + fs*.4);
-    pg.geo = {W:W, H:H, fs:fs, mx:mx, rows:rows, top:top, ill:{x:W*.08, y:iy, w:W*.84, h:H*.88 - iy}};
+    pg.geo = {W:W, H:H, fs:fs, mx:mx, rows:rows, top:top, ill:{x:W*.08, y:iy, w:W*.84, h:(RENDER_MODE ? H*.88 : Math.min(H*.88, H - 98)) - iy}};
     return pg.geo;
   }
   var DOODLE = { olhei:'eye', tempo:'clock', finalmente:'hearts', prometi:'ring', tambem:'heart', aconteceu:'spark', escreveu:'quill', presente:'gift', ale:'star', agradecer:'spark', perdoar:'heart', certeza:'heart', jessica:'hearts', mao:'heart', cor:'spark', aniversario:'gift', juntos:'hearts', novo:'heart', seguro:'anchor', gloria:'sun', luta:'cloud' };
@@ -2207,9 +2209,10 @@ body.covered #player{opacity:0; pointer-events:none}
 
   function cornerFlowers(pg, t){
     var s = Math.min(W, H)*.11, k = easeBack(grow(t, LINES[pg.from].s - .9, 1.2)), kind = FKINDS[(pg.num + 2) % 6], kind2 = FKINDS[(pg.num + 4) % 6];
-    ctx.strokeStyle = LEAF; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(W, H*.98); ctx.quadraticCurveTo(W - s*1.2, H - s*.4, W - s*1.5*k, H - s*1.4*k); ctx.stroke();
-    flower(kind, W - s*.55, H - s*.75, s*.9*k, .3); flower(kind2, W - s*1.35, H - s*.35, s*.6*k, -.2);
-    ctx.fillStyle = LEAF; ctx.beginPath(); ctx.ellipse(W - s*1.05*k, H - s*1.05*k, s*.2*k, s*.08*k, -.7, 0, 6.3); ctx.fill();
+    var HB = RENDER_MODE ? H : H - 96;
+    ctx.strokeStyle = LEAF; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(W, HB*.98); ctx.quadraticCurveTo(W - s*1.2, HB - s*.4, W - s*1.5*k, HB - s*1.4*k); ctx.stroke();
+    flower(kind, W - s*.55, HB - s*.75, s*.9*k, .3); flower(kind2, W - s*1.35, HB - s*.35, s*.6*k, -.2);
+    ctx.fillStyle = LEAF; ctx.beginPath(); ctx.ellipse(W - s*1.05*k, HB - s*1.05*k, s*.2*k, s*.08*k, -.7, 0, 6.3); ctx.fill();
   }
 
   var PAGES = [
@@ -2293,6 +2296,7 @@ body.covered #player{opacity:0; pointer-events:none}
     requestAnimationFrame(frame);
     var dt = Math.min(.05, (now - lastNow)/1000); lastNow = now;
     var t = audio.currentTime, d = audio.duration || 0, cov = document.body.classList.contains('covered');
+    RES += ((cov ? 1 : 0) - RES)*Math.min(1, dt*3);
     window.__amb = cov ? now/1000 : undefined;   // vela e brilhos continuam se mexendo na tela inicial
     readAudio(dt, now/1000);
     var idx = currentIndex(t);
@@ -2307,6 +2311,7 @@ body.covered #player{opacity:0; pointer-events:none}
     window.__ready = (document.fonts ? document.fonts.ready : Promise.resolve()).then(function(){ PAGES.forEach(function(p){ p.geo = null; }); return true; });
     return;
   }
+  if(window.parent !== window) document.body.classList.add('embedded');
   player.hidden = false; cover.hidden = false; document.body.classList.add('covered');
   var fontsP = document.fonts ? Promise.all(['500 40px "Dancing Script"','600 40px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','40px "Great Vibes"'].map(function(f){ return document.fonts.load(f).catch(function(){}); })) : Promise.resolve();
   Promise.race([fontsP, new Promise(function(r){ setTimeout(r, 4000); })]).then(function(){ PAGES.forEach(function(p){ p.geo = null; }); startBtn.disabled = false; startLabel.textContent = 'Ouvir a música'; });
