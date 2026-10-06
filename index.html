@@ -247,6 +247,18 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
 .crayon{height:calc(var(--bw) * .52)}
 .cake{height:calc(var(--bw) * .6)}
 .bookBase .ribbon{left:20%}
+
+/* ===== etapa 3: acessibilidade e acabamento ===== */
+:root{ --gold-d:#7a5a1c }
+#closeClip{background:linear-gradient(180deg,#2f6b4a,#1d4934); border:1px solid #b8862a; color:#f6e3b0; font:600 .74rem var(--serif); letter-spacing:.22em; text-transform:uppercase; padding:10px 16px; border-radius:3px; box-shadow:0 6px 14px rgba(0,0,0,.4)}
+#closeClip:focus-visible{outline:2px solid #fff; outline-offset:3px}
+.paper .inner::before{font-size:max(10px, calc(var(--bw) * .028))}
+.kicker{font-size:max(10.5px, calc(var(--bw) * .03))}
+.big .lbl,.cd-l{font-size:max(10px, calc(var(--bw) * .029))}
+.stats span{font-size:max(11px, calc(var(--bw) * .035))}
+.num{font-size:max(11px, calc(var(--bw) * .034))}
+.reason small{font-size:max(10.5px, calc(var(--bw) * .03))}
+.bud{width:max(44px, calc(var(--bw) * .11 * var(--s,1))); height:max(44px, calc(var(--bw) * .11 * var(--s,1)))}
 </style>
 </head>
 <body>
@@ -732,7 +744,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
     var r = Math.floor(i/7), c = i % 7;
     var x = .075 + (c + (r % 2 ? .5 : 0))*(.85/6.5) + (rnd(i + 1) - .5)*.016, s = .7 + r*.12, yb = .46 + r*.125 + (rnd(i + 50) - .5)*.012, L = .104*s;   // vaso embaixo, flor logo acima
     GP.push({x:x, yb:yb, y:yb - L, s:s, kind:KINDS[i % 6], ph:rnd(i + 3)*6.28, rot:(rnd(i + 9) - .5)*.5, i:i, row:r});
-    var b = document.createElement('button'); b.className = 'bud'; b.type = 'button'; b.setAttribute('aria-label', 'Flor ' + (i + 1));
+    var b = document.createElement('button'); b.className = 'bud'; b.type = 'button'; b.setAttribute('aria-label', 'Flor ' + (i + 1) + ' de 35, fechada. Toque para abrir');
     b.style.left = (x*100).toFixed(2) + '%'; b.style.top = ((yb - L)*100).toFixed(2) + '%'; b.style.setProperty('--s', s.toFixed(2));
     b.addEventListener('click', function(){ openBud(i); });
     garden.appendChild(b); buds.push(b);
@@ -752,7 +764,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   function openBud(i){
     if(glock) return; glock = true; lastAct = performance.now();
     var first = !opened[i], wasAll = countOpen() === 35;
-    if(first){ opened[i] = performance.now()/1000; burst(i); updCount(); if(countOpen() === 35) finT = performance.now()/1000 + 1.4; }
+    if(first){ opened[i] = performance.now()/1000; buds[i].setAttribute('aria-label', 'Flor ' + (i + 1) + ' de 35, aberta. Toque para ler o motivo'); burst(i); updCount(); if(countOpen() === 35) finT = performance.now()/1000 + 1.4; }
     setTimeout(function(){ showCard(i, wasAll); }, first ? 800 : 0);
   }
   var lastAct = 0, finT = 0, hintIdx = -1, PREF = [17, 7, 22, 12, 27, 2, 32], gardenSeen = false, lastSpawn = 0;
