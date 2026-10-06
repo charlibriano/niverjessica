@@ -617,14 +617,16 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   // Capítulo I: o clipe abre em tela cheia por cima do livro
   var clipLayer = document.getElementById('clipLayer'), frame = null;
   var clipOpen = false;
+  function prepClip(){ if(frame) return; frame = document.createElement('iframe'); frame.title = 'Foi Deus quem escreveu'; frame.allow = 'autoplay'; frame.src = window.__CLIP_URL__ || ('clipe.html?v=' + Date.now()); clipLayer.appendChild(frame); }   // o clipe carrega escondido, para abrir na hora
+  function clipPlay(){ var ok = false; try{ ok = !!(frame.contentWindow.__embedPlay && frame.contentWindow.__embedPlay()); }catch(e){} if(!ok){ try{ frame.contentWindow.postMessage('embed-play', '*'); }catch(e2){} } }
   function openClip(){
     if(clipOpen) return; clipOpen = true; try{ history.pushState({clip:1}, ''); }catch(e){}
-    clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
-    frame = document.createElement('iframe'); frame.title = 'Foi Deus quem escreveu'; frame.allow = 'autoplay';
-    frame.src = window.__CLIP_URL__ || ('clipe.html?v=' + Date.now());   // sempre a versão mais nova do clipe, sem ficar preso no cache do navegador
-    clipLayer.appendChild(frame);
+    prepClip(); clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
+    clipPlay();   // dentro do mesmo toque do usuário, para o navegador deixar tocar sozinho
   }
-  function hideClip(){ clipOpen = false; clipLayer.classList.remove('show'); setTimeout(function(){ if(!clipOpen){ if(frame){ frame.remove(); frame = null; } clipLayer.hidden = true; } }, 600); }
+  setTimeout(prepClip, 1500);
+  window.addEventListener('message', function(e){ if(e.data === 'clip-ready' && clipOpen) clipPlay(); });
+  function hideClip(){ clipOpen = false; clipLayer.classList.remove('show'); try{ frame.contentWindow.__embedStop(); }catch(e){ try{ frame.contentWindow.postMessage('embed-stop', '*'); }catch(e2){} } setTimeout(function(){ if(!clipOpen) clipLayer.hidden = true; }, 600); }
   function closeClip(){ if(!clipOpen) return; if(history.state && history.state.clip) history.back(); else hideClip(); }   // "voltar" do celular e o botão Fechar fazem a mesma coisa
   window.addEventListener('popstate', function(){ if(clipOpen) hideClip(); });
   document.getElementById('openClip').addEventListener('click', openClip);
