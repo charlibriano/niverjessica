@@ -259,6 +259,36 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
 .num{font-size:max(11px, calc(var(--bw) * .034))}
 .reason small{font-size:max(10.5px, calc(var(--bw) * .03))}
 .bud{width:max(44px, calc(var(--bw) * .11 * var(--s,1))); height:max(44px, calc(var(--bw) * .11 * var(--s,1)))}
+
+/* ===== capítulo VI: recados de quem te ama ===== */
+.recados .inner{padding-bottom:9%}
+.rwrap{position:relative; width:100%; flex:1; min-height:0; display:flex; margin-top:calc(var(--bw) * .03)}
+.rcard{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:calc(var(--bw) * .018); padding:calc(var(--bw) * .035) calc(var(--bw) * .04); border:1px solid rgba(168,122,44,.55); border-radius:3px; background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.22)); box-shadow:inset 0 0 0 3px rgba(255,255,255,.35); overflow:hidden; transition:opacity .22s}
+.rcard.out{opacity:0}
+.rb{all:unset; cursor:pointer; position:absolute; top:40%; z-index:2; width:max(30px, calc(var(--bw) * .085)); height:max(30px, calc(var(--bw) * .085)); border:1px solid rgba(168,122,44,.7); border-radius:50%; background:#fffdf8; color:var(--gold-d); display:grid; place-items:center; font:600 calc(var(--bw) * .06)/1 var(--sans); box-shadow:0 3px 8px rgba(60,40,20,.25)}
+.rb:focus-visible{outline:2px solid var(--green); outline-offset:2px}
+.rl{left:calc(var(--bw) * -.05)} .rr{right:calc(var(--bw) * -.05)}
+.rfoto{flex:1 1 auto; min-height:calc(var(--bw) * .16); width:100%; background:#fffdf8; padding:5px 5px 6px; border:1px solid rgba(168,122,44,.55); box-shadow:0 6px 14px rgba(60,40,20,.28); transform:rotate(-.8deg); display:flex; overflow:hidden}
+.rfoto img{width:100%; height:100%; object-fit:cover; object-position:50% 40%; display:block}
+.rmono{flex:none; width:calc(var(--bw) * .27); height:calc(var(--bw) * .27); border-radius:50%; padding:4px; background:linear-gradient(135deg,#f6d996,#b5832a 55%,#e8b94f); box-sizing:border-box}
+.rmono div{width:100%; height:100%; border-radius:50%; background:linear-gradient(160deg,#2f6b4a,#173e2c); display:grid; place-items:center; font:calc(var(--bw) * .17)/1 "Great Vibes", cursive; color:#f3d48f; padding-bottom:4%}
+.rnm{font-family:var(--serif); font-style:italic; font-weight:600; font-size:calc(var(--bw) * .072); color:var(--green-d); line-height:1.1}
+.rrel{font-family:var(--serif); font-weight:600; font-size:max(10.5px, calc(var(--bw) * .03)); letter-spacing:.3em; text-transform:uppercase; color:var(--gold-d)}
+.rtx{font-family:var(--serif); font-style:italic; font-weight:500; font-size:calc(var(--bw) * .047); line-height:1.3; color:#4a3826; margin:0}
+.rpl{flex:none; display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; padding:6px 10px 6px 6px; border:1px solid rgba(168,122,44,.55); border-radius:30px; background:#fffdf8}
+.rpb{all:unset; cursor:pointer; flex:none; width:max(38px, calc(var(--bw) * .115)); height:max(38px, calc(var(--bw) * .115)); border-radius:50%; background:linear-gradient(180deg,#2f6b4a,#1d4934); border:1px solid #b8862a; color:#f6e3b0; display:grid; place-items:center; font-size:calc(var(--bw) * .04); text-indent:1px}
+.rpb:focus-visible{outline:2px solid var(--green); outline-offset:2px}
+.rwf{flex:1; min-width:0; height:max(28px, calc(var(--bw) * .09)); display:flex; align-items:center; gap:2px; cursor:pointer}
+.rwf i{flex:1; background:#b8a27a; border-radius:2px; min-width:1.5px}
+.rwf i.on{background:var(--green)}
+.rtm{flex:none; font:600 12px var(--sans); color:#5a4833; min-width:34px; text-align:right}
+.rdots{display:flex; justify-content:center; gap:2px; margin-top:calc(var(--bw) * .015)}
+.rdots button{all:unset; cursor:pointer; width:22px; height:22px; display:grid; place-items:center}
+.rdots button::before{content:""; width:8px; height:8px; border-radius:50%; background:rgba(168,122,44,.4)}
+.rdots button.on::before{background:var(--green)}
+.rdots button:focus-visible{outline:2px solid var(--green); outline-offset:-2px}
+.rfc{width:calc(var(--bw) * .32); height:calc(var(--bw) * .32)}
+.rfc img{width:100%; height:100%; border-radius:50%; object-fit:cover; object-position:50% 35%; display:block}
 </style>
 </head>
 <body>
@@ -291,7 +321,8 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
             <li><button data-go="4"><span class="cap">III</span> 35 flores, 35 motivos <span class="dots"></span><span class="pg">5</span></button></li>
             <li><button data-go="5"><span class="cap">IV</span> Um recado da Alê <span class="dots"></span><span class="pg">6</span></button></li>
             <li><button data-go="6"><span class="cap">V</span> Faça um pedido <span class="dots"></span><span class="pg">7</span></button></li>
-            <li><button data-go="7"><span class="cap">VI</span> A próxima página <span class="dots"></span><span class="pg">8</span></button></li>
+            <li><button data-go="7"><span class="cap">VI</span> Recados de quem te ama <span class="dots"></span><span class="pg">8</span></button></li>
+            <li><button data-go="8"><span class="cap">VII</span> A próxima página <span class="dots"></span><span class="pg">9</span></button></li>
           </ul>
         </div><div class="num">— 2 —</div></div>
         <div class="face back"></div>
@@ -387,15 +418,29 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
         <div class="face back"></div>
       </section>
       <!-- 5: capítulo 4 -->
-      <section class="page chapter write" aria-label="Capítulo 6">
+      <!-- capítulo 6: recados de quem te ama -->
+      <section class="page chapter recados" aria-label="Capítulo 6">
         <div class="face front paper"><div class="inner">
           <div class="kicker">Capítulo VI</div>
+          <h3 class="ctitle small">Recados de quem te ama</h3>
+          <div class="rwrap" id="rwrap">
+            <button class="rb rl" id="rPrev" type="button" aria-label="Recado anterior">&#8249;</button>
+            <article class="rcard" id="rcard" aria-live="polite"></article>
+            <button class="rb rr" id="rNext" type="button" aria-label="Próximo recado">&#8250;</button>
+          </div>
+          <div class="rdots" id="rdots"></div>
+        </div><div class="num">— 8 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <section class="page chapter write" aria-label="Capítulo 7">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo VII</div>
           <h3 class="ctitle small">A próxima página</h3>
           <p class="gsub">Esta página é sua. Escreva o que quiser — eu vou ler.</p>
           <textarea id="nextPage" class="lined" maxlength="1200" aria-label="Escreva a próxima página" placeholder="continua…"></textarea>
           <button class="cta" id="sendWA" type="button">Enviar para o Felipe</button>
           <p class="note" id="waNote" hidden></p>
-        </div><div class="num">— 8 —</div></div>
+        </div><div class="num">— 9 —</div></div>
         <div class="face back"></div>
       </section>
       <!-- 6: contracapa -->
@@ -427,7 +472,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   var PAGE_HOOKS = [];
   var pages = [].slice.call(document.querySelectorAll('.page'));
   var N = pages.length, cur = 0; // cur = página que está à vista
-  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Capítulo VI','Contracapa'];
+  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Capítulo VI','Capítulo VII','Contracapa'];
   var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), label = document.getElementById('pgLabel');
 
   // empilhamento: a página da frente fica por cima; as já viradas somem depois de virar
@@ -455,7 +500,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   function shade(p, k){ p.style.setProperty('--shade', (k*.35).toFixed(3)); }
   var stage = document.getElementById('stage'), drag = null, justDragged = false;
   stage.addEventListener('pointerdown', function(e){
-    if(e.target.closest('button,textarea,.reason,.cake,.wishDone')) return;
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.rwrap')) return;
     drag = {x:e.clientX, y:e.clientY, w:stage.clientWidth, p:null, dir:0, a:0}; justDragged = false;
     stage.setPointerCapture(e.pointerId);
   });
@@ -483,7 +528,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
   // toque simples: lado direito avança, lado esquerdo volta
   stage.addEventListener('click', function(e){
-    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.garden') || justDragged){ justDragged = false; return; }
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.garden,.rwrap') || justDragged){ justDragged = false; return; }
     var r = stage.getBoundingClientRect(); if(e.clientX - r.left > r.width*.5) goNext(); else goPrev();
   });
 
@@ -621,7 +666,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   function clipPlay(){ var ok = false; try{ ok = !!(frame.contentWindow.__embedPlay && frame.contentWindow.__embedPlay()); }catch(e){} if(!ok){ try{ frame.contentWindow.postMessage('embed-play', '*'); }catch(e2){} } }
   function openClip(){
     if(clipOpen) return; clipOpen = true; try{ history.pushState({clip:1}, ''); }catch(e){}
-    prepClip(); clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
+    stopRecado(); prepClip(); clipLayer.hidden = false; requestAnimationFrame(function(){ clipLayer.classList.add('show'); });
     clipPlay();   // dentro do mesmo toque do usuário, para o navegador deixar tocar sozinho
   }
   setTimeout(prepClip, 1500);
@@ -920,11 +965,51 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
       var k = +b.dataset.k; firstNote.classList.remove('first'); $id('aleHint').hidden = true;
       if(playing === k){ aleAudio[k].pause(); playing = null; setBtns(); return; }
       if(playing){ aleAudio[playing].pause(); }
-      aleAudio[k].currentTime = aleAudio[k].ended ? 0 : aleAudio[k].currentTime; var p = aleAudio[k].play(); if(p && p.catch) p.catch(function(e){ showError('Não deu para tocar o recado: ' + e.message); });
+      stopRecado(); aleAudio[k].currentTime = aleAudio[k].ended ? 0 : aleAudio[k].currentTime; var p = aleAudio[k].play(); if(p && p.catch) p.catch(function(e){ showError('Não deu para tocar o recado: ' + e.message); });
       playing = k; setBtns();
     });
   });
   PAGE_HOOKS.push(function(c){ if(c !== 5 && playing){ aleAudio[playing].pause(); playing = null; setBtns(); } });
+  // ===== capítulo VI: recados de quem te ama (um por pessoa; é só acrescentar à lista) =====
+  var RECADOS = [
+    {nome:'Rubens', rel:'nosso amigo', foto:'recado-rubens.jpg', circulo:true, alt:'Foto do Rubens', audio:'recado-rubens.mp3', dur:47, wave:[0.99, 0.84, 0.68, 0.86, 0.89, 0.65, 0.86, 0.93, 0.93, 0.71, 0.97, 0.58, 0.88, 0.9, 0.85, 0.64, 0.87, 0.72, 0.9, 0.66, 0.8, 0.79, 0.82, 0.9, 0.66, 0.85, 0.79, 0.77, 0.92, 0.92, 0.8, 0.64, 1.0, 0.91, 0.74, 0.52]},
+    {nome:'Jane', rel:'sua mãe', foto:'recado-jane.jpg', alt:'Foto enviada pela Jane', texto:'\u201cE não há nada para comparar, para poder lhe explicar como é grande o meu amor por você…\u201d'}
+  ];
+  var recIdx = 0, recCard = $id('rcard'), recDots = $id('rdots'), recPrev = $id('rPrev'), recNext = $id('rNext');
+  function recSrc(f){ return (window.__REC_SRC__ && window.__REC_SRC__[f]) || ('assets/' + f); }
+  function fmtT(s){ s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ':' + ('0' + (s % 60)).slice(-2); }
+  function stopRecado(){ RECADOS.forEach(function(r){ if(r.a && !r.a.paused) r.a.pause(); }); syncRec(); }
+  function syncRec(){ var r = RECADOS[recIdx], bt = recCard.querySelector('.rpb'); if(!bt) return; var on = r.a && !r.a.paused; bt.textContent = on ? '\u275A\u275A' : '\u25B6'; bt.setAttribute('aria-label', on ? 'Pausar o recado' : 'Ouvir o recado'); }
+  function playRec(r){
+    if(!r.a){ r.a = new Audio(); r.a.preload = 'metadata'; r.a.src = recSrc(r.audio);
+      r.a.addEventListener('timeupdate', function(){ if(RECADOS[recIdx] === r) paintRec(r); });
+      r.a.addEventListener('play', syncRec); r.a.addEventListener('pause', syncRec); r.a.addEventListener('ended', function(){ r.a.currentTime = 0; paintRec(r); syncRec(); }); }
+    if(r.a.paused){ if(typeof playing !== 'undefined' && playing){ aleAudio[playing].pause(); playing = null; setBtns(); } var p = r.a.play(); if(p && p.catch) p.catch(function(e){ showError('Não deu para tocar o recado: ' + e.message); }); } else r.a.pause();
+  }
+  function paintRec(r){ var bars = recCard.querySelectorAll('.rwf i'), tm = recCard.querySelector('.rtm'); if(!bars.length) return; var d = (r.a && r.a.duration) || r.dur, c = r.a ? r.a.currentTime : 0, k = d ? c/d : 0; [].forEach.call(bars, function(x, i){ x.classList.toggle('on', i/bars.length < k); }); if(tm) tm.textContent = fmtT(c > 0 ? c : d); }
+  function renderRec(i){
+    recIdx = (i + RECADOS.length) % RECADOS.length; var r = RECADOS[recIdx]; recCard.textContent = '';
+    function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt) e.textContent = txt; return e; }
+    if(r.foto && r.circulo){ var cf = el('div', 'rmono rfc'), ci = document.createElement('img'); ci.src = recSrc(r.foto); ci.alt = r.alt || ('Foto de ' + r.nome); cf.appendChild(ci); recCard.appendChild(cf); }
+    else if(r.foto){ var f = el('div', 'rfoto'), im = document.createElement('img'); im.src = recSrc(r.foto); im.alt = r.alt || ('Foto de ' + r.nome); f.appendChild(im); recCard.appendChild(f); }
+    else { var m = el('div', 'rmono'); m.appendChild(el('div', '', r.nome.charAt(0))); m.setAttribute('aria-hidden', 'true'); recCard.appendChild(m); }
+    recCard.appendChild(el('div', 'rnm', r.nome)); recCard.appendChild(el('div', 'rrel', r.rel));
+    if(r.texto) recCard.appendChild(el('p', 'rtx', r.texto));
+    if(r.audio){ var pl = el('div', 'rpl'), bt = el('button', 'rpb', '\u25B6'), wf = el('div', 'rwf'), tm = el('span', 'rtm', fmtT(r.dur)); bt.type = 'button'; bt.addEventListener('click', function(){ playRec(r); });
+      (r.wave || []).forEach(function(h){ var b2 = document.createElement('i'); b2.style.height = Math.round(h*100) + '%'; wf.appendChild(b2); });
+      wf.addEventListener('click', function(e){ var rc = wf.getBoundingClientRect(); if(!r.a){ playRec(r); } var d = (r.a && r.a.duration) || r.dur; r.a.currentTime = Math.max(0, Math.min(d - .1, (e.clientX - rc.left)/rc.width*d)); });
+      pl.appendChild(bt); pl.appendChild(wf); pl.appendChild(tm); recCard.appendChild(pl); }
+    [].forEach.call(recDots.children, function(d, k){ d.classList.toggle('on', k === recIdx); d.setAttribute('aria-current', k === recIdx ? 'true' : 'false'); });
+    syncRec(); paintRec(r);
+  }
+  function goRec(i){ stopRecado(); recCard.classList.add('out'); setTimeout(function(){ renderRec(i); recCard.classList.remove('out'); }, 180); }
+  RECADOS.forEach(function(r, k){ var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Recado de ' + r.nome); d.addEventListener('click', function(){ if(k !== recIdx) goRec(k); }); recDots.appendChild(d); });
+  recPrev.addEventListener('click', function(){ goRec(recIdx - 1); }); recNext.addEventListener('click', function(){ goRec(recIdx + 1); });
+  if(RECADOS.length < 2){ recPrev.hidden = recNext.hidden = recDots.hidden = true; }
+  (function(){ var sx = null, rw = $id('rwrap'); rw.addEventListener('pointerdown', function(e){ if(e.target.closest('button,.rwf')) return; sx = e.clientX; }); rw.addEventListener('pointerup', function(e){ if(sx === null) return; var dx = e.clientX - sx; sx = null; if(Math.abs(dx) > 45 && RECADOS.length > 1) goRec(recIdx + (dx < 0 ? 1 : -1)); }); rw.addEventListener('pointercancel', function(){ sx = null; }); })();
+  PAGE_HOOKS.push(function(c){ if(c !== 7) stopRecado(); });
+  renderRec(0);
+
   function amp(){ if(!playing) return 0; var e = ALE[playing].env, i = Math.floor(aleAudio[playing].currentTime*20); return e[Math.min(e.length-1, i)] || 0; }
   function sizeCv(c){ var r = c.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); if(c.width !== Math.round(r.width*d)){ c.width = Math.round(r.width*d); c.height = Math.round(r.height*d); } return {w:r.width, h:r.height, d:d}; }
   // traço de giz de cera: um pouco tremido, e redesenhado várias vezes por segundo para "ferver" como desenho animado
