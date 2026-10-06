@@ -289,6 +289,11 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
 .rdots button:focus-visible{outline:2px solid var(--green); outline-offset:-2px}
 .rfc{width:calc(var(--bw) * .32); height:calc(var(--bw) * .32)}
 .rfc img{width:100%; height:100%; border-radius:50%; object-fit:cover; object-position:50% 35%; display:block}
+.rlado{display:flex; align-items:center; gap:calc(var(--bw) * .04); width:100%; box-sizing:border-box; padding:0 calc(var(--bw) * .035) 0 calc(var(--bw) * .05); flex:1; min-height:0}
+.rlado .rfoto{flex:none; width:44%; height:auto; aspect-ratio:3/4; max-height:100%; min-height:0}
+.rlado .rcol{flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:calc(var(--bw) * .015)}
+.rlado .rtx{font-size:calc(var(--bw) * .043)}
+.rhc{color:#c4476a; font-style:normal}
 </style>
 </head>
 <body>
@@ -973,7 +978,8 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   // ===== capítulo VI: recados de quem te ama (um por pessoa; é só acrescentar à lista) =====
   var RECADOS = [
     {nome:'Rubens', rel:'nosso amigo', foto:'recado-rubens.jpg', circulo:true, alt:'Foto do Rubens', audio:'recado-rubens.mp3', dur:47, wave:[0.99, 0.84, 0.68, 0.86, 0.89, 0.65, 0.86, 0.93, 0.93, 0.71, 0.97, 0.58, 0.88, 0.9, 0.85, 0.64, 0.87, 0.72, 0.9, 0.66, 0.8, 0.79, 0.82, 0.9, 0.66, 0.85, 0.79, 0.77, 0.92, 0.92, 0.8, 0.64, 1.0, 0.91, 0.74, 0.52]},
-    {nome:'Jane', rel:'sua mãe', foto:'recado-jane.jpg', alt:'Foto enviada pela Jane', texto:'\u201cE não há nada para comparar, para poder lhe explicar como é grande o meu amor por você…\u201d'}
+    {nome:'Jane', rel:'sua mãe', foto:'recado-jane.jpg', alt:'Foto enviada pela Jane', texto:'\u201cE não há nada para comparar, para poder lhe explicar como é grande o meu amor por você…\u201d'},
+    {nome:'Jussara', rel:'', foto:'recado-jussara.jpg', layout:'lado', alt:'Foto enviada pela Jussara', texto:'Jéssica, obrigado por fazer parte da minha vida. Seja em tudo abençoada!', coracao:true}
   ];
   var recIdx = 0, recCard = $id('rcard'), recDots = $id('rdots'), recPrev = $id('rPrev'), recNext = $id('rNext');
   function recSrc(f){ return (window.__REC_SRC__ && window.__REC_SRC__[f]) || ('assets/' + f); }
@@ -990,15 +996,22 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   function renderRec(i){
     recIdx = (i + RECADOS.length) % RECADOS.length; var r = RECADOS[recIdx]; recCard.textContent = '';
     function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt) e.textContent = txt; return e; }
+    if(r.layout === 'lado'){   // foto vertical: foto de um lado, nome e texto do outro
+      var lw = el('div', 'rlado'), lf = el('div', 'rfoto'), li = document.createElement('img'); li.src = recSrc(r.foto); li.alt = r.alt || ('Foto de ' + r.nome); lf.appendChild(li);
+      var lc = el('div', 'rcol'); lc.appendChild(el('div', 'rnm', r.nome)); if(r.rel) lc.appendChild(el('div', 'rrel', r.rel));
+      if(r.texto){ var tp = el('p', 'rtx', r.texto); if(r.coracao) tp.appendChild(el('span', 'rhc', ' \u2665')); lc.appendChild(tp); }
+      lw.appendChild(lf); lw.appendChild(lc); recCard.appendChild(lw);
+    } else {
     if(r.foto && r.circulo){ var cf = el('div', 'rmono rfc'), ci = document.createElement('img'); ci.src = recSrc(r.foto); ci.alt = r.alt || ('Foto de ' + r.nome); cf.appendChild(ci); recCard.appendChild(cf); }
     else if(r.foto){ var f = el('div', 'rfoto'), im = document.createElement('img'); im.src = recSrc(r.foto); im.alt = r.alt || ('Foto de ' + r.nome); f.appendChild(im); recCard.appendChild(f); }
     else { var m = el('div', 'rmono'); m.appendChild(el('div', '', r.nome.charAt(0))); m.setAttribute('aria-hidden', 'true'); recCard.appendChild(m); }
-    recCard.appendChild(el('div', 'rnm', r.nome)); recCard.appendChild(el('div', 'rrel', r.rel));
+    recCard.appendChild(el('div', 'rnm', r.nome)); if(r.rel) recCard.appendChild(el('div', 'rrel', r.rel));
     if(r.texto) recCard.appendChild(el('p', 'rtx', r.texto));
     if(r.audio){ var pl = el('div', 'rpl'), bt = el('button', 'rpb', '\u25B6'), wf = el('div', 'rwf'), tm = el('span', 'rtm', fmtT(r.dur)); bt.type = 'button'; bt.addEventListener('click', function(){ playRec(r); });
       (r.wave || []).forEach(function(h){ var b2 = document.createElement('i'); b2.style.height = Math.round(h*100) + '%'; wf.appendChild(b2); });
       wf.addEventListener('click', function(e){ var rc = wf.getBoundingClientRect(); if(!r.a){ playRec(r); } var d = (r.a && r.a.duration) || r.dur; r.a.currentTime = Math.max(0, Math.min(d - .1, (e.clientX - rc.left)/rc.width*d)); });
       pl.appendChild(bt); pl.appendChild(wf); pl.appendChild(tm); recCard.appendChild(pl); }
+    }
     [].forEach.call(recDots.children, function(d, k){ d.classList.toggle('on', k === recIdx); d.setAttribute('aria-current', k === recIdx ? 'true' : 'false'); });
     syncRec(); paintRec(r);
   }
