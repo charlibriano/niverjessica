@@ -612,6 +612,20 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 .ph-heart{display:inline-block; transform-origin:50% 60%; animation:phbeat 1.15s ease-in-out infinite}
 @keyframes phbeat{0%{transform:scale(1)} 14%{transform:scale(1.28)} 26%{transform:scale(1)} 40%{transform:scale(1.18)} 56%,100%{transform:scale(1)}}
 @media (prefers-reduced-motion: reduce){ .ph-heart{animation:none} }
+
+/* transição dos recados: o cartão desliza e gira de leve, como quem passa uma foto para a outra; a foto entra "revelando" */
+.rcard.rout-f{animation:rOutF .26s cubic-bezier(.5,0,.75,0) forwards}
+.rcard.rout-b{animation:rOutB .26s cubic-bezier(.5,0,.75,0) forwards}
+.rcard.rin-f{animation:rInF .56s cubic-bezier(.2,.8,.25,1) both}
+.rcard.rin-b{animation:rInB .56s cubic-bezier(.2,.8,.25,1) both}
+.rcard.rin-f .rfoto img, .rcard.rin-b .rfoto img, .rcard.rin-f .rfc img, .rcard.rin-b .rfc img{animation:rDev .9s ease-out both}
+.rcard.rin-f .rnm, .rcard.rin-b .rnm, .rcard.rin-f .rrel, .rcard.rin-b .rrel, .rcard.rin-f .rtx, .rcard.rin-b .rtx, .rcard.rin-f .rtxs, .rcard.rin-b .rtxs, .rcard.rin-f .rpl, .rcard.rin-b .rpl{animation:rUp .6s .12s cubic-bezier(.2,.8,.25,1) both}
+@keyframes rOutF{to{opacity:0; transform:translateX(-14%) rotate(-3deg)}}
+@keyframes rOutB{to{opacity:0; transform:translateX(14%) rotate(3deg)}}
+@keyframes rInF{from{opacity:0; transform:translateX(14%) rotate(3deg)}}
+@keyframes rInB{from{opacity:0; transform:translateX(-14%) rotate(-3deg)}}
+@keyframes rDev{from{filter:blur(5px) saturate(.4) brightness(1.15); transform:scale(1.06)} to{filter:none; transform:none}}
+@keyframes rUp{from{opacity:0; transform:translateY(8px)}}
 </style>
 </head>
 <body>
@@ -1406,7 +1420,15 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(albFit);
   PAGE_HOOKS.push(function(c){ if(c === 8) albFit(); });
   albShow(0, true);
-  function goRec(i){ stopRecado(); recCard.classList.add('out'); setTimeout(function(){ renderRec(i); recCard.classList.remove('out'); }, 180); }
+  var recBusy = false, recReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function goRec(i){   // o cartão sai para o lado e o próximo entra do outro, com a foto "revelando"
+    if(recBusy) return; stopRecado();
+    var n = RECADOS.length, to = (i + n) % n, fwd = (i > recIdx) ? !(recIdx === 0 && to === n - 1 && i < 0) : (recIdx === n - 1 && to === 0);
+    if(recReduce){ renderRec(i); return; }
+    recBusy = true; recCard.classList.remove('rin-f', 'rin-b'); recCard.classList.add(fwd ? 'rout-f' : 'rout-b');
+    setTimeout(function(){ renderRec(i); recCard.classList.remove('rout-f', 'rout-b'); void recCard.offsetWidth; recCard.classList.add(fwd ? 'rin-f' : 'rin-b');
+      setTimeout(function(){ recCard.classList.remove('rin-f', 'rin-b'); recBusy = false; }, 560); }, 260);
+  }
   RECADOS.forEach(function(r, k){ var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Recado de ' + r.nome); d.addEventListener('click', function(){ if(k !== recIdx) goRec(k); }); recDots.appendChild(d); });
   recPrev.addEventListener('click', function(){ goRec(recIdx - 1); }); recNext.addEventListener('click', function(){ goRec(recIdx + 1); });
   if(RECADOS.length < 2){ recPrev.hidden = recNext.hidden = recDots.hidden = true; }
