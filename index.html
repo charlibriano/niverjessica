@@ -80,8 +80,9 @@ body{height:100%; margin:0; overflow:hidden; color:#f6eedd; font-family:var(--sa
 .ded{font-family:var(--script); font-size:calc(var(--bw) * .062); line-height:1.35; color:var(--ink); margin:0 0 9%}
 .ded b{color:var(--green); font-weight:700}
 h2{font-family:var(--serif); font-weight:600; font-size:calc(var(--bw) * .075); margin:0 0 5%; color:var(--ink); letter-spacing:.02em}
+section[aria-label="Dedicatória e sumário"] .inner{padding-top:10.5%; padding-bottom:12%}
 .toc{list-style:none; margin:0; padding:0; width:100%; text-align:left}
-.toc button{all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:baseline; gap:6px; width:100%; padding:3.2% 1%; font-family:var(--serif); font-size:calc(var(--bw) * .05); color:var(--ink); border-radius:6px}
+.toc button{all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:baseline; gap:6px; width:100%; padding:2.3% 1%; font-family:var(--serif); font-size:calc(var(--bw) * .05); color:var(--ink); border-radius:6px}
 .toc button:focus-visible{outline:2px solid var(--green); outline-offset:2px}
 .toc .cap{font-weight:600; color:var(--green); white-space:nowrap}
 .toc .dots{flex:1; border-bottom:2px dotted rgba(58,42,28,.35); transform:translateY(-4px); min-width:12px}
@@ -279,6 +280,16 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
 .rtopo .rcol{display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:calc(var(--bw) * .008)}
 .rtxs{align-self:stretch; padding:0 calc(var(--bw) * .075); font-size:calc(var(--bw) * .043); display:flex; flex-direction:column; gap:.45em; margin-top:calc(var(--bw) * .01)}
 .rtxs .rtx{font-size:inherit; line-height:1.32}
+.album .inner{padding-bottom:13%}
+.awrap{position:relative; width:100%; flex:1; min-height:0; display:flex; margin-top:calc(var(--bw) * .02)}
+.astage{flex:1; min-width:0; min-height:0; position:relative; display:grid; place-items:center; cursor:pointer}
+.aback{position:absolute; width:64%; height:72%; background:#fbf6ea; border:1px solid rgba(120,90,40,.12); box-shadow:0 4px 10px rgba(60,40,20,.18)}
+.a1{transform:rotate(-5deg)} .a2{transform:rotate(4.5deg)}
+.apol{position:relative; z-index:1; margin:0; display:flex; flex-direction:column; align-items:center; background:#fffdf8; padding:calc(var(--bw) * .022) calc(var(--bw) * .022) 0; box-shadow:0 10px 22px rgba(60,40,20,.32), 0 1px 2px rgba(60,40,20,.2); transition:opacity .25s ease, transform .35s ease}
+.apol img{display:block; background:#e9e1d0}
+.apol figcaption{box-sizing:border-box; width:100%; text-align:center; font-family:var(--script); font-size:max(15px, calc(var(--bw) * .05)); line-height:1.15; color:var(--paper-ink); padding:calc(var(--bw) * .02) calc(var(--bw) * .02) calc(var(--bw) * .026)}
+.apol.out{opacity:0}
+.acount{font-family:var(--serif); font-style:italic; font-size:max(12px, calc(var(--bw) * .036)); color:var(--ink2); text-align:center; margin-top:calc(var(--bw) * .012); letter-spacing:.08em}
 .rnm{font-family:var(--serif); font-style:italic; font-weight:600; font-size:calc(var(--bw) * .072); color:var(--green-d); line-height:1.1}
 .rrel{font-family:var(--serif); font-weight:600; font-size:max(10.5px, calc(var(--bw) * .03)); letter-spacing:.3em; text-transform:uppercase; color:var(--gold-d)}
 .rlado .rrel{letter-spacing:.16em}
@@ -337,7 +348,8 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
             <li><button data-go="5"><span class="cap">IV</span> Um recado da Alê <span class="dots"></span><span class="pg">6</span></button></li>
             <li><button data-go="6"><span class="cap">V</span> Faça um pedido <span class="dots"></span><span class="pg">7</span></button></li>
             <li><button data-go="7"><span class="cap">VI</span> Recados de quem te ama <span class="dots"></span><span class="pg">8</span></button></li>
-            <li><button data-go="8"><span class="cap">VII</span> A próxima página <span class="dots"></span><span class="pg">9</span></button></li>
+            <li><button data-go="8"><span class="cap">VII</span> Sua história em fotos <span class="dots"></span><span class="pg">9</span></button></li>
+            <li><button data-go="9"><span class="cap">VIII</span> A próxima página <span class="dots"></span><span class="pg">10</span></button></li>
           </ul>
         </div><div class="num">— 2 —</div></div>
         <div class="face back"></div>
@@ -447,15 +459,28 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
         </div><div class="num">— 8 —</div></div>
         <div class="face back"></div>
       </section>
-      <section class="page chapter write" aria-label="Capítulo 7">
+      <section class="page chapter album" aria-label="Capítulo 7">
         <div class="face front paper"><div class="inner">
           <div class="kicker">Capítulo VII</div>
+          <h3 class="ctitle small">Sua história em fotos</h3>
+          <div class="awrap" id="awrap">
+            <button class="rb rl" id="aPrev" type="button" aria-label="Foto anterior">&#8249;</button>
+            <div class="astage" id="astage"><div class="aback a1"></div><div class="aback a2"></div><figure class="apol" id="apol"><img id="aimg" alt=""><figcaption id="acap"></figcaption></figure></div>
+            <button class="rb rr" id="aNext" type="button" aria-label="Próxima foto">&#8250;</button>
+          </div>
+          <div class="acount" id="acount" aria-live="polite"></div>
+        </div><div class="num">— 9 —</div></div>
+        <div class="face back"></div>
+      </section>
+      <section class="page chapter write" aria-label="Capítulo 8">
+        <div class="face front paper"><div class="inner">
+          <div class="kicker">Capítulo VIII</div>
           <h3 class="ctitle small">A próxima página</h3>
           <p class="gsub">Esta página é sua. Escreva o que quiser — eu vou ler.</p>
           <textarea id="nextPage" class="lined" maxlength="1200" aria-label="Escreva a próxima página" placeholder="continua…"></textarea>
           <button class="cta" id="sendWA" type="button">Enviar para o Felipe</button>
           <p class="note" id="waNote" hidden></p>
-        </div><div class="num">— 9 —</div></div>
+        </div><div class="num">— 10 —</div></div>
         <div class="face back"></div>
       </section>
       <!-- 6: contracapa -->
@@ -487,7 +512,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   var PAGE_HOOKS = [];
   var pages = [].slice.call(document.querySelectorAll('.page'));
   var N = pages.length, cur = 0; // cur = página que está à vista
-  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Capítulo VI','Capítulo VII','Contracapa'];
+  var LABELS = ['Capa','Sumário','Capítulo I','Capítulo II','Capítulo III','Capítulo IV','Capítulo V','Capítulo VI','Capítulo VII','Capítulo VIII','Contracapa'];
   var prevB = document.getElementById('prev'), nextB = document.getElementById('next'), label = document.getElementById('pgLabel');
 
   // empilhamento: a página da frente fica por cima; as já viradas somem depois de virar
@@ -515,7 +540,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   function shade(p, k){ p.style.setProperty('--shade', (k*.35).toFixed(3)); }
   var stage = document.getElementById('stage'), drag = null, justDragged = false;
   stage.addEventListener('pointerdown', function(e){
-    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.rwrap')) return;
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.rwrap,.awrap')) return;
     drag = {x:e.clientX, y:e.clientY, w:stage.clientWidth, p:null, dir:0, a:0}; justDragged = false;
     stage.setPointerCapture(e.pointerId);
   });
@@ -543,7 +568,7 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
   // toque simples: lado direito avança, lado esquerdo volta
   stage.addEventListener('click', function(e){
-    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.garden,.rwrap') || justDragged){ justDragged = false; return; }
+    if(e.target.closest('button,textarea,.reason,.cake,.wishDone,.garden,.rwrap,.awrap') || justDragged){ justDragged = false; return; }
     var r = stage.getBoundingClientRect(); if(e.clientX - r.left > r.width*.5) goNext(); else goPrev();
   });
 
@@ -1041,6 +1066,32 @@ h2::after{content:""; display:block; width:40%; height:calc(var(--bw) * .04); ma
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fitRec(); });
   if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function(){ fitRec(); });   // fonte que chega depois: refaz o ajuste
   PAGE_HOOKS.push(function(c){ if(c === 7) fitRec(); });
+  // ===== capítulo VII: sua história em fotos (álbum, uma foto por vez, com legenda) =====
+  var ALBUM = [{"f": "01.jpg", "w": 720, "h": 717, "c": "Devemos florescer sempre"}, {"f": "02.jpg", "w": 315, "h": 605, "c": "Até as flores sorriem para você"}, {"f": "03.jpg", "w": 720, "h": 476, "c": "De braços abertos para a vida"}, {"f": "04.jpg", "w": 468, "h": 550, "c": "Olhos no céu, coração em Deus"}, {"f": "05.jpg", "w": 669, "h": 1100, "c": "Linda de qualquer jeito"}, {"f": "06.jpg", "w": 1056, "h": 784, "c": "Esse sorriso que ilumina qualquer lugar"}, {"f": "07.jpg", "w": 1056, "h": 784, "c": "Feliz no meio do verde"}, {"f": "08.jpg", "w": 618, "h": 1100, "c": "Pronta para conhecer o mundo"}, {"f": "09.jpg", "w": 619, "h": 1100, "c": "Os pequenos momentos também são grandes"}, {"f": "10.jpg", "w": 1056, "h": 784, "c": "Eu e você"}, {"f": "11.jpg", "w": 1100, "h": 733, "c": "Esperando o nosso maior presente"}, {"f": "12.jpg", "w": 733, "h": 1100, "c": "Contando os dias para conhecer a Alê"}, {"f": "13.jpg", "w": 1100, "h": 733, "c": "E então você virou mãe"}, {"f": "14.jpg", "w": 817, "h": 1100, "c": "Chapéus combinando desde cedo"}, {"f": "15.jpg", "w": 1024, "h": 683, "c": "Celebrando cada passo dela"}, {"f": "16.jpg", "w": 507, "h": 1100, "c": "Carregando o nosso mundo nos ombros"}, {"f": "17.jpg", "w": 507, "h": 1100, "c": "Diversão garantida ao seu lado"}, {"f": "18.jpg", "w": 618, "h": 1100, "c": "Colo de mãe, o lugar preferido dela"}, {"f": "19.jpg", "w": 825, "h": 1100, "c": "Parceiras de todas as viagens"}, {"f": "20.jpg", "w": 817, "h": 1100, "c": "Mãe e filha, melhores amigas"}, {"f": "21.jpg", "w": 804, "h": 1100, "c": "As duas mais lindas da festa"}, {"f": "22.jpg", "w": 618, "h": 1100, "c": "Aprendendo com você todos os dias"}, {"f": "23.jpg", "w": 1100, "h": 612, "c": "Ministrando para Deus com todo o coração"}, {"f": "24.jpg", "w": 507, "h": 1100, "c": "Nós três"}, {"f": "25.jpg", "w": 618, "h": 1100, "c": "A família que Deus escreveu"}, {"f": "26.jpg", "w": 1100, "h": 826, "c": "Dias de sol com quem a gente ama"}];
+  var albIdx = 0, albPol = document.getElementById('apol'), albImg = document.getElementById('aimg'), albCap = document.getElementById('acap'), albCnt = document.getElementById('acount'), albStage = document.getElementById('astage'), albBusy = false;
+  function albSrc(f){ return (window.__ALB_SRC__ && window.__ALB_SRC__[f]) || ('assets/album/' + f); }
+  function albFit(){ var a = ALBUM[albIdx]; if(!a) return; var sw = albStage.clientWidth, sh = albStage.clientHeight; if(sw < 20 || sh < 20) return;
+    var pad = parseFloat(getComputedStyle(albPol).paddingLeft) || 8, mw = sw * .9 - pad*2, minW = Math.min(sw * .9, Math.max(sw * .66, 150)), k = 1, iw = 0, pw = minW, capH;
+    albPol.style.maxWidth = ''; albPol.style.width = pw + 'px'; capH = albCap.offsetHeight || 40;
+    for(var it = 0; it < 3; it++){ k = Math.min(mw / a.w, (sh * .96 - pad - capH) / a.h); iw = a.w * k; pw = Math.max(iw + pad*2, minW); albPol.style.width = Math.round(pw) + 'px'; capH = albCap.offsetHeight || 40; }   // a legenda pode quebrar em mais linhas: recalcula a foto
+    albImg.style.width = Math.round(iw) + 'px'; albImg.style.height = Math.round(a.h * k) + 'px'; }
+  function albShow(i, first){
+    albIdx = (i + ALBUM.length) % ALBUM.length; var a = ALBUM[albIdx], rot = ((albIdx * 37) % 7 - 3) * .6;
+    function apply(){ albCap.textContent = a.c; albImg.alt = a.c; albCnt.textContent = (albIdx + 1) + ' de ' + ALBUM.length; albFit(); albPol.style.transform = 'rotate(' + rot + 'deg)'; albPol.classList.remove('out'); albBusy = false;
+      [1, -1, 2].forEach(function(d){ var n = new Image(); n.src = albSrc(ALBUM[(albIdx + d + ALBUM.length) % ALBUM.length].f); }); }
+    if(first){ albImg.src = albSrc(a.f); apply(); return; }
+    albBusy = true; albPol.classList.add('out');
+    setTimeout(function(){ var pre = new Image(); pre.onload = pre.onerror = function(){ albImg.src = pre.src; apply(); }; pre.src = albSrc(a.f); }, 230);
+  }
+  function albGo(d){ if(!albBusy) albShow(albIdx + d); }
+  document.getElementById('aPrev').addEventListener('click', function(){ albGo(-1); }); document.getElementById('aNext').addEventListener('click', function(){ albGo(1); });
+  albStage.addEventListener('click', function(){ albGo(1); });
+  (function(){ var sx = null, aw = document.getElementById('awrap'); aw.addEventListener('pointerdown', function(e){ if(e.target.closest('button')) return; sx = e.clientX; }); aw.addEventListener('pointerup', function(e){ if(sx === null) return; var dx = e.clientX - sx; sx = null; if(Math.abs(dx) > 45){ e.stopPropagation(); albGo(dx < 0 ? 1 : -1); albStage.dataset.swiped = '1'; setTimeout(function(){ delete albStage.dataset.swiped; }, 50); } }); aw.addEventListener('pointercancel', function(){ sx = null; }); })();
+  albStage.addEventListener('click', function(e){ if(albStage.dataset.swiped) e.stopImmediatePropagation(); }, true);
+  window.addEventListener('resize', albFit);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(albFit);
+  PAGE_HOOKS.push(function(c){ if(c === 8) albFit(); });
+  albShow(0, true);
   function goRec(i){ stopRecado(); recCard.classList.add('out'); setTimeout(function(){ renderRec(i); recCard.classList.remove('out'); }, 180); }
   RECADOS.forEach(function(r, k){ var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Recado de ' + r.nome); d.addEventListener('click', function(){ if(k !== recIdx) goRec(k); }); recDots.appendChild(d); });
   recPrev.addEventListener('click', function(){ goRec(recIdx - 1); }); recNext.addEventListener('click', function(){ goRec(recIdx + 1); });
