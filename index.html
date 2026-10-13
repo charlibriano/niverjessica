@@ -606,6 +606,12 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 #esZoom{background:linear-gradient(150deg,#b39cb0,#9d84a0 50%,#8c7390)}
 #esZoom::after{background:#e9e6e2}
 #toShelf{background:rgba(255,250,246,.82); border:1px solid rgba(120,90,110,.35); color:#4a3a46}
+
+/* coração da tela batendo (como um coração de verdade: duas batidas e uma pausa) */
+.ph-orn{font-size:72px; line-height:1; margin-bottom:14px; color:#a8436f}
+.ph-heart{display:inline-block; transform-origin:50% 60%; animation:phbeat 1.15s ease-in-out infinite}
+@keyframes phbeat{0%{transform:scale(1)} 14%{transform:scale(1.28)} 26%{transform:scale(1)} 40%{transform:scale(1.18)} 56%,100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){ .ph-heart{animation:none} }
 </style>
 </head>
 <body>
@@ -1673,7 +1679,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
         var img = document.createElement('img'); img.className = 'ph-img'; img.alt = 'Um leitor digital sobre a mesa, ao lado de uma xícara de café e de um vaso com planta'; img.src = window.__MESA_SRC__ || 'assets/mesa-foto.jpg'; scene.appendChild(img);
         home.style.setProperty('--mesa', 'url(' + (window.__MESA_SRC__ || 'assets/mesa-foto.jpg') + ')');
         var box = el('div', 'ph-box', 'width:' + BW + 'px; height:' + (BH + 90) + 'px; transform:' + homography(BW, BH, QUAD));
-        box.innerHTML = '<div class="ph-scr"><div class="ph-orn">♥</div><p class="ph-pre">Para</p><h2>Jéssica</h2><p class="ph-age">35 anos</p><p class="ph-go">toque aqui ♥</p></div><div class="ph-brand">Jéssica</div>';
+        box.innerHTML = '<div class="ph-scr"><div class="ph-orn"><span class="ph-heart">♥</span></div><p class="ph-pre">Para</p><h2>Jéssica</h2><p class="ph-age">35 anos</p><p class="ph-go">toque aqui ♥</p></div><div class="ph-brand">Jéssica</div>';
         scene.appendChild(box); tabScreen = box.querySelector('.ph-scr');
         var tb = el('button', 'ph-btn'); tb.type = 'button'; tb.setAttribute('aria-label', 'Abrir o leitor com os seus livros');
         var xs = QUAD.map(function(p){ return p[0]; }), ys = QUAD.map(function(p){ return p[1]; });
