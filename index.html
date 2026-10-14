@@ -654,6 +654,12 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 .rvid .rvbox{height:86%}
 .rvid .rcol{flex:1 1 0; min-width:0}
 .rvid .rnm{white-space:nowrap}
+
+/* muitos recados: os pontinhos encolhem para as setas sempre caberem */
+.rnav .rdots{flex:0 1 auto; min-width:0}
+.rnav .rdots button{width:min(17px, calc(var(--bw) * .56 / var(--nd, 9)))}
+.rnav .rdots button::before{width:min(7px, calc(var(--bw) * .3 / var(--nd, 9))); height:min(7px, calc(var(--bw) * .3 / var(--nd, 9)))}
+.rnav{gap:calc(var(--bw) * .02)}
 </style>
 </head>
 <body>
@@ -1375,7 +1381,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     {nome:'Poliana', rel:'sua irmã', foto:'recado-poliana.jpg', pos:'50% 20%', alt:'Foto da Poliana com a Jéssica', audio:'recado-poliana.mp3', dur:49, wave:[0.61, 0.86, 0.53, 0.27, 0.81, 0.92, 0.64, 0.49, 0.7, 0.82, 0.73, 0.78, 0.59, 0.52, 0.44, 0.39, 0.8, 0.49, 0.5, 0.91, 0.66, 1.0, 0.91, 0.82, 0.73, 0.99, 0.92, 0.49, 0.85, 0.9, 0.59, 0.7, 0.61, 0.94, 0.44, 0.58]},
     {nome:'Priscilla', rel:'sua irmã', foto:'recado-priscilla.jpg', layout:'lado', aspect:'1/1', alt:'Foto da Priscilla com a Jéssica', texto:'Ter você como irmã é o presente mais bonito que a vida me deu. Que Deus sempre te cubra de bênçãos, saúde e alegrias. Feliz aniversário!', coracao:true},
     {nome:'Nanaina', rel:'sua cunhada', foto:'recado-nanaina.jpg', pos:'50% 30%', alt:'Foto da Nanaina com a Jéssica grávida', texto:'Parabéns, Jeh! Te desejo toda a felicidade do mundo, que você alcance todos os seus objetivos, que tenha muita fé, saúde e amor. Que Deus te abençoe todos os dias da sua vida. E obrigada pelo meu presentinho, pedacinho de stress, rsrsrs!', coracao:true},
-    {nome:'Laedes', rel:'sua sogra', foto:'recado-laedes.jpg', layout:'topo', alt:'Foto da Laedes', paginas:['Hoje é um dia especial, pois é o seu aniversário!\nDesejamos que este dia seja repleto de sorrisos, alegria e momentos inesquecíveis, e que a felicidade te acompanhe hoje e sempre. Obrigada por ser esta pessoa especial nas nossas vidas.', 'Parabéns, muitas felicidades, e que os sonhos se realizem neste novo ciclo de vida. Que Deus te abençoe abundantemente.\nMuito obrigada por me dar uma neta linda e muito querida por nós. Não ganhei uma nora, ganhei uma filha. Você merece tudo de melhor que a vida pode oferecer.\nParabéns, Jéssica!'], coracao:true},
+    {nome:'Laedes', rel:'sua sogra', foto:'recado-laedes.jpg', layout:'topo', alt:'Foto da Laedes', paginas:['Hoje é um dia especial: o seu aniversário!\nDesejo que ele seja repleto de sorrisos, alegria e momentos inesquecíveis, e que a felicidade te acompanhe sempre. Que os seus sonhos se realizem neste novo ciclo e que Deus te abençoe abundantemente.', 'Obrigada por ser essa pessoa tão especial na minha vida e por me dar uma neta linda e muito querida.\nNão ganhei uma nora, ganhei uma filha. Você merece tudo de melhor que a vida pode oferecer.\nParabéns, Jéssica!'], coracao:true},
     {nome:'Joelma', rel:'sua tia', foto:'recado-joelma.jpg', video:'recado-joelma.mp4'},
     {nome:'Rubens', rel:'nosso amigo', foto:'recado-rubens.jpg', circulo:true, alt:'Foto do Rubens', audio:'recado-rubens.mp3', dur:47, wave:[0.99, 0.84, 0.68, 0.86, 0.89, 0.65, 0.86, 0.93, 0.93, 0.71, 0.97, 0.58, 0.88, 0.9, 0.85, 0.64, 0.87, 0.72, 0.9, 0.66, 0.8, 0.79, 0.82, 0.9, 0.66, 0.85, 0.79, 0.77, 0.92, 0.92, 0.8, 0.64, 1.0, 0.91, 0.74, 0.52]},
     {nome:'Tamara', rel:'amiga e chefa', foto:'recado-tamara.jpg', layout:'lado', alt:'Foto enviada pela Tamara', audio:'recado-tamara.mp3', dur:67, wave:[0.73, 0.55, 0.62, 0.83, 0.74, 0.53, 0.95, 0.71, 1.0, 0.66, 0.63, 0.7, 0.44, 0.65, 0.81, 0.86, 0.83, 0.82, 0.89, 0.91, 0.64, 1.0, 0.63, 0.59, 0.63, 0.56, 0.78, 0.78, 0.77, 0.61, 0.76, 0.75, 0.82, 0.45, 0.83, 0.72]},
@@ -1435,7 +1441,14 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     [].forEach.call(recDots.children, function(d, k){ d.classList.toggle('on', k === recIdx); d.setAttribute('aria-current', k === recIdx ? 'true' : 'false'); });
     syncRec(); paintRec(r); fitRec(); setTimeout(fitRec, 400); setTimeout(fitRec, 1500);
   }
-  function fitRec(){ var t = recCard.querySelector('.rtxs') || recCard.querySelector('.rtx'); if(!t) return; var ph = recCard.querySelector('.rfc'); t.style.fontSize = ''; if(ph) ph.style.width = ph.style.height = ''; var fs = parseFloat(getComputedStyle(t).fontSize), n = 0, pw = ph ? ph.offsetWidth : 0, p0 = pw; function over(){ return recCard.scrollHeight > recCard.clientHeight + 1; } while(ph && over() && pw > p0 * 0.5){ pw *= 0.92; ph.style.width = ph.style.height = pw + 'px'; } while(over() && n < 25 && fs > 10.5){ fs *= 0.95; t.style.fontSize = fs + 'px'; n++; } }   // texto longo: primeiro diminui a foto redonda, depois a letra, só o necessário para caber
+  function fitRec(){   // texto longo: primeiro diminui a foto, depois a letra, só o necessário para caber (também nas telas pequenas)
+    var t = recCard.querySelector('.rtxs') || recCard.querySelector('.rtx'); if(!t) return;
+    var ph = recCard.querySelector('.rfc'), fo = recCard.querySelector(':scope > .rfoto'), lf0 = recCard.querySelector('.rlado:not(.rvid) .rfoto'); if(lf0) lf0.style.width = ''; t.style.fontSize = ''; if(ph) ph.style.width = ph.style.height = ''; if(fo) fo.style.flex = fo.style.minHeight = fo.style.maxHeight = fo.style.height = '';
+    var fs = parseFloat(getComputedStyle(t).fontSize), n = 0, pw = ph ? ph.offsetWidth : 0, p0 = pw; function over(){ return recCard.scrollHeight > recCard.clientHeight + 1; }
+    while(ph && over() && pw > p0 * 0.5){ pw *= 0.92; ph.style.width = ph.style.height = pw + 'px'; }
+    if(fo && over()){ var fh = fo.offsetHeight, f0 = fh; fo.style.flex = 'none'; fo.style.minHeight = '0'; while(over() && fh > f0 * 0.78){ fh *= 0.92; fo.style.maxHeight = fo.style.height = fh + 'px'; } }
+    var lf = recCard.querySelector('.rlado:not(.rvid) .rfoto'); if(lf){ lf.style.width = ''; if(over()){ var lw = 42; while(over() && lw > 30){ lw -= 2; lf.style.width = lw + '%'; } } }
+    while(over() && n < 30 && fs > 9.5){ fs *= 0.95; t.style.fontSize = fs + 'px'; n++; } }
   window.addEventListener('resize', function(){ fitRec(); });
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fitRec(); });
   if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function(){ fitRec(); });   // fonte que chega depois: refaz o ajuste
@@ -1479,6 +1492,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
       setTimeout(function(){ recCard.classList.remove('rin-f', 'rin-b'); recBusy = false; }, 560); }, 260);
   }
 
+  recDots.style.setProperty('--nd', RECADOS.length);
   RECADOS.forEach(function(r, k){ var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Recado de ' + r.nome); d.addEventListener('click', function(){ if(k !== recIdx) goRec(k, true); }); recDots.appendChild(d); });
   recPrev.addEventListener('click', function(){ goRec(recIdx - 1); }); recNext.addEventListener('click', function(){ goRec(recIdx + 1); });
   if(RECADOS.length < 2){ recPrev.hidden = recNext.hidden = recDots.hidden = true; }
