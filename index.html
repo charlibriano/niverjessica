@@ -714,6 +714,22 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 .numbers .card .ic{display:block; order:0; flex:none; width:calc(var(--bw) * .062); height:calc(var(--bw) * .062); align-self:center}
 .numbers .card .fr{justify-content:flex-start; align-items:center; gap:3%}
 .numbers .card .fr > span{flex:1}
+
+/* ===== herbário (35 flores, 35 motivos) ===== */
+.flowers .garden{background:transparent !important; box-shadow:none !important; border-radius:0; top:27%; bottom:9%; left:7%; right:7%; border-top:1px solid rgba(46,34,54,.14); border-bottom:1px solid rgba(46,34,54,.14)}
+.flowers .bud{width:calc(100% / 7.4); height:calc(100% / 6); min-width:0; min-height:0; border-radius:12px}
+.flowers .bud:focus-visible{box-shadow:0 0 0 2px var(--bookc)}
+.flowers .gsub{font:italic 400 max(12px, calc(var(--bw) * .038))/1.3 var(--serif) !important; color:#6a5560 !important}
+.flowers .prog{width:40%; height:1px !important; background:rgba(46,34,54,.15) !important; border-radius:0}
+.flowers .prog i{background:var(--bookc) !important; border-radius:0}
+.reason{background:#fbfaf6 !important; border-radius:3px !important; box-shadow:0 18px 40px rgba(40,30,40,.25), 0 0 0 1px rgba(46,34,54,.12) !important; padding:9% 8% 6% !important; top:28% !important}
+.reason::before{display:none}
+.reason img{display:none}
+.rnum{font:italic 400 max(12px, calc(var(--bw) * .036))/1 var(--serif) !important; letter-spacing:0 !important; text-transform:none !important; color:#8a5a6e !important; border:0 !important}
+.rtext{font:italic 400 max(16px, calc(var(--bw) * .062))/1.35 'Newsreader', Georgia, serif !important; color:#2e2236 !important; margin:5% 0 4% !important}
+.rtext.done{color:var(--bookc) !important}
+.sign{font:max(15px, calc(var(--bw) * .05))/1 'Nothing You Could Do', cursive !important; color:#a8406e !important}
+.reason small{font:italic 400 max(11px, calc(var(--bw) * .032))/1 var(--serif) !important; color:#8a7a82 !important}
 </style>
 </head>
 <body>
@@ -1251,6 +1267,9 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     b.addEventListener('click', function(){ openBud(i); });
     garden.appendChild(b); buds.push(b);
   });
+  // herbário: grade uniforme de 7 x 5 raminhos
+  GP.forEach(function(P, i){ var r = Math.floor(i / 7), c = i % 7; P.x = (c + .5) / 7; P.yb = .06 + (r + 1) / 5 * .9 - .02 + (rnd(i + 31) - .5) * .012; P.y = P.yb - .11 - rnd(i + 41) * .035; P.x += (rnd(i + 51) - .5) * .02; P.s = 1; P.row = r;
+    buds[i].style.left = (P.x * 100).toFixed(2) + '%'; buds[i].style.top = ((P.y - .01) * 100).toFixed(2) + '%'; buds[i].style.setProperty('--s', '1'); });
   var parts = [], motes = [];
   for(var mi=0; mi<28; mi++) motes.push({x:rnd(mi + 70), y:rnd(mi + 90), sp:.006 + rnd(mi + 11)*.012, ph:rnd(mi + 5)*6.28});
   function countOpen(){ return Object.keys(opened).length; }
@@ -1317,76 +1336,50 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     var S = sz*2.1; g.save(); g.translate(hx, hy); g.rotate(Math.sin(t*1.1 + ph)*.05);
     if(glow > 0){ var rg = g.createRadialGradient(0, -sz*.2, 0, 0, -sz*.2, sz*1.3); rg.addColorStop(0, 'rgba(255,225,130,' + (.5*glow) + ')'); rg.addColorStop(1, 'rgba(255,225,130,0)'); g.fillStyle = rg; g.beginPath(); g.arc(0, -sz*.2, sz*1.3, 0, 6.3); g.fill(); }
     g.shadowColor = 'rgba(20,30,10,.3)'; g.shadowBlur = 3; g.drawImage(FLORA.bud[kind], -S/2, -S/2 - S*.04, S, S); g.restore(); }
+  // ===== herbário: 35 raminhos em traço fino; o botão abre numa flor com toque de aquarela =====
   function drawGarden(t, dt){
-    var S = sizeG(), g = gctx, W = S.w, H = S.h, U = W*.075; gW = W; gH = H; if(!gT0) gT0 = t;
+    var S = sizeG(), g = gctx, W = S.w, H = S.h, U = Math.min(W / 7, H / 5); gW = W; gH = H; if(!gT0) gT0 = t;
     g.setTransform(S.d, 0, 0, S.d, 0, 0); g.clearRect(0, 0, W, H);
-    // céu, sol com brilho, nuvens, morros
-    var sky = g.createLinearGradient(0, 0, 0, H*.5); sky.addColorStop(0, '#a6d8f4'); sky.addColorStop(1, '#fdf0d6'); g.fillStyle = sky; g.fillRect(0, 0, W, H);
-    var sx = W*.82, sy = H*.1, sg = g.createRadialGradient(sx, sy, 0, sx, sy, W*.6); sg.addColorStop(0, 'rgba(255,240,180,.9)'); sg.addColorStop(1, 'rgba(255,240,180,0)'); g.fillStyle = sg; g.fillRect(0, 0, W, H*.8);
-    g.fillStyle = '#ffeaa6'; g.beginPath(); g.arc(sx, sy, W*.04, 0, 6.3); g.fill();
-    for(var c=0;c<3;c++){ var cx = ((t*5*(1 + c*.3) + c*W*.45) % (W*1.4)) - W*.2, cy = H*(.1 + c*.07), cs = W*.05*(1 + c*.2); g.fillStyle = 'rgba(255,255,255,.82)'; [[0,0,1],[.9,.15,.8],[-.9,.15,.75],[.35,-.45,.8],[-.4,-.3,.7]].forEach(function(b){ g.beginPath(); g.arc(cx + b[0]*cs, cy + b[1]*cs, cs*b[2], 0, 6.3); g.fill(); }); }
-    for(var L=0;L<2;L++){ g.fillStyle = L ? 'rgba(100,165,120,.6)' : 'rgba(130,175,160,.5)'; g.beginPath(); g.moveTo(0, H*.34); for(var x2=0; ; x2+=6){ var xx2 = Math.min(x2, W); g.lineTo(xx2, H*(.24 + L*.035) - Math.sin(xx2/W*(3 + L*2) + L*1.7)*H*.03 - Math.sin(xx2/W*8 + L)*H*.008); if(x2 >= W) break; } g.lineTo(W, H*.36); g.lineTo(0, H*.36); g.closePath(); g.fill(); }
-    // varanda: mureta branca ao fundo e piso de madeira em perspectiva
-    var dy0 = H*.34;
-    var wg2 = g.createLinearGradient(0, H*.26, 0, dy0); wg2.addColorStop(0, '#f6efe0'); wg2.addColorStop(1, '#e2d6bf'); g.fillStyle = wg2; g.fillRect(0, H*.26, W, dy0 - H*.26);
-    g.fillStyle = '#fffaf0'; g.fillRect(0, H*.252, W, H*.012); g.fillStyle = 'rgba(160,140,110,.2)'; for(var bl=0; bl<=16; bl++) g.fillRect(bl*W/16 - 2, H*.266, 4, dy0 - H*.266);
-    g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(0, dy0 - 3, W, 3);
-    var dk = g.createLinearGradient(0, dy0, 0, H); dk.addColorStop(0, '#dcb480'); dk.addColorStop(1, '#a87a46'); g.fillStyle = dk; g.fillRect(0, dy0, W, H - dy0);
-    g.strokeStyle = 'rgba(90,55,25,.28)'; g.lineWidth = 1; for(var pl=-8; pl<=8; pl++){ g.beginPath(); g.moveTo(W/2 + pl*W*.13*.55, dy0); g.lineTo(W/2 + pl*W*.13, H); g.stroke(); }
-    for(var jn=1; jn<7; jn++){ var yj = dy0 + (H - dy0)*Math.pow(jn/7, 1.35); g.beginPath(); g.moveTo(0, yj); g.lineTo(W, yj); g.stroke(); }
-    var fl = g.createLinearGradient(0, dy0, 0, H); fl.addColorStop(0, 'rgba(255,240,190,.3)'); fl.addColorStop(1, 'rgba(255,240,190,0)'); g.fillStyle = fl; g.fillRect(0, dy0, W, H*.32);
-    // plantas penduradas nos cantos de cima, balançando de leve
-    [[.1, 0],[.9, 1]].forEach(function(hp){ var hx3 = W*hp[0], hy3 = H*.15, ps = W*.055, sw3 = Math.sin(t*.9 + hp[1]*2)*2;
-      g.strokeStyle = '#8a6a3a'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(hx3, 0); g.lineTo(hx3 - ps*.5 + sw3*.2, hy3 + ps*.3); g.moveTo(hx3, 0); g.lineTo(hx3 + ps*.5 + sw3*.2, hy3 + ps*.3); g.stroke();
-      for(var tl=0; tl<3; tl++){ var tx = hx3 + (tl - 1)*ps*.45 + sw3*.2; for(var lk=0; lk<7; lk++){ gLeaf(g, tx + Math.sin(t*.8 + lk*.6 + tl)*3, hy3 + ps*.55 + lk*ps*.34 + tl*3, ps*.4, Math.PI/2 + (lk % 2 ? .6 : -.6), '#5fb064', '#3f8f4a'); } }
-      gPot(g, hx3 + sw3*.2, hy3 + ps*.95, ps, hp[1] + 2, 1); });
-    // flores, fileira por fileira (de trás para a frente), com neblina leve entre as fileiras de trás
-    for(var r=0; r<5; r++){
-      if(r === 2){ var fog = g.createLinearGradient(0, H*.3, 0, H*.62); fog.addColorStop(0, 'rgba(255,255,255,.16)'); fog.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = fog; g.fillRect(0, H*.3, W, H*.32); }
-      for(var i=r*7; i<r*7 + 7; i++){
-        var P = GP[i], s = P.s, enter = gcl((t - gT0 - i*.035 - .35)/.9, 0, 1), bx = P.x*W, by = P.yb*H, hy0 = P.y*H, sway = Math.sin(t*1.15 + P.ph)*U*s*.1;
-        var sz = U*s*1.15, topY = by - sz*.8*.97, hx = bx + sway, hy = topY - (topY - hy0)*geo(enter), op = opened[i];
-        // o vasinho aparece primeiro, com um pulinho
-        gPot(g, bx, by, sz, i, gbk(gcl((t - gT0 - i*.03)/.45, 0, 1)));
-        if(enter <= 0) continue;
-        // caule curvo com folhas
-        var cxq = bx + sway*.3 - sz*.1, cyq = topY - (topY - hy)*.55, stw = Math.max(1.5, sz*.07);
-        var SC = STEMC[P.kind], sw2 = stw*STEMW[P.kind], ey = hy + sz*(op ? .1 : .3); g.lineCap = 'round';
-        g.strokeStyle = SC[0]; g.lineWidth = sw2*1.45; g.beginPath(); g.moveTo(bx, topY); g.quadraticCurveTo(cxq, cyq, hx, ey); g.stroke();
-        g.strokeStyle = SC[1]; g.lineWidth = sw2; g.beginPath(); g.moveTo(bx - sw2*.12, topY); g.quadraticCurveTo(cxq - sw2*.12, cyq, hx - sw2*.12, ey); g.stroke();
-        g.strokeStyle = 'rgba(255,255,230,.28)'; g.lineWidth = Math.max(.8, sw2*.25); g.beginPath(); g.moveTo(bx - sw2*.3, topY); g.quadraticCurveTo(cxq - sw2*.3, cyq, hx - sw2*.3, ey); g.stroke();
-        if(enter > .2){ var fk = gbk((enter - .2)/.4); [[-1],[1]].forEach(function(sd){ leafK(g, P.kind, bx + sd[0]*sz*.08, topY + 1, sz*.42*fk, sd[0] < 0 ? -Math.PI + .5 + Math.sin(t*1.3 + P.ph)*.06 : -.5 + Math.sin(t*1.1 + P.ph)*.06, sd[0] < 0 ? -1 : 1); }); }
-        if(enter > .35){ [[.28, -1],[.5, 1]].forEach(function(lf){ var u = lf[0], qx = (1 - u)*(1 - u)*bx + 2*u*(1 - u)*cxq + u*u*hx, qy = (1 - u)*(1 - u)*topY + 2*u*(1 - u)*cyq + u*u*(hy + sz*.3); leafK(g, P.kind, qx, qy, sz*.72*gbk((enter - .35)/.4), lf[1] < 0 ? -Math.PI + .45 + Math.sin(t + P.ph)*.05 : -.45 + Math.sin(t*.9 + P.ph)*.05, lf[1] < 0 ? -1 : 1); }); }
-        if(enter < .55) continue;
-        var he = gbk((enter - .55)/.45);
-        if(op){
-          var k = gcl((t - op)/.9, 0, 1), big = sz*1.7*gbk(k)*he, rot = P.rot + Math.sin(t*.9 + P.ph)*.07 + (1 - geo(k))*-.9;
-          if(k < 1){ var wg = g.createRadialGradient(hx, hy, 0, hx, hy, sz*1.3); wg.addColorStop(0, 'rgba(255,240,170,' + (.55*(1 - k)) + ')'); wg.addColorStop(1, 'rgba(255,240,170,0)'); g.fillStyle = wg; g.beginPath(); g.arc(hx, hy, sz*1.3, 0, 6.3); g.fill(); }
-          g.save(); g.translate(hx, hy); g.rotate(rot); g.shadowColor = 'rgba(40,30,10,.3)'; g.shadowBlur = 4; g.shadowOffsetY = 2; var im = FLIMG[P.kind]; if(im.complete && im.naturalWidth) g.drawImage(im, -big/2, -big/2, big, big); g.restore();
-        } else {
-          var glow = (hintIdx === i) ? (.6 + .4*Math.sin(t*6)) : Math.max(0, Math.pow(Math.sin(t*1.6 + i*1.7), 8))*.55;
-          gBud2(g, P.kind, hx, hy, sz*he, P.ph, t, glow);
-          if(glow > .25){ var tw = glow*sz*.22; g.strokeStyle = 'rgba(255,248,200,' + glow + ')'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(hx + sz*.55, hy - sz*.7 - tw); g.lineTo(hx + sz*.55, hy - sz*.7 + tw); g.moveTo(hx + sz*.55 - tw, hy - sz*.7); g.lineTo(hx + sz*.55 + tw, hy - sz*.7); g.stroke(); }
-        }
-      }
+    var INK = '#4a3f47', LW = Math.max(1, U * .022);
+    var TW = {rose:'#d8506e', daisy:'#ffffff', sunflower:'#f2b52a', tulip:'#e486b8', lavender:'#9a86d6', blue:'#6f9be8'};
+    function wash(path, col, a){ g.save(); g.globalAlpha = a; g.fillStyle = col; path(); g.fill(); g.translate(U * .012, U * .01); g.globalAlpha = a * .45; path(); g.fill(); g.restore(); }
+    function ink(path, w){ g.strokeStyle = INK; g.lineWidth = w || LW; path(); g.stroke(); }
+    function leaf(x, y, len, ang){ g.save(); g.translate(x, y); g.rotate(ang);
+      var p = function(){ g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(len * .5, -len * .32, len, 0); g.quadraticCurveTo(len * .5, len * .26, 0, 0); };
+      wash(p, '#8fae84', .35); ink(p, LW * .85); g.beginPath(); g.moveTo(len * .08, 0); g.lineTo(len * .85, 0); g.strokeStyle = 'rgba(74,63,71,.45)'; g.lineWidth = LW * .6; g.stroke(); g.restore(); }
+    function petals(n, rx, ry, off, col, a){ for(var k = 0; k < n; k++){ g.save(); g.rotate(k / n * 6.2832); var pp = function(){ g.beginPath(); g.ellipse(off, 0, rx, ry, 0, 0, 6.2832); }; wash(pp, col, a); ink(pp, LW * .8); g.restore(); } }
+    function flower(kind, sz, k){   // sz = raio da flor aberta; k = abertura 0..1
+      var r = sz * (.35 + .65 * k);
+      if(kind === 'rose'){ petals(5, r * .55, r * .42, r * .42, TW.rose, .55); var c = function(){ g.beginPath(); g.arc(0, 0, r * .42, 0, 6.2832); }; wash(c, '#c23c5c', .6); ink(c);
+        g.beginPath(); for(var s = 0; s < 2.6; s += .1){ var rr = r * .32 * (1 - s / 2.8); g.lineTo(Math.cos(s * 3) * rr, Math.sin(s * 3) * rr); } g.strokeStyle = INK; g.lineWidth = LW * .7; g.stroke(); }
+      else if(kind === 'daisy'){ petals(12, r * .42, r * .13, r * .5, '#ffffff', .95); var d = function(){ g.beginPath(); g.arc(0, 0, r * .2, 0, 6.2832); }; wash(d, '#f2c230', .9); ink(d); }
+      else if(kind === 'sunflower'){ for(var q = 0; q < 14; q++){ g.save(); g.rotate(q / 14 * 6.2832); var sp = function(){ g.beginPath(); g.moveTo(r * .3, -r * .1); g.quadraticCurveTo(r * .75, -r * .12, r, 0); g.quadraticCurveTo(r * .75, r * .12, r * .3, r * .1); g.closePath(); }; wash(sp, TW.sunflower, .75); ink(sp, LW * .75); g.restore(); }
+        var e = function(){ g.beginPath(); g.arc(0, 0, r * .34, 0, 6.2832); }; wash(e, '#7a5230', .8); ink(e); }
+      else if(kind === 'tulip'){ var tp = function(){ g.beginPath(); g.moveTo(-r * .55, -r * .1); g.quadraticCurveTo(-r * .6, r * .55, 0, r * .6); g.quadraticCurveTo(r * .6, r * .55, r * .55, -r * .1); g.lineTo(r * .3, -r * .55); g.lineTo(r * .05, -r * .15); g.lineTo(-r * .2, -r * .6); g.lineTo(-r * .32, -r * .12); g.closePath(); }; wash(tp, TW.tulip, .6); ink(tp); }
+      else if(kind === 'lavender'){ for(var v = 0; v < 7; v++){ var yy = r * .55 - v * r * .2, xx = (v % 2 ? 1 : -1) * r * .12; g.save(); g.translate(xx, yy); var lv = function(){ g.beginPath(); g.ellipse(0, 0, r * .13, r * .18, (v % 2 ? .4 : -.4), 0, 6.2832); }; wash(lv, TW.lavender, .65); ink(lv, LW * .7); g.restore(); } }
+      else { petals(5, r * .36, r * .3, r * .38, TW.blue, .6); var b = function(){ g.beginPath(); g.arc(0, 0, r * .14, 0, 6.2832); }; wash(b, '#f3d36a', .9); ink(b, LW * .7); }
     }
-    // poeirinha de luz, borboletas e abelha
-    for(var m=0;m<motes.length;m++){ var mt = motes[m], my = ((mt.y - t*mt.sp) % 1 + 1) % 1, mx = (mt.x + Math.sin(t*.4 + mt.ph)*.03), al = .25 + .35*Math.sin(t*1.7 + mt.ph); g.fillStyle = 'rgba(255,246,200,' + Math.max(0, al) + ')'; g.beginPath(); g.arc(mx*W, my*H*.9, 1.6, 0, 6.3); g.fill(); }
-    var calm = countOpen() === 35 ? 1.8 : 1;
-    for(var b=0;b<3;b++){ var bfx = W*(.2 + .6*(.5 + .5*Math.sin(t*.28*calm + b*2.1))), bfy = H*(.3 + .3*(.5 + .5*Math.sin(t*.43*calm + b))), wf = Math.abs(Math.sin(t*(8 + calm*3) + b)); g.fillStyle = ['#f08aa5','#f4b81c','#8a63c4'][b]; g.beginPath(); g.ellipse(bfx - 5*wf, bfy, 5*wf + 1, 3.6, -.4, 0, 6.3); g.ellipse(bfx + 5*wf, bfy, 5*wf + 1, 3.6, .4, 0, 6.3); g.fill(); g.fillStyle = '#3a2a1c'; g.fillRect(bfx - .8, bfy - 3, 1.6, 6); }
-    // pétalas e brilhos que saem quando a flor abre (e a chuva de pétalas do final)
-    for(var pi=parts.length - 1; pi>=0; pi--){ var p = parts[pi]; p.life -= dt*p.dec; if(p.life <= 0 || p.y > H + 10){ parts.splice(pi, 1); continue; } p.x += p.vx*dt; p.y += p.vy*dt; if(!p.fall){ p.vy += 60*dt; p.vx *= .985; } else { p.vx = Math.sin(t*2 + p.rot)*14; } p.rot += (p.vr || 0)*dt;
-      g.save(); g.globalAlpha = Math.min(1, p.life*1.6); g.translate(p.x, p.y); g.rotate(p.rot);
-      if(p.type === 'petal'){ g.fillStyle = p.c; g.beginPath(); g.ellipse(0, 0, p.sz*1.5, p.sz*.8, 0, 0, 6.3); g.fill(); g.strokeStyle = 'rgba(0,0,0,.1)'; g.lineWidth = .6; g.stroke(); } else { g.fillStyle = p.c; g.fillRect(-p.sz, -p.sz*.3, p.sz*2, p.sz*.6); g.fillRect(-p.sz*.3, -p.sz, p.sz*.6, p.sz*2); }
-      g.restore(); }
-    // final: o jardim inteiro brilha e chovem pétalas
-    if(countOpen() === 35 && t > finT){ var fin = gcl((t - finT)/2, 0, 1); g.fillStyle = 'rgba(255,225,150,' + (.14*fin*(.8 + .2*Math.sin(t*2))) + ')'; g.fillRect(0, 0, W, H);
-      if(t - lastSpawn > .09){ lastSpawn = t; var cols = ['#ffb3cc','#ffffff','#ffd23f','#e07bbd','#e0244f']; parts.push({x:Math.random()*W, y:-8, vx:0, vy:26 + Math.random()*24, rot:Math.random()*6, vr:(Math.random() - .5)*4, life:1, dec:.1, c:cols[Math.floor(Math.random()*5)], type:'petal', sz:gW*.012, fall:true}); } }
-    // a mãozinha que mostra onde tocar (e um anel dourado)
-    if(hintIdx >= 0){ var HP = GP[hintIdx], hx2 = HP.x*W, hy2 = HP.y*H, hs = U*HP.s, pr = (t*1.2) % 1; g.strokeStyle = 'rgba(255,225,130,' + (1 - pr) + ')'; g.lineWidth = 2; g.beginPath(); g.arc(hx2, hy2 - hs*.1, hs*(.6 + pr*.9), 0, 6.3); g.stroke();
-      g.font = Math.round(hs*1.15) + 'px "Apple Color Emoji","Segoe UI Emoji",sans-serif'; g.textAlign = 'center'; g.fillText('👆', hx2 + hs*.25, hy2 + hs*1.15 + Math.sin(t*5)*3); g.textAlign = 'left'; }
-    // bordas levemente escurecidas, como numa ilustração
-    var vg = g.createRadialGradient(W/2, H/2, Math.min(W, H)*.35, W/2, H/2, Math.max(W, H)*.78); vg.addColorStop(0, 'rgba(70,45,20,0)'); vg.addColorStop(1, 'rgba(70,45,20,.28)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+    function bud(sz){ var p = function(){ g.beginPath(); g.moveTo(0, sz * .3); g.bezierCurveTo(sz * .42, sz * .15, sz * .32, -sz * .45, 0, -sz * .75); g.bezierCurveTo(-sz * .32, -sz * .45, -sz * .42, sz * .15, 0, sz * .3); };
+      ink(p); g.beginPath(); g.moveTo(0, sz * .3); g.quadraticCurveTo(-sz * .38, sz * .12, -sz * .3, -sz * .12); g.moveTo(0, sz * .3); g.quadraticCurveTo(sz * .38, sz * .12, sz * .3, -sz * .12); g.strokeStyle = INK; g.lineWidth = LW * .85; g.stroke(); }
+    for(var i = 0; i < 35; i++){
+      var P = GP[i], enter = gcl((t - gT0 - i * .03 - .2) / .8, 0, 1); if(enter <= 0) continue;
+      var bx = P.x * W, by = P.yb * H, hy = P.y * H, sway = Math.sin(t * .9 + P.ph) * U * .02, hx = bx + sway + (rnd(i + 21) - .5) * U * .3, op = opened[i];
+      var ek = geo(enter), topY = by - (by - hy) * ek;
+      g.lineCap = 'round'; g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(bx + (hx - bx) * .2 - U * .06, (by + topY) / 2, hx, topY); g.strokeStyle = INK; g.lineWidth = LW; g.stroke();
+      if(enter > .3){ var lk = geo((enter - .3) / .5); leaf(bx + (hx - bx) * .35, by - (by - topY) * .35, U * .26 * lk, -Math.PI + .7 + (rnd(i) - .5) * .3); leaf(bx + (hx - bx) * .5, by - (by - topY) * .55, U * .24 * lk, -.6 + (rnd(i + 7) - .5) * .3); }
+      if(enter < .6) continue;
+      var he = gbk((enter - .6) / .4), sz = U * .3 * he;
+      g.save(); g.translate(hx, topY);
+      if(op){ var k = gbk(gcl((t - op) / .9, 0, 1)); g.rotate(P.rot * .4 + Math.sin(t * .7 + P.ph) * .04); flower(P.kind, U * .4, k); }
+      else { g.rotate(Math.sin(t * 1.1 + P.ph) * .05); bud(sz); }
+      g.restore();
+    }
+    // pétalas que saem quando a flor abre (e a chuva do final)
+    for(var pi = parts.length - 1; pi >= 0; pi--){ var p = parts[pi]; p.life -= dt * p.dec; if(p.life <= 0 || p.y > H + 10){ parts.splice(pi, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; if(!p.fall){ p.vy += 60 * dt; p.vx *= .985; } else { p.vx = Math.sin(t * 2 + p.rot) * 12; } p.rot += (p.vr || 0) * dt;
+      if(p.type !== 'petal') continue; g.save(); g.globalAlpha = Math.min(.8, p.life * 1.4); g.translate(p.x, p.y); g.rotate(p.rot); g.fillStyle = p.c === '#ffffff' ? '#f4ede6' : p.c; g.beginPath(); g.ellipse(0, 0, p.sz * 1.4, p.sz * .7, 0, 0, 6.2832); g.fill(); g.strokeStyle = 'rgba(74,63,71,.35)'; g.lineWidth = .6; g.stroke(); g.restore(); }
+    if(countOpen() === 35 && t > finT && t - lastSpawn > .12){ lastSpawn = t; var cols = ['#e7a3b8','#f4ede6','#f2c86a','#c9b6e6','#d8506e']; parts.push({x:Math.random() * W, y:-8, vx:0, vy:22 + Math.random() * 20, rot:Math.random() * 6, vr:(Math.random() - .5) * 3, life:1, dec:.1, c:cols[Math.floor(Math.random() * 5)], type:'petal', sz:U * .07, fall:true}); }
+    // onde tocar: um anel fino que pulsa em volta do próximo botão
+    if(hintIdx >= 0){ var HP = GP[hintIdx], pr = (t * .9) % 1, hhx = HP.x * W, hhy = HP.y * H; g.strokeStyle = 'rgba(168,64,110,' + (.7 * (1 - pr)) + ')'; g.lineWidth = 1.3; g.beginPath(); g.arc(hhx, hhy - U * .1, U * (.22 + pr * .25), 0, 6.2832); g.stroke(); }
   }
   var lastT = 0;
   (function gloop(now){ requestAnimationFrame(gloop); var t = now/1000, dt = Math.min(.05, t - lastT); lastT = t; if(cur !== 4){ if(cur < 3) gT0 = 0; return; }
