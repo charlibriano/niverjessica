@@ -1189,9 +1189,6 @@ body.covered #player{opacity:0; pointer-events:none}
       ctx.beginPath(); ctx.moveTo(PTH.M[0] - R.w*.04, R.y - R.h*.3); ctx.lineTo(PTH.M[0] + R.w*.04, R.y - R.h*.3); ctx.lineTo(PTH.M[0] + R.w*.18, PTH.M[1]); ctx.lineTo(PTH.M[0] - R.w*.18, PTH.M[1]); ctx.closePath(); ctx.fill(); ctx.restore();
       pen(PTH.a, ga, GREEN_INK, 3.5); }
     if(gb > 0) pen(PTH.b, gb, ROSE, 3.5);
-    // tantos caminhos, tanta gente: outras pessoas andando, cada uma pelo seu caminho
-    if(g > .6){ for(var tr=0; tr<4; tr++){ var path = PTH.list[(tr*2 + 1) % PTH.list.length], kk = (Math.sin(t*.35 + tr*1.7) + 1)/2*.85, n2 = path.length - 1, ip = Math.min(n2, Math.floor(kk*n2)), pp = path[ip], dir = Math.cos(t*.35 + tr*1.7) >= 0 ? -1 : 1;
-        ctx.save(); ctx.globalAlpha *= .55*clamp((g - .6)*3, 0, 1); guy(pp[0], pp[1], Math.min(R.h*.12, R.w*.1), {walk:1, face:dir, phase:tr, color:'rgba(58,42,28,.7)', w:1.2}); ctx.restore(); } }
     // por onde vocês passam, nascem florzinhas
     [[PTH.a, ga, 0], [PTH.b, gb, 3]].forEach(function(P){ var pa = P[0], kk = clamp(P[1], 0, 1); if(kk <= 0) return; var nn = pa.length - 1;
       for(var fi=4; fi<nn - 2; fi+=6){ var pass = kk*nn - fi; if(pass <= 0) break; var q = clamp(pass/6, 0, 1), pf = pa[fi], ix = Math.floor(fi/6), sd = ix % 2 ? 1 : -1; flower(FKINDS[(ix + P[2]) % 6], pf[0] + sd*8, pf[1] - 4, Math.min(R.w, R.h)*.045*easeBack(q), Math.sin(t + fi)*.2); } });
@@ -1298,7 +1295,13 @@ body.covered #player{opacity:0; pointer-events:none}
       for(var r=0;r<12;r++){ var a = r/12*Math.PI*2 + t*.3; ctx.strokeStyle = '#d9960f'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a)*u*.15, cy + Math.sin(a)*u*.15); ctx.lineTo(cx + Math.cos(a)*u*.22, cy + Math.sin(a)*u*.22); ctx.stroke(); }
       for(var b=0;b<5;b++){ ctx.strokeStyle = ['#e0244f','#f0a500','#ffd23f','#4f8f5f','#3b6fd1'][b]; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, R.y + R.h*.98, u*(.42 - b*.035), Math.PI, Math.PI*2); ctx.stroke(); } ctx.restore(); }
     for(var c=0;c<2;c++){ var side = c ? 1 : -1, ox = cx + side*(u*.12 + clear*u*.5); ctx.save(); ctx.globalAlpha *= cl*(1 - clear*.8);
-      strokes([{p:arc(ox - u*.12, cy, u*.1, u*.09, Math.PI*.5, Math.PI*1.55, 10).concat(arc(ox, cy - u*.07, u*.14, u*.12, Math.PI, Math.PI*2, 12)).concat(arc(ox + u*.13, cy, u*.09, u*.09, Math.PI*1.45, Math.PI*2.5, 10)).concat(seg(ox + u*.13, cy + u*.09, ox - u*.12, cy + u*.09, 8))}], 1, INK, lw()); ctx.restore(); }
+      // nuvem de tempestade: massa cinza de bolhas com a barriga mais escura e a borda de cima mais clara
+      var sc2 = u*.2, sw3 = Math.sin(t*.8 + c*2)*u*.01, nx = ox + sw3;
+      var blobs = [[-.78, .05, .5],[-.42, -.2, .62],[.02, -.32, .74],[.46, -.16, .62],[.8, .06, .5],[0, .06, .8],[-.55, .2, .42],[-.18, .26, .44],[.2, .26, .44],[.56, .2, .42]];
+      var cg = ctx.createLinearGradient(0, cy - sc2*.9, 0, cy + sc2*.55); cg.addColorStop(0, '#9aa3b5'); cg.addColorStop(.55, '#6f788c'); cg.addColorStop(1, '#4d5468');
+      ctx.fillStyle = cg; ctx.beginPath(); blobs.forEach(function(B){ ctx.moveTo(nx + B[0]*sc2 + B[2]*sc2*.62, cy + B[1]*sc2); ctx.arc(nx + B[0]*sc2, cy + B[1]*sc2, B[2]*sc2*.62, 0, 6.3); }); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.beginPath(); ctx.ellipse(nx - sc2*.1, cy - sc2*.55, sc2*.38, sc2*.1, -.15, 0, 6.3); ctx.fill();
+      ctx.restore(); }
     var rain = grow(t, tl - .4, .6)*(1 - clear);
     if(rain > 0){ ctx.strokeStyle = 'rgba(59,111,209,' + rain*.7 + ')'; ctx.lineWidth = 1.5; for(var d=0; d<36; d++){ var x = cx - u*.35 + (d*29.3 % (u*.7)), y = cy + u*.12 + ((t*260 + d*53) % (R.h*.55)); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 3, y + 10); ctx.stroke(); } }
     var bx = R.x + R.w/2, by = R.y + R.h*.99, bh = R.h*.4, umb = clamp(grow(t, tl - .7, .5) - clear*1.5, 0, 1);
@@ -1863,7 +1866,7 @@ body.covered #player{opacity:0; pointer-events:none}
   var FL1000 = []; for(var fq=0; fq<260; fq++) FL1000.push({x:Math.random(), y:Math.random(), k:FKINDS[fq % 6], r:Math.random()*6, h:hrtPts(0,0,1)[fq % 41]});
   // "E se eu pudesse escolher… mil vezes eu escolheria você": ele imagina outras vidas possíveis, mas toda vez, mil vezes, caminha até ela
   function illFlowers(t, R){
-    var u = Math.min(R.w, R.h*1.3), ground = R.y + R.h*.78, footY = ground + R.h*.04, fh = u*.33, sX = R.x + R.w*.14, jX = R.x + R.w*.8;
+    var u = Math.min(R.w, R.h*1.3), ground = R.y + R.h*.78, footY = ground + R.h*.04, fh = u*.33, sX = R.x + R.w*.12, jX = R.x + R.w*.73;
     var tEsc = wordT(52, 'escolher'), tVoce = wordT(53, 'voce'), vis = grow(t, LINES[52].s - .6, .8), p0 = tEsc + .1, tLoopEnd = p0 + 1.25;
     var oK = grow(t, LINES[52].s + .3, .9)*(1 - clamp((t - (tEsc + .5))/1.2, 0, 1)), pg = clamp((t - p0)/(tVoce - p0), 0, 1), xs = clamp(t - p0, 0, 1.25);
     var loops = xs*1.2 + 4.5*xs*xs, ph = t < p0 ? 0 : (t < tLoopEnd ? loops - Math.floor(loops) : (t < tVoce ? ease((t - tLoopEnd)/(tVoce - tLoopEnd)) : 1)), done = t >= tVoce;
@@ -1969,8 +1972,26 @@ body.covered #player{opacity:0; pointer-events:none}
     var u = Math.min(R.w, R.h*1.3), cx = R.x + R.w/2, hy = R.y + R.h*.8, p = grow(t, LINES[56].s - .2, 1.5);
     ctx.save(); ctx.globalAlpha *= p; glowDot(cx, hy, u*.45, 'rgba(243,170,90,A)', .55); ctx.fillStyle = '#f2a65a'; ctx.beginPath(); ctx.arc(cx, hy, u*.14, Math.PI, Math.PI*2); ctx.fill(); ctx.restore();
     ctx.save(); ctx.globalAlpha *= p; ctx.fillStyle = 'rgba(79,143,95,.9)'; ctx.beginPath(); ctx.moveTo(R.x, R.y + R.h); ctx.quadraticCurveTo(cx, hy - R.h*.08, R.x + R.w, R.y + R.h); ctx.closePath(); ctx.fill(); ctx.restore();
-    var lean = grow(t, wordT(57, 'mundo') - .8, 1), hand = [cx, hy - R.h*.02 - u*.11];
-    him(cx - u*.06, hy - R.h*.02, u*.26, {hold:hand, tilt:lean*.6}); her(cx + u*.06 - lean*u*.015, hy - R.h*.02, u*.25, {holdL:hand, tilt:-lean*1.4, phase:1});
+    var lean = grow(t, wordT(57, 'mundo') - .8, 1);
+    // piquenique no topo da colina: manta, cestinha, o cachorro e o coelhinho ao lado; os dois de mãos dadas vendo o sol baixo
+    var gnd = R.y + R.h*.86 - R.h*.012, fh = u*.36, bwid = u*.58, bx0 = cx - u*.17, appear = grow(t, LINES[56].s + .2, 1);
+    ctx.save(); ctx.globalAlpha *= appear;
+    ctx.fillStyle = 'rgba(30,60,30,.25)'; ctx.beginPath(); ctx.ellipse(bx0, gnd + R.h*.012, bwid*.55, R.h*.03, 0, 0, 6.3); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(bx0 - bwid*.42, gnd - R.h*.012); ctx.lineTo(bx0 + bwid*.42, gnd - R.h*.012); ctx.lineTo(bx0 + bwid*.5, gnd + R.h*.04); ctx.lineTo(bx0 - bwid*.5, gnd + R.h*.04); ctx.closePath(); ctx.fillStyle = '#f4d9d4'; ctx.fill(); ctx.strokeStyle = 'rgba(150,80,90,.7)'; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.save(); ctx.clip(); ctx.fillStyle = 'rgba(214,110,130,.55)'; for(var ck=0; ck<8; ck++){ ctx.fillRect(bx0 - bwid*.5 + ck*bwid*.125, gnd - R.h*.02, bwid*.0625, R.h*.08); } for(var ck2=0; ck2<3; ck2++){ ctx.fillRect(bx0 - bwid*.55, gnd - R.h*.012 + ck2*R.h*.026, bwid*1.1, R.h*.013); } ctx.restore();
+    // cestinha com pão e maçã, na ponta da manta
+    var kx = bx0 + bwid*.44, ky = gnd + R.h*.012;
+    ctx.fillStyle = '#b8864a'; ctx.strokeStyle = '#6b4a24'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(kx - u*.05, ky - u*.05); ctx.lineTo(kx + u*.05, ky - u*.05); ctx.lineTo(kx + u*.04, ky + u*.012); ctx.lineTo(kx - u*.04, ky + u*.012); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(kx, ky - u*.05, u*.045, Math.PI, Math.PI*2); ctx.stroke(); ctx.fillStyle = '#d9402f'; ctx.beginPath(); ctx.arc(kx - u*.02, ky - u*.058, u*.016, 0, 6.3); ctx.fill(); ctx.fillStyle = '#e8c27a'; ctx.beginPath(); ctx.ellipse(kx + u*.018, ky - u*.058, u*.026, u*.012, -.3, 0, 6.3); ctx.fill();
+    // os dois de mãos dadas sobre a manta, vendo o sol baixo
+    var yy = gnd + R.h*.022;
+    var hnd = [bx0 - u*.03, yy - fh*.34]; him(bx0 - u*.11, yy, fh, {face:1, tilt:.4 + lean*.5, phase:0, hold:hnd});
+    var alx = bx0 + u*.17, alh = fh*.52; her(bx0 + u*.05 - lean*u*.012, yy, fh*.96, {face:1, tilt:-.6 - lean*.8, phase:1, holdL:hnd, hold:[alx - alh*.1, yy - alh*.36]});
+    child(alx, yy, alh, t, 0, 1, false);
+    ctx.restore();
+    // o cachorro e o coelhinho deitadinhos ao lado
+    if(appear > .3){ ctx.save(); ctx.globalAlpha *= clamp((appear - .3)/.7, 0, 1); var dx0 = bx0 + bwid*.68;
+      dog(dx0, gnd + R.h*.03, u*.15, t, 0, 1, true, 0); bunny(dx0 + u*.13, gnd + R.h*.045, u*.09, t, 0, 1, true, 1.3); ctx.restore(); }
     var ip = grow(t, wordT(57, 'mundo') - .6, 1.8), inf = [];
     for(var i=0;i<=80;i++){ var a = i/80*Math.PI*2, d = 1 + Math.sin(a)*Math.sin(a); inf.push([cx + u*.24*Math.cos(a)/d, R.y + R.h*.2 + u*.24*Math.sin(a)*Math.cos(a)/d]); }
     ctx.save(); ctx.shadowColor = GOLD; ctx.shadowBlur = 8; pen(inf, ip, '#b8862a', 3); ctx.restore();
