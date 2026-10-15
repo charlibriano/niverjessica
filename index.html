@@ -656,6 +656,10 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 .rvid .rvhint{font-size:max(11.5px, calc(var(--bw) * .034))}
 .rvid .rvbox{height:86%}
 .rvid .rcol{flex:1 1 0; min-width:0}
+.rvtxt .rvbox{height:68%; align-self:center}
+.rvtxt .rvhint{display:none}
+.rvtxt .rtx{font-size:max(11.5px, calc(var(--bw) * .035)); line-height:1.28}
+.rvtxt .rcol{gap:.15em}
 .rvid .rnm{white-space:nowrap}
 
 /* muitos recados: os pontinhos encolhem para as setas sempre caberem */
@@ -1488,10 +1492,14 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     {nome:'Nanaina', rel:'sua cunhada', foto:'recado-nanaina.jpg', pos:'50% 30%', alt:'Foto da Nanaina com a Jéssica grávida', texto:'Parabéns, Jeh! Te desejo toda a felicidade do mundo, que você alcance todos os seus objetivos, que tenha muita fé, saúde e amor. Que Deus te abençoe todos os dias da sua vida. E obrigada pelo meu presentinho, pedacinho de stress, rsrsrs!', coracao:true},
     {nome:'Laedes', rel:'sua sogra', foto:'recado-laedes.jpg', layout:'topo', alt:'Foto da Laedes', paginas:['Hoje é um dia especial: o seu aniversário!\nDesejo que ele seja repleto de sorrisos, alegria e momentos inesquecíveis, e que a felicidade te acompanhe sempre. Que os seus sonhos se realizem neste novo ciclo e que Deus te abençoe abundantemente.', 'Obrigada por ser essa pessoa tão especial na minha vida e por me dar uma neta linda e muito querida.\nNão ganhei uma nora, ganhei uma filha. Você merece tudo de melhor que a vida pode oferecer.\nParabéns, Jéssica!'], coracao:true},
     {nome:'Joelma', rel:'sua tia', foto:'recado-joelma.jpg', video:'recado-joelma.mp4'},
+    {nome:'Aryanne', rel:'sua prima', foto:'recado-aryanne.jpg', alt:'Foto de infância da Jéssica com a Aryanne e outra prima, em roupas de festa junina', texto:'Prima, crescemos juntas fazendo arte, brincando de escolinha ou de bola na laje. Que privilégio o nosso! A gente era e continua sendo muito feliz. Que essas memórias sempre aqueçam o seu coração. Parabéns!', coracao:true},
+    {nome:'Faby', rel:'sua prima', foto:'recado-faby.jpg', video:'recado-faby.mp4', texto:'Parabéns! Hoje é seu dia e desejo um novo ciclo cheio de saúde, paz e muitas alegrias. Que Deus abençoe sempre os seus caminhos e que a cada dia você possa ter mais prosperidade.', coracao:true},
+    {nome:'Sabrina', rel:'sua cunhada', foto:'recado-sabrina.jpg', layout:'lado', alt:'Foto enviada pela Sabrina', texto:'O aniversário é seu, mas quem ganha presente somos nós! Agradeço a Deus pela sua vida e pela de sua família. Obrigada por ser essa conselheira maravilhosa que nos ampara sempre que precisamos. Conte sempre com a gente. Te amo!', coracao:true},
     {nome:'Rubens', rel:'nosso amigo', foto:'recado-rubens.jpg', circulo:true, alt:'Foto do Rubens', audio:'recado-rubens.mp3', dur:47, wave:[0.99, 0.84, 0.68, 0.86, 0.89, 0.65, 0.86, 0.93, 0.93, 0.71, 0.97, 0.58, 0.88, 0.9, 0.85, 0.64, 0.87, 0.72, 0.9, 0.66, 0.8, 0.79, 0.82, 0.9, 0.66, 0.85, 0.79, 0.77, 0.92, 0.92, 0.8, 0.64, 1.0, 0.91, 0.74, 0.52]},
     {nome:'Tamara', rel:'amiga e chefa', foto:'recado-tamara.jpg', layout:'lado', alt:'Foto enviada pela Tamara', audio:'recado-tamara.mp3', dur:67, wave:[0.73, 0.55, 0.62, 0.83, 0.74, 0.53, 0.95, 0.71, 1.0, 0.66, 0.63, 0.7, 0.44, 0.65, 0.81, 0.86, 0.83, 0.82, 0.89, 0.91, 0.64, 1.0, 0.63, 0.59, 0.63, 0.56, 0.78, 0.78, 0.77, 0.61, 0.76, 0.75, 0.82, 0.45, 0.83, 0.72]},
     {nome:'Bruna', rel:'amiga e discípula', foto:'recado-bruna.jpg', layout:'lado', alt:'Foto enviada pela Bruna', texto:'Que Deus continue cuidando dos seus sonhos, guiando os seus passos e multiplicando em sua vida tudo o que há de melhor.', coracao:true},
-    {nome:'Claudia', rel:'amiga', foto:'recado-claudia.jpg', pos:'50% 25%', alt:'Foto da Claudia com a Jéssica', audio:'recado-claudia.mp3', dur:59, wave:[0.08, 0.4, 0.47, 0.28, 0.96, 0.8, 0.55, 0.52, 0.69, 0.35, 0.59, 0.73, 0.66, 0.82, 0.66, 0.8, 0.8, 0.5, 0.59, 0.82, 0.56, 1.0, 0.73, 0.64, 0.27, 0.62, 0.54, 0.48, 0.63, 0.95, 0.96, 0.75, 0.41, 0.48, 0.33, 0.18]}
+    {nome:'Claudia', rel:'amiga', foto:'recado-claudia.jpg', pos:'50% 25%', alt:'Foto da Claudia com a Jéssica', audio:'recado-claudia.mp3', dur:59, wave:[0.08, 0.4, 0.47, 0.28, 0.96, 0.8, 0.55, 0.52, 0.69, 0.35, 0.59, 0.73, 0.66, 0.82, 0.66, 0.8, 0.8, 0.5, 0.59, 0.82, 0.56, 1.0, 0.73, 0.64, 0.27, 0.62, 0.54, 0.48, 0.63, 0.95, 0.96, 0.75, 0.41, 0.48, 0.33, 0.18]},
+    {nome:'Vívian', rel:'Ministério de Dança', foto:'recado-vivian.jpg', layout:'lado', alt:'Foto enviada pela Vívian', texto:'Feliz aniversário, Jessy! Que Deus continue abençoando sua vida, guiando seus passos e fortalecendo essa mulher de fé que tanto admiro. Que seu novo ciclo seja repleto de paz, amor, saúde e da presença de Deus em cada detalhe. Que você continue sendo essa mulher que inspira, mesmo sem perceber. Que seu dia seja tão especial quanto as bênçãos que desejo para sua vida!', coracao:true},
   ];
   var recIdx = 0, recCard = $id('rcard'), recDots = $id('rdots'), recPrev = $id('rPrev'), recNext = $id('rNext');
   function recSrc(f){ return (window.__REC_SRC__ && window.__REC_SRC__[f]) || ('assets/' + f); }
@@ -1520,7 +1528,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
       if(!last){ var cn = el('p', 'rcont', 'continua \u203A'); tx.appendChild(cn); } else if(r.paginas){ tx.appendChild(el('p', 'rcont', pg + 1 + ' de ' + r.paginas.length)); }
       recCard.appendChild(tx);
     } else if(r.video){   // recado em vídeo: o vídeo em pé de um lado, nome do outro; toque para tocar, botão para tela cheia
-      var vw = el('div', 'rlado rvid'), vf = el('div', 'rfoto rvbox'), vv = document.createElement('video');
+      var vw = el('div', r.texto ? 'rlado rvid rvtxt' : 'rlado rvid'), vf = el('div', 'rfoto rvbox'), vv = document.createElement('video');
       vv.src = recSrc(r.video); vv.poster = recSrc(r.foto); vv.playsInline = true; vv.setAttribute('playsinline', ''); vv.preload = 'metadata'; vv.setAttribute('aria-label', 'Vídeo de ' + r.nome);
       var vp = el('button', 'rvplay', '\u25B6'), vx = el('button', 'rvfull', '\u26F6'); vp.type = vx.type = 'button'; vp.setAttribute('aria-label', 'Tocar o vídeo'); vx.setAttribute('aria-label', 'Ver em tela cheia');
       function vsync(){ vf.classList.toggle('on', !vv.paused); vp.setAttribute('aria-label', vv.paused ? 'Tocar o vídeo' : 'Pausar o vídeo'); }
@@ -1528,7 +1536,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
       vp.addEventListener('click', vtoggle); vv.addEventListener('click', vtoggle); vv.addEventListener('play', vsync); vv.addEventListener('pause', vsync); vv.addEventListener('ended', function(){ vv.currentTime = 0; vsync(); });
       vx.addEventListener('click', function(){ if(vv.requestFullscreen) vv.requestFullscreen(); else if(vv.webkitEnterFullscreen) vv.webkitEnterFullscreen(); if(vv.paused) vtoggle(); });
       r.v = vv; vf.appendChild(vv); vf.appendChild(vp); vf.appendChild(vx);
-      var vc = el('div', 'rcol'); vc.appendChild(el('div', 'rnm', r.nome)); if(r.rel) vc.appendChild(el('div', 'rrel', r.rel)); vc.appendChild(el('p', 'rvhint', 'Toque para assistir'));
+      var vc = el('div', 'rcol'); vc.appendChild(el('div', 'rnm', r.nome)); if(r.rel) vc.appendChild(el('div', 'rrel', r.rel)); if(r.texto){ var vtp = el('p', 'rtx', r.texto); if(r.coracao) vtp.appendChild(el('span', 'rhc', ' \u2665')); vc.appendChild(vtp); } vc.appendChild(el('p', 'rvhint', 'Toque para assistir'));
       vw.appendChild(vf); vw.appendChild(vc); recCard.appendChild(vw);
     } else if(r.layout === 'lado'){   // foto vertical: foto de um lado, nome e texto do outro
       var lw = el('div', r.audio ? 'rlado com-audio' : 'rlado'), lf = el('div', 'rfoto'), li = document.createElement('img'); li.src = recSrc(r.foto); li.alt = r.alt || ('Foto de ' + r.nome); if(r.aspect) lf.style.aspectRatio = r.aspect; lf.appendChild(li);
