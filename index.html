@@ -628,6 +628,12 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
 @keyframes rInF{from{opacity:0; transform:translateX(14%) rotate(3deg)}}
 @keyframes rInB{from{opacity:0; transform:translateX(-14%) rotate(-3deg)}}
 @keyframes rDev{from{filter:blur(5px) saturate(.4) brightness(1.15); transform:scale(1.06)} to{filter:none; transform:none}}
+.rsel{font-family:var(--serif); font-weight:600; font-size:max(9px, calc(var(--bw) * .024)); letter-spacing:.08em; white-space:nowrap; text-transform:uppercase; color:var(--gold-d); line-height:1.2}
+.rcard.rfinal{border:1.5px solid #c9a24a; box-shadow:inset 0 0 0 3px rgba(255,255,255,.35), 0 0 0 3px rgba(201,162,74,.2), 0 0 20px rgba(227,184,101,.55), inset 0 0 16px rgba(243,212,143,.35)}
+.rcard.rfinal .rnm{font-size:calc(var(--bw) * .08)}
+.rcard.rfinal .rhc{color:#c9a24a; font-size:1.45em; line-height:1; vertical-align:-.08em}
+.rcard.rfinal.rin-f .rtxs, .rcard.rfinal.rin-b .rtxs, .rcard.rfinal.rin-f .rsel, .rcard.rfinal.rin-b .rsel{animation:rUp 1.1s .25s cubic-bezier(.2,.8,.25,1) both}
+@media (max-height:700px){ .rcard.rfinal .rsel{display:none} .rcard.rfinal .rnm{font-size:calc(var(--bw) * .072)} }
 @keyframes rUp{from{opacity:0; transform:translateY(8px)}}
 
 #home.land #esScene{box-shadow:none; -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%); mask-image:linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%)}
@@ -1503,7 +1509,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     {nome:'Claudia', rel:'amiga', foto:'recado-claudia.jpg', pos:'50% 25%', alt:'Foto da Claudia com a Jéssica', audio:'recado-claudia.mp3', dur:59, wave:[0.08, 0.4, 0.47, 0.28, 0.96, 0.8, 0.55, 0.52, 0.69, 0.35, 0.59, 0.73, 0.66, 0.82, 0.66, 0.8, 0.8, 0.5, 0.59, 0.82, 0.56, 1.0, 0.73, 0.64, 0.27, 0.62, 0.54, 0.48, 0.63, 0.95, 0.96, 0.75, 0.41, 0.48, 0.33, 0.18]},
     {nome:'Vívian', rel:'Ministério de Dança', foto:'recado-vivian.jpg', layout:'lado', alt:'Foto enviada pela Vívian', texto:'Feliz aniversário, Jessy! Que Deus continue abençoando sua vida, guiando seus passos e fortalecendo essa mulher de fé que tanto admiro. Que seu novo ciclo seja repleto de paz, amor, saúde e da presença de Deus em cada detalhe. Que você continue sendo essa mulher que inspira, mesmo sem perceber. Que seu dia seja tão especial quanto as bênçãos que desejo para sua vida!', coracao:true},
     {nome:'Keyla', rel:'Ministério de Dança', foto:'recado-keyla.jpg', layout:'topo', alt:'Foto enviada pela Keyla', texto:'Hoje é o dia de uma mulher abençoada! Você, minha dupla!\nDesejo de todo o meu coração que você possa viver mais um novo ciclo repleto de experiências com o Senhor. Que você veja os seus sonhos se realizarem conforme a vontade de Deus, que é boa, perfeita e agradável. Sou grata a Deus por me permitir conhecer alguém como você, que marca a vida de outras pessoas por onde passa.\nTe amo muito, e saiba que você é muito especial pra mim! Felicidades, e muitos anos de vida, Jeh!', coracao:true},
-    {nome:'Felipe', rel:'seu marido', foto:'recado-felipe.jpg', layout:'topo', alt:'Felipe e Jéssica', texto:'Jéssica, hoje é seu dia, mas quem ganhou o presente fui eu.\nParabéns, minha esposa! Você é uma mulher maravilhosa, amiga de Deus, mulher de oração e de muita sabedoria. É na sua fé e nas suas orações que a nossa casa se sustenta, e é com a sua sabedoria que a gente aprende.\nEntre milhões de pessoas, foi você quem Deus me deu. Obrigado por ser minha companheira, meu porto seguro, e por ser a mãe que a Alê tem. Que Deus continue cuidando de você e realizando os seus sonhos.\nSe eu pudesse escolher, escolheria você de novo. E de novo. E de novo.', coracao:true},
+    {nome:'Felipe', rel:'seu marido', foto:'recado-felipe.jpg', layout:'topo', final:true, alt:'Felipe e Jéssica', texto:'Jéssica, hoje é seu dia, mas quem ganhou o presente fui eu.\nParabéns, minha esposa! Você é uma mulher maravilhosa, amiga de Deus, mulher de oração e de muita sabedoria. É na sua fé e nas suas orações que a nossa casa se sustenta, e é com a sua sabedoria que a gente aprende.\nEntre milhões de pessoas, foi você quem Deus me deu. Obrigado por ser minha companheira, meu porto seguro, e por ser a mãe que a Alê tem. Que Deus continue cuidando de você e realizando os seus sonhos.\nSe eu pudesse escolher, escolheria você de novo. E de novo. E de novo.', coracao:true},
   ];
   var recIdx = 0, recCard = $id('rcard'), recDots = $id('rdots'), recPrev = $id('rPrev'), recNext = $id('rNext');
   function recSrc(f){ return (window.__REC_SRC__ && window.__REC_SRC__[f]) || ('assets/' + f); }
@@ -1518,13 +1524,14 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
   }
   function paintRec(r){ var bars = recCard.querySelectorAll('.rwf i'), tm = recCard.querySelector('.rtm'); if(!bars.length) return; var d = (r.a && r.a.duration) || r.dur, c = r.a ? r.a.currentTime : 0, k = d ? c/d : 0; [].forEach.call(bars, function(x, i){ x.classList.toggle('on', i/bars.length < k); }); if(tm) tm.textContent = fmtT(c > 0 ? c : d); }
   function renderRec(i){
-    recIdx = (i + RECADOS.length) % RECADOS.length; var r = RECADOS[recIdx]; recCard.textContent = '';
+    recIdx = (i + RECADOS.length) % RECADOS.length; var r = RECADOS[recIdx]; recCard.textContent = ''; recCard.classList.toggle('rfinal', !!r.final);
     function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt) e.textContent = txt; return e; }
     function addPlayer(){ var pl = el('div', 'rpl'), bt = el('button', 'rpb', '\u25B6'), wf = el('div', 'rwf'), tm = el('span', 'rtm', fmtT(r.dur)); bt.type = 'button'; bt.addEventListener('click', function(){ playRec(r); });
       (r.wave || []).forEach(function(h){ var b2 = document.createElement('i'); b2.style.height = Math.round(h*100) + '%'; wf.appendChild(b2); });
       wf.addEventListener('click', function(e){ var rc = wf.getBoundingClientRect(); if(!r.a){ playRec(r); } var d = (r.a && r.a.duration) || r.dur; r.a.currentTime = Math.max(0, Math.min(d - .1, (e.clientX - rc.left)/rc.width*d)); });
       pl.appendChild(bt); pl.appendChild(wf); pl.appendChild(tm); recCard.appendChild(pl); }
     if(r.layout === 'topo'){   // texto longo: foto pequena ao lado do nome e o texto em parágrafos
+      if(r.final) recCard.appendChild(el('div', 'rsel', '\u2726 Fechando com chave de ouro \u2726'));
       var tw = el('div', 'rtopo'), tf = el('div', 'rmono rfc'), ti = document.createElement('img'); ti.src = recSrc(r.foto); ti.alt = r.alt || ('Foto de ' + r.nome); tf.appendChild(ti);
       var tc = el('div', 'rcol'); tc.appendChild(el('div', 'rnm', r.nome)); if(r.rel) tc.appendChild(el('div', 'rrel', r.rel)); tw.appendChild(tf); tw.appendChild(tc); recCard.appendChild(tw);
       var pg = r.paginas ? (r._pg || 0) : 0, last = !r.paginas || pg === r.paginas.length - 1, T = r.paginas ? r.paginas[pg] : r.texto;
@@ -1606,7 +1613,7 @@ body.solo .bookBase .board::after{color:rgba(80,56,74,.75)}
     if(recReduce){ renderRec(to); return; }
     recBusy = true; recCard.classList.remove('rin-f', 'rin-b'); recCard.classList.add(fwd ? 'rout-f' : 'rout-b');
     setTimeout(function(){ renderRec(to); recCard.classList.remove('rout-f', 'rout-b'); void recCard.offsetWidth; recCard.classList.add(fwd ? 'rin-f' : 'rin-b');
-      setTimeout(function(){ recCard.classList.remove('rin-f', 'rin-b'); recBusy = false; }, 560); }, 260);
+      setTimeout(function(){ recCard.classList.remove('rin-f', 'rin-b'); recBusy = false; }, RECADOS[recIdx].final ? 1400 : 560); }, 260);
   }
 
   recDots.style.setProperty('--nd', RECADOS.length);
